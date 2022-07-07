@@ -13,10 +13,13 @@
 #
 pre-commit:
   commands:
+    lint_code:
+      glob: '*.dart'
+      run: dart fix --apply lib && git add .
     pretty:
       glob: '*.dart'
       run: flutter format {staged_files} && git add {staged_files}
-    linter:
-      run: dart fix --dry-run
-    tests:
+    test:
       run: flutter test
+    static_code_analysis:
+      run: flutter analyze
