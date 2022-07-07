@@ -19,7 +19,7 @@ pre-commit:
     pretty:
       glob: '*.dart'
       run: flutter format {staged_files} && git add {staged_files}
-    test:
-      run: flutter test
     static_code_analysis:
       run: flutter analyze
+#    test:
+#      run: flutter test
