@@ -1,6 +1,11 @@
 # nemo_flutter
 - 네모의 flutter 프로젝트입니다.
 
+## 설정 방법
+0. `nvm install --lts` (node v16.15.1)
+1. `nvm use --lts`
+2. `npm install`
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
