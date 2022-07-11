@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 // import initial page
-import 'pages/init/first.dart';
 import 'pages/init/login.dart';
 import 'pages/init/signup.dart';
 
@@ -21,14 +20,13 @@ void main() => runApp(MaterialApp(
       title: 'Nemo test',
       initialRoute: '/',
       routes: {
-        '/': (context) => FirstPage(),
-        '/login': (context) => LoginPage(),
+        '/': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
         '/contacts': (context) => ContactsPage(),
         '/message': (context) => MessagePage(),
         '/mypage': (context) => MypagePage(),
         '/sharing': (context) => SharingPage(),
-        // '/setting': (context) => SettingPage(),
+        '/setting': (context) => SettingPage(),
         '/namecard': (context) => NameCardGenerator(),
       }, // end routes
     ));
