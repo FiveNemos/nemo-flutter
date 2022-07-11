@@ -14,9 +14,9 @@ class SignupPage extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              child: const Text('메인페이지'),
+              child: const Text('메인'),
               onPressed: () {
-                Navigator.pushNamed(context, '/');
+                Navigator.pushNamed(context, '/login');
               },
             ),
             ElevatedButton(
