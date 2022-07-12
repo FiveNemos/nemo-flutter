@@ -3,19 +3,19 @@ import '../model/user.dart';
 class UserPreferences {
   static const myUser = User(
     imagePath:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmy_tAYTaI_s0_x_0CItXgE7khwKORXSzXHg&usqp=CAU',
-    nickname: '닉네임',
-    introduction: '한줄 소개 입력',
-    about:
-        'Rick and Morty is an American adult animated science fiction sitcom created by Justin Roiland and Dan Harmon for Cartoon Networks nighttime programming block Adult Swim. The series follows the misadventures of cynical mad scientist Rick Sanchez and his good-hearted but fretful grandson Morty Smith, who split their time between domestic life and interdimensional adventures.',
+        'https://s3.us-west-2.amazonaws.com/secure.notion-static.com/668a3935-3fcd-4bd5-a419-4cb7732a5288/KakaoTalk_Photo_2022-07-04-01-01-40.gif?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Content-Sha256=UNSIGNED-PAYLOAD&X-Amz-Credential=AKIAT73L2G45EIPT3X45%2F20220712%2Fus-west-2%2Fs3%2Faws4_request&X-Amz-Date=20220712T140031Z&X-Amz-Expires=86400&X-Amz-Signature=a9a591296e62e42bcb75d5a32f4082bd6e07239b04e544de79f36390268f7be8&X-Amz-SignedHeaders=host&response-content-disposition=filename%20%3D%22KakaoTalk_Photo_2022-07-04-01-01-40.gif%22&x-id=GetObject',
+    nickname: '정글러버',
+    introduction: 'Pintos 정복자 😎',
+    title: '모닥코 해요 👍',
+    about: '모닥불 보며 코딩하기 🥰\n' '캠핑가서 마시멜로 구워먹으며 함께 코딩해요 ~ !\n\n',
     image1:
-        'https://images-na.ssl-images-amazon.com/images/S/pv-target-images/f2bc44a9d75daf5b21e45cde9e96808ea899ee4bee518cb1fa41fe894eff0cbc._V_SX1080_.png',
+        'https://thumb.mt.co.kr/06/2021/04/2021040215304223096_1.jpg/dims/optimize/',
     image2:
-        'https://observer.com/wp-content/uploads/sites/2/2021/09/rick-and-morty-season-5-evil-morty-return-1281723.jpeg?quality=80&w=635',
+        'https://shop4.daumcdn.net/thumb/R500x500.q90/?fname=https%3A%2F%2Fshop4.daumcdn.net%2Fshophow%2Fp%2FD5109338473.jpg%3Fut%3D202207',
     image3:
-        'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS4WkYDEssEAgV1yTFcBr_A2m-ybF-HH7U0jg&usqp=CAU',
-    tag1: 'he11o world',
-    tag2: 'he22o world',
-    tag3: 'he33o world',
+        'http://img.taling.me/Content/Uploads/Cover/0ad1f4cfe776f7381a23951c8582c771a3558b7d.jpg',
+    tag1: '#코딩',
+    tag2: '#캠핑',
+    tag3: '#베이킹',
   );
 }
