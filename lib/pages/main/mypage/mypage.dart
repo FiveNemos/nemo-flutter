@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import '../mypage/page/profile_page.dart';
 
 class MypagePage extends StatelessWidget {
   const MypagePage({Key? key}) : super(key: key);
@@ -9,15 +11,7 @@ class MypagePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('마이페이지'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('메인 페이지로 이동'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/');
-          },
-        ),
-      ),
-      // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
+      body: MyProfile(),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -56,6 +50,22 @@ class MypagePage extends StatelessWidget {
           }
         },
       ),
+    );
+  }
+}
+
+class MyProfile extends StatelessWidget {
+  const MyProfile({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.blue.shade300,
+        dividerColor: Colors.black,
+      ),
+      home: ProfilePage(),
     );
   }
 }
