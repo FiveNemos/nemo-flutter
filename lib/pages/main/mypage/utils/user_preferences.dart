@@ -4,8 +4,8 @@ class UserPreferences {
   static const myUser = User(
     imagePath:
         'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRmy_tAYTaI_s0_x_0CItXgE7khwKORXSzXHg&usqp=CAU',
-    name: '닉네임',
-    email: '한줄 소개 입력',
+    nickname: '닉네임',
+    introduction: '한줄 소개 입력',
     about:
         'Rick and Morty is an American adult animated science fiction sitcom created by Justin Roiland and Dan Harmon for Cartoon Networks nighttime programming block Adult Swim. The series follows the misadventures of cynical mad scientist Rick Sanchez and his good-hearted but fretful grandson Morty Smith, who split their time between domestic life and interdimensional adventures.',
     image1:
