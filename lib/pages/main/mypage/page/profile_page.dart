@@ -39,12 +39,12 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildName(User user) => Column(
         children: [
           Text(
-            user.name,
+            user.nickname,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
           ),
           const SizedBox(height: 4),
           Text(
-            user.email,
+            user.introduction,
             style: TextStyle(color: Colors.grey),
           )
         ],

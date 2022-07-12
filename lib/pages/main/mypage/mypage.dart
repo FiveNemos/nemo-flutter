@@ -2,14 +2,36 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../mypage/page/profile_page.dart';
 
-class MypagePage extends StatelessWidget {
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'dart:async';
+
+class MypagePage extends StatefulWidget {
   const MypagePage({Key? key}) : super(key: key);
+
+  @override
+  State<MypagePage> createState() => _MypagePageState();
+}
+
+class _MypagePageState extends State<MypagePage> {
+  getData() async {}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('마이페이지'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(
+              Icons.send,
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pushNamed(context, '/message');
+            },
+          ),
+        ],
       ),
       body: MyProfile(),
       bottomNavigationBar: BottomNavigationBar(
