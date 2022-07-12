@@ -5,6 +5,7 @@ class User {
   final String imagePath;
   final String nickname;
   final String introduction;
+  final String title;
   final String about;
   final String image1;
   final String image2;
@@ -17,6 +18,7 @@ class User {
     required this.imagePath,
     required this.nickname,
     required this.introduction,
+    required this.title,
     required this.about,
     required this.image1,
     required this.image2,

@@ -21,17 +21,6 @@ class _MypagePageState extends State<MypagePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('마이페이지'),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(
-              Icons.send,
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pushNamed(context, '/message');
-            },
-          ),
-        ],
       ),
       body: MyProfile(),
       bottomNavigationBar: BottomNavigationBar(
