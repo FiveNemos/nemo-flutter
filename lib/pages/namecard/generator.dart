@@ -53,7 +53,19 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
               showDialog(
                   context: context,
                   builder: (context){
-                    return Dialog(child: Text('저장완료'),);});
+                    return AlertDialog(
+                        title: Text('저장완료'),
+                        content: Text('가입이 완료되었습니다.'),
+                        actions: [
+                          FlatButton(
+                            textColor: Colors.black,
+                            onPressed: (){
+                              Navigator.pushNamed(context, '/');
+                            },
+                            child: Text('확인'),
+                          )
+                        ]
+                      );});
             },
             icon: Icon(Icons.save_rounded))]
         ),
