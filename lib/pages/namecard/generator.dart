@@ -6,11 +6,12 @@ import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 
-Future<dynamic> postNameCard
-    (dynamic context, String nickname, Map tags, String introduction, dynamic userImage) async{
+Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
+    String introduction, dynamic userImage) async {
   var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
   var request = http.MultipartRequest('POST', uri);
-  request.headers.addAll({"Content-Type": "multipart/form-data; boundary=----myboundary"});
+  request.headers
+      .addAll({"Content-Type": "multipart/form-data; boundary=----myboundary"});
   request.files.add(await http.MultipartFile.fromPath("image", userImage.path));
   request.fields['user_id'] = "9999";
   request.fields['nickname'] = "Hyunjoo";
@@ -21,36 +22,32 @@ Future<dynamic> postNameCard
 
   final response = await request.send();
 
-  if (response.statusCode == 201){
+  if (response.statusCode == 201) {
     return showDialog(
         context: context,
-        builder: (context){
+        builder: (context) {
           return AlertDialog(
               title: Text('저장완료'),
               content: Text('저장이 완료되었습니다.'),
               actions: [
                 TextButton(
                   // textColor: Colors.black,
-                  onPressed: (){
+                  onPressed: () {
                     Navigator.pushNamed(context, '/');
                   },
                   child: Text('확인'),
                 )
-              ]
-          );});
+              ]);
+        });
   } else {
     return showDialog(
-      context: context,
-      builder: (context){
-        return AlertDialog(
-          title: Text('저장실패'),
-          content: Text('재시도하세요'),
-          actions: [
-            IconButton(onPressed: (){}, icon: Icon(Icons.star))
-          ]
-        );
-      }
-    );
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+              title: Text('저장실패'),
+              content: Text('재시도하세요'),
+              actions: [IconButton(onPressed: () {}, icon: Icon(Icons.star))]);
+        });
     // throw Exception('명함 저장 실패');
   }
 }
@@ -71,7 +68,6 @@ Future<dynamic> postNameCard
 //   },
 // );
 
-
 class NameCardGenerator extends StatefulWidget {
   const NameCardGenerator({Key? key}) : super(key: key);
 
@@ -85,15 +81,16 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   var tags = {'1': 'one', '2': 'two', '3': 'three'};
   var introduction = '한줄소개';
   // var userImage = Image.asset('assets/grey_profile.png', fit: BoxFit.fill); //이건 파일형태가 아니군!
-  dynamic userImage = 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
+  dynamic userImage =
+      'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
 
-  saveName(String value){
+  saveName(String value) {
     setState(() {
       nickname = value;
     });
   }
 
-  saveTags(int num, String value){
+  saveTags(int num, String value) {
     setState(() {
       tags['${num}'] = value;
     });
@@ -112,7 +109,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     // }
   }
 
-  saveIntro(String value){
+  saveIntro(String value) {
     setState(() {
       introduction = value;
     });
@@ -121,20 +118,19 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: (){
+      onTap: () {
         // FocusScopeNode currentFocus = FocusScope.of(context);
         // if (!currentFocus.hasPrimaryFocus){
         //   currentFocus.unfocus();
-      FocusScope.of(context).unfocus();
-    },
+        FocusScope.of(context).unfocus();
+      },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text('명함 생성'),
-          actions: [ElevatedButton(
-            style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
-            child: Text('저장'),
-              onPressed: (){
-              postNameCard(context, nickname, tags, introduction, userImage);
+          appBar: AppBar(title: Text('명함 생성'), actions: [
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
+              child: Text('저장'),
+              onPressed: () {
+                postNameCard(context, nickname, tags, introduction, userImage);
                 // showDialog(
                 //     context: context,
                 //     builder: (context){
@@ -152,82 +148,93 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 //           ]
                 //         );});
               },
-
-              )]
-          ),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              NameCard(nickname: nickname, tags: tags, introduction: introduction, userImage: userImage),
-              Container(
-                child: Column(
-                  children: [
-                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),),
-                    nameSpace(nickname: nickname, saveName: saveName,),
-                    Container(
-                      width: 200,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: tagSpace(saveTags: saveTags, num: 1),
-                            ),
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: tagSpace(saveTags: saveTags, num: 2),
-                            ),
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: tagSpace(saveTags: saveTags, num: 3),
-                            )
-                          ]
+            )
+          ]),
+          body: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                NameCard(
+                    nickname: nickname,
+                    tags: tags,
+                    introduction: introduction,
+                    userImage: userImage),
+                Container(
+                  child: Column(
+                    children: [
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
                       ),
-                    ),
-                    Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20),),
-                    introSpace(introduction: introduction, saveIntro: saveIntro,),
-                    TextButton(
-                      child: Text('사진 가져오기'),
-                        // icon: Icon(Icons.add_box_rounded),
-                        onPressed: () async {
-                          var picker = ImagePicker();
-                          var image = await picker.pickImage(
-                              source: ImageSource.gallery);
-                          if (image != null) {
-                            setState(() {
-                              // userImage = Image.file(File(image.path), fit: BoxFit.fill);
-                              userImage = File(image.path);
-                            });
-                          }
-                        }
-                    ),
-                  ],//children
-              ),
-              ),
-            ],
+                      nameSpace(
+                        nickname: nickname,
+                        saveName: saveName,
+                      ),
+                      Container(
+                        width: 200,
+                        child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: tagSpace(saveTags: saveTags, num: 1),
+                              ),
+                              SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: tagSpace(saveTags: saveTags, num: 2),
+                              ),
+                              SizedBox(
+                                width: 50,
+                                height: 50,
+                                child: tagSpace(saveTags: saveTags, num: 3),
+                              )
+                            ]),
+                      ),
+                      Padding(
+                        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                      ),
+                      introSpace(
+                        introduction: introduction,
+                        saveIntro: saveIntro,
+                      ),
+                      TextButton(
+                          child: Text('사진 가져오기'),
+                          // icon: Icon(Icons.add_box_rounded),
+                          onPressed: () async {
+                            var picker = ImagePicker();
+                            var image = await picker.pickImage(
+                                source: ImageSource.gallery);
+                            if (image != null) {
+                              setState(() {
+                                // userImage = Image.file(File(image.path), fit: BoxFit.fill);
+                                userImage = File(image.path);
+                              });
+                            }
+                          }),
+                    ], //children
+                  ),
+                ),
+              ],
+            ),
           ),
-        ),
-        bottomNavigationBar: ElevatedButton(
-          child: Text('메인 페이지로 이동'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/');
+          bottomNavigationBar: ElevatedButton(
+            child: Text('메인 페이지로 이동'),
+            onPressed: () {
+              Navigator.pushNamed(context, '/');
             },
-
-        )
-
-      ),
+          )),
     );
   }
 }
 
-
 class nameSpace extends StatefulWidget {
-  nameSpace({Key? key, this.nickname, this.saveName,}) : super(key: key);
+  nameSpace({
+    Key? key,
+    this.nickname,
+    this.saveName,
+  }) : super(key: key);
   var nickname, saveName;
 
   @override
@@ -241,7 +248,8 @@ class _nameSpaceState extends State<nameSpace> {
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
-        constraints: BoxConstraints(minWidth: 200, maxWidth: 200, minHeight: 30, maxHeight: 30),
+        constraints: BoxConstraints(
+            minWidth: 200, maxWidth: 200, minHeight: 30, maxHeight: 30),
         labelText: '닉네임',
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -266,7 +274,6 @@ class _nameSpaceState extends State<nameSpace> {
           widget.saveName(text);
         }
       },
-
     );
   }
 }
@@ -292,7 +299,7 @@ class _tagSpaceState extends State<tagSpace> {
       ),
       controller: controller,
       onChanged: (text) {
-        if (text != null){
+        if (text != null) {
           widget.saveTags(widget.num, text);
         }
       },
@@ -306,7 +313,6 @@ class introSpace extends StatefulWidget {
 
   @override
   State<introSpace> createState() => _introSpaceState();
-
 }
 
 class _introSpaceState extends State<introSpace> {
@@ -316,7 +322,8 @@ class _introSpaceState extends State<introSpace> {
   Widget build(BuildContext context) {
     return TextField(
         decoration: InputDecoration(
-          constraints: BoxConstraints(minWidth: 200, maxWidth: 200, minHeight: 30, maxHeight: 100),
+          constraints: BoxConstraints(
+              minWidth: 200, maxWidth: 200, minHeight: 30, maxHeight: 100),
           labelText: '한줄소개',
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -335,19 +342,19 @@ class _introSpaceState extends State<introSpace> {
         maxLength: 40,
         onChanged: (text) {
           if (text != null) {
-
             // setState(() {
             //   widget.introduction = controller.text;
             // });
             widget.saveIntro(text);
           }
-        }
-    );
+        });
   }
 }
 
 class NameCard extends StatefulWidget {
-  NameCard({Key? key, this.nickname, this.tags, this.introduction, this.userImage}) : super(key: key);
+  NameCard(
+      {Key? key, this.nickname, this.tags, this.introduction, this.userImage})
+      : super(key: key);
   var nickname, tags, introduction;
   dynamic userImage;
 
@@ -377,24 +384,41 @@ class _NameState extends State<NameCard> {
           ),
           child: Row(
             children: [
-              Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0),),
-              Container(
-                width: 100,
-                height: 100,
-                child: widget.userImage.runtimeType == String ? Image.network(widget.userImage, fit: BoxFit.fill) : Image.file(widget.userImage, fit: BoxFit.fill)
+              Padding(
+                padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
               ),
-              Padding(padding: EdgeInsets.fromLTRB(5, 0, 5, 0),),
+              Container(
+                  width: 100,
+                  height: 100,
+                  child: widget.userImage.runtimeType == String
+                      ? Image.network(widget.userImage, fit: BoxFit.fill)
+                      : Image.file(widget.userImage, fit: BoxFit.fill)),
+              Padding(
+                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+              ),
               Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   // ItemTags(title: nickname),
-                  Text(widget.nickname,style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
+                  Text(widget.nickname,
+                      style:
+                          TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      ElevatedButton(child: Text(widget.tags['1']),onPressed: (){},style:ButtonStyle()),
-                      OutlinedButton(child: Text(widget.tags['2']),onPressed: (){},),
-                      ElevatedButton(child: Text(widget.tags['3']),onPressed: (){},style: ButtonStyle(),),
+                      ElevatedButton(
+                          child: Text(widget.tags['1']),
+                          onPressed: () {},
+                          style: ButtonStyle()),
+                      OutlinedButton(
+                        child: Text(widget.tags['2']),
+                        onPressed: () {},
+                      ),
+                      ElevatedButton(
+                        child: Text(widget.tags['3']),
+                        onPressed: () {},
+                        style: ButtonStyle(),
+                      ),
                     ],
                   ),
 
@@ -437,15 +461,7 @@ class _NameState extends State<NameCard> {
                 ],
               )
             ], //children
-          )
-      ),
+          )),
     );
   }
 }
-
-
-
-
-
-
-
