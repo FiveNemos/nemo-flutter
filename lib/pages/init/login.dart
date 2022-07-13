@@ -1,7 +1,34 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert'; // json decode 등등 관련 패키지
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({Key? key}) : super(key: key);
+  LoginPage({Key? key}) : super(key: key);
+
+  var inputData = TextEditingController();
+  var inputData2 = TextEditingController();
+
+  getHttp(accountName, password) async {
+    try {
+      var dio = Dio();
+      var param = {
+        'account_name': '$accountName',
+        'password': '$password'
+      };
+
+      Response response = await dio.post('http://34.64.217.3:3000/api/user/login', data: param);
+
+      if (response.statusCode == 200) {
+        final jsonBody = json.decode(response.data['user_id'].toString());
+        print(jsonBody); // 5
+        return true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +50,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 10),),
                   TextField(
+                    controller: inputData,
                     decoration: InputDecoration(
                       labelText: 'Username',
                       enabledBorder: OutlineInputBorder(
@@ -41,6 +69,7 @@ class LoginPage extends StatelessWidget {
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20),),
                   TextField(
+                    controller: inputData2,
                     decoration: InputDecoration(
                       labelText: 'Password',
                       enabledBorder: OutlineInputBorder(
@@ -62,7 +91,12 @@ class LoginPage extends StatelessWidget {
                     width: double.infinity,
                     height: 56,
                     child: ElevatedButton(
-                      onPressed:(){},
+                      onPressed:() async{
+                        if(await getHttp(inputData.text, inputData2.text) == true){
+                          Navigator.pushNamed(context, '/namecard');
+                        } else {
+                        }
+                      },
                       child: Text('Continue'),
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all(Colors.black),
