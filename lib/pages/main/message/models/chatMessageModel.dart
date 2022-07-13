@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 
-class ChatMessage{
+class ChatMessage {
   String messageContent;
   String messageType;
   ChatMessage({required this.messageContent, required this.messageType});
@@ -10,13 +10,15 @@ Map messages_db = {
   "Sanori": [
     ChatMessage(messageContent: "안녕하세요", messageType: "receiver"),
     ChatMessage(messageContent: "잘하고 계신가요 ㅎㅎ ", messageType: "receiver"),
-    ChatMessage(messageContent: "앗 코치님! 플러터 하고 있어요. 금방 하겠죠..? ", messageType: "sender"),
+    ChatMessage(
+        messageContent: "앗 코치님! 플러터 하고 있어요. 금방 하겠죠..? ", messageType: "sender"),
     ChatMessage(messageContent: "예... 뭐 그럴수도 있겠다", messageType: "receiver"),
     ChatMessage(messageContent: "감... 감사합니다^^", messageType: "sender"),
   ],
   "Opjoobe": [
     ChatMessage(messageContent: "안녕하세요 주형님", messageType: "sender"),
-    ChatMessage(messageContent: "앗 리더님! 친히 연락을 다 주시다니요", messageType: "receiver"),
+    ChatMessage(
+        messageContent: "앗 리더님! 친히 연락을 다 주시다니요", messageType: "receiver"),
     ChatMessage(messageContent: "농구 한판 하실래요 ?", messageType: "receiver"),
   ],
   "Jocy": [
@@ -30,15 +32,22 @@ Map messages_db = {
     ChatMessage(messageContent: "현주님.....?", messageType: "sender"),
     ChatMessage(messageContent: "님..?", messageType: "sender"),
   ],
+  "정글러버": [
+    ChatMessage(messageContent: "안녕하세요 찬익님", messageType: "sender"),
+    ChatMessage(messageContent: "블루베리 가자구요?", messageType: "receiver"),
+    ChatMessage(messageContent: "좋~죠~", messageType: "sender"),
+  ],
   "Chani": [
     ChatMessage(messageContent: "안녕하세요 찬익님", messageType: "sender"),
     ChatMessage(messageContent: "블루베리 가자구요?", messageType: "receiver"),
     ChatMessage(messageContent: "좋~죠~", messageType: "sender"),
   ],
   "Krafton": [
-    ChatMessage(messageContent: "안녕하세요 의장님:) 저희 발표 혹시..", messageType: "sender"),
+    ChatMessage(
+        messageContent: "안녕하세요 의장님:) 저희 발표 혹시..", messageType: "sender"),
     ChatMessage(messageContent: "내가 말했지", messageType: "receiver"),
-    ChatMessage(messageContent: "니 인생은 너꺼야!!! 운영진 신경쓰지마!!", messageType: "receiver"),
+    ChatMessage(
+        messageContent: "니 인생은 너꺼야!!! 운영진 신경쓰지마!!", messageType: "receiver"),
     ChatMessage(messageContent: "알겠어?!!", messageType: "receiver"),
   ],
   "고니고니": [
