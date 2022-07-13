@@ -6,6 +6,8 @@ import 'pages/init/signup.dart';
 
 // import 'pages/newNameCard.dart';
 import 'pages/main/contacts/contacts.dart';
+import 'pages/main/contacts/contacts2.dart';
+
 import 'pages/main/message/message.dart';
 import 'pages/main/mypage/mypage.dart';
 import 'pages/main/sharing/sharing.dart';
@@ -23,6 +25,7 @@ void main() => runApp(MaterialApp(
         '/': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
         '/contacts': (context) => ContactsPage(),
+        '/contacts2': (context) => ContactsPage2(),
         '/message': (context) => MessagePage(),
         '/mypage': (context) => MypagePage(),
         '/sharing': (context) => SharingPage(),
