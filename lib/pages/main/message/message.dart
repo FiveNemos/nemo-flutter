@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'screens/chatPage.dart';
+
 
 class MessagePage extends StatelessWidget {
   const MessagePage({Key? key}) : super(key: key);
@@ -10,14 +12,7 @@ class MessagePage extends StatelessWidget {
       appBar: AppBar(
         title: Text('메시지 페이지'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('메인 페이지로 이동'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/');
-          },
-        ),
-      ),
+      body: ChatPage(),
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
