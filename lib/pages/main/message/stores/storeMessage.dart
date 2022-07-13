@@ -1,5 +1,5 @@
 // 연습중
-import 'package:nemo_flutter/pages/messages/message.dart';
+import '../message.dart';
 import '../models/chatMessageModel.dart';
 
 class StoreMessage extends MessagePage{
