@@ -7,11 +7,11 @@ import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 
 Future<dynamic> postNameCard
-    (dynamic context, String nickname, Map tags, String introduction, Image userImage) async{
+    (dynamic context, String nickname, Map tags, String introduction, dynamic userImage) async{
   var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
   var request = http.MultipartRequest('POST', uri);
   request.headers.addAll({"Content-Type": "multipart/form-data"});
-  request.files.add(await http.MultipartFile.fromPath("image", "assets/grey_profile.png"));
+  request.files.add(await http.MultipartFile.fromPath("image", userImage));
   request.fields['user_id'] = "9999";
   request.fields['nickname'] = "Hyunjoo";
   request.fields['tag_1'] = tags['1'];
@@ -84,7 +84,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   // var tag1 = '태그1', tag2 = '태그2', tag3 = '태그3';
   var tags = {'1': 'one', '2': 'two', '3': 'three'};
   var introduction = '한줄소개';
-  var userImage = Image.asset('assets/grey_profile.png', fit: BoxFit.fill); //이건 파일형태가 아니군!
+  // var userImage = Image.asset('assets/grey_profile.png', fit: BoxFit.fill); //이건 파일형태가 아니군!
+  dynamic userImage = 'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
 
   saveName(String value){
     setState(() {
@@ -199,7 +200,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                               source: ImageSource.gallery);
                           if (image != null) {
                             setState(() {
-                              userImage = Image.file(File(image.path), fit: BoxFit.fill);
+                              // userImage = Image.file(File(image.path), fit: BoxFit.fill);
+                              userImage = File(image.path);
                             });
                           }
                         }
@@ -359,7 +361,8 @@ class _introSpaceState extends State<introSpace> {
 
 class NameCard extends StatefulWidget {
   NameCard({Key? key, this.nickname, this.tags, this.introduction, this.userImage}) : super(key: key);
-  var nickname, tags, introduction, userImage;
+  var nickname, tags, introduction;
+  dynamic userImage;
 
   @override
   State<NameCard> createState() => _NameState();
@@ -389,7 +392,7 @@ class _NameState extends State<NameCard> {
             Container(
               width: 100,
               height: 100,
-              child: widget.userImage,
+              child: widget.userImage.runtimeType == String ? Image.network(widget.userImage) : Image.file(widget.userImage)
             ),
             Padding(padding: EdgeInsets.fromLTRB(5, 0, 5, 0),),
             Column(
