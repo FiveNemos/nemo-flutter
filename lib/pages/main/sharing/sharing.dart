@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import './screens/tookPage.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({Key? key}) : super(key: key);
@@ -9,14 +10,7 @@ class SharingPage extends StatelessWidget {
       appBar: AppBar(
         title: Text('TOOK 페이지'),
       ),
-      body: Center(
-        child: ElevatedButton(
-          child: Text('메인 페이지로 이동'),
-          onPressed: () {
-            Navigator.pushNamed(context, '/');
-          },
-        ),
-      ),
+      body: TookPage(),
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
