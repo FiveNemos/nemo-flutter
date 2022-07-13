@@ -27,7 +27,7 @@ Future<dynamic> postNameCard
         builder: (context){
           return AlertDialog(
               title: Text('저장완료'),
-              content: Text('이 완료되었습니다.'),
+              content: Text('저장이 완료되었습니다.'),
               actions: [
                 TextButton(
                   // textColor: Colors.black,
