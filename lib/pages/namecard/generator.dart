@@ -3,15 +3,15 @@ import 'package:flutter/painting.dart';
 import 'dart:io';
 import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
-import 'package:flutter_tags/flutter_tags.dart';
+// import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 
 Future<dynamic> postNameCard
     (dynamic context, String nickname, Map tags, String introduction, dynamic userImage) async{
   var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
   var request = http.MultipartRequest('POST', uri);
-  request.headers.addAll({"Content-Type": "multipart/form-data"});
-  request.files.add(await http.MultipartFile.fromPath("image", userImage));
+  request.headers.addAll({"Content-Type": "multipart/form-data; boundary=----myboundary"});
+  request.files.add(await http.MultipartFile.fromPath("image", userImage.path));
   request.fields['user_id'] = "9999";
   request.fields['nickname'] = "Hyunjoo";
   request.fields['tag_1'] = tags['1'];
@@ -257,13 +257,13 @@ class _nameSpaceState extends State<nameSpace> {
         ),
       ),
       // controller: controller,
-      onChanged: (context) {
-        if (controller.text != null) {
-          setState(() {
-            widget.nickname = controller.text;
-          });
+      onChanged: (text) {
+        if (text != null) {
+          // setState(() {
+          //   widget.nickname = text;
+          // });
           // print(widget.nickname);
-          // widget.saveName(controller.text);
+          widget.saveName(text);
         }
       },
 
@@ -291,9 +291,9 @@ class _tagSpaceState extends State<tagSpace> {
         labelText: '태그 *',
       ),
       controller: controller,
-      onChanged: (context) {
-        if (controller.text != null){
-          widget.saveTags(widget.num, controller.text);
+      onChanged: (text) {
+        if (text != null){
+          widget.saveTags(widget.num, text);
         }
       },
     );
@@ -311,18 +311,6 @@ class introSpace extends StatefulWidget {
 
 class _introSpaceState extends State<introSpace> {
   var controller = TextEditingController();
-
-  void _handleChange(){
-    setState(() {
-      widget.introduction = controller.text;
-    });
-  }
-
-  @override
-  void initState(){
-    super.initState();
-    controller.addListener(_handleChange);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -344,15 +332,14 @@ class _introSpaceState extends State<introSpace> {
           ),
         ),
         maxLines: 3,
-        maxLength: 50,
-        onChanged: (context) {
-          if (controller.text != null) {
-            _handleChange();
-            print(widget.introduction);
+        maxLength: 40,
+        onChanged: (text) {
+          if (text != null) {
+
             // setState(() {
             //   widget.introduction = controller.text;
             // });
-            // widget.saveIntro(controller.text);
+            widget.saveIntro(text);
           }
         }
     );
@@ -372,55 +359,86 @@ class _NameState extends State<NameCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        width: 300,
-        height: 200,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.all(Radius.circular(20)),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.5),
-              spreadRadius: 5,
-              blurRadius: 7,
-              offset: Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        child: Row(
-          children: [
-            Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0),),
-            Container(
-              width: 100,
-              height: 100,
-              child: widget.userImage.runtimeType == String ? Image.network(widget.userImage) : Image.file(widget.userImage)
-            ),
-            Padding(padding: EdgeInsets.fromLTRB(5, 0, 5, 0),),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                // ItemTags(title: nickname),
-                Text(widget.nickname,style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
-                Tags(
-                  horizontalScroll: true, //이걸 해도 길어졌을 때 소용이 없음...
-                  itemCount: 3,
-                  itemBuilder: (int index){
-                    return Tooltip(
-                      // decoration: BoxDecoration(color: Color(0xffADD8E6)),
-                      message: 'message',
-                      child: ItemTags(
-                          activeColor: Color(0xffADD8E6),
-                          textActiveColor: Colors.black,
-                          index: index,
-                          title: widget.tags['${index+1}'].toString()
-                      ),
-                    );
-                  },
-                ),
-                Text(widget.introduction, style: TextStyle(fontSize: 15)),
-              ],
-            )
-          ], //children
-        )
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      child: Container(
+          width: double.infinity,
+          height: 200,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.all(Radius.circular(20)),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 5,
+                blurRadius: 7,
+                offset: Offset(0, 3), // changes position of shadow
+              ),
+            ],
+          ),
+          child: Row(
+            children: [
+              Padding(padding: EdgeInsets.fromLTRB(10, 0, 0, 0),),
+              Container(
+                width: 100,
+                height: 100,
+                child: widget.userImage.runtimeType == String ? Image.network(widget.userImage, fit: BoxFit.fill) : Image.file(widget.userImage, fit: BoxFit.fill)
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(5, 0, 5, 0),),
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  // ItemTags(title: nickname),
+                  Text(widget.nickname,style: TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      ElevatedButton(child: Text(widget.tags['1']),onPressed: (){},style:ButtonStyle()),
+                      OutlinedButton(child: Text(widget.tags['2']),onPressed: (){},),
+                      ElevatedButton(child: Text(widget.tags['3']),onPressed: (){},style: ButtonStyle(),),
+                    ],
+                  ),
+
+                  // ListView.builder(
+                  //   scrollDirection: Axis.horizontal,
+                  //   itemCount: 3,
+                  //   itemBuilder: (context, i){
+                  //     return ElevatedButton(
+                  //       onPressed: (){},
+                  //       child: Text(widget.tags['${i+1}'].toString()),
+                  //       style: ButtonStyle(
+                  //         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                  //           RoundedRectangleBorder(
+                  //             borderRadius: BorderRadius.circular(18.0),
+                  //             side: BorderSide(color: Color(0xffADD8E6))
+                  //           )
+                  //         )
+                  //       )
+                  //     );
+                  //   },
+                  // ),
+
+                  // Tags(
+                  //   horizontalScroll: true, //이걸 해도 길어졌을 때 소용이 없음...
+                  //   itemCount: 3,
+                  //   itemBuilder: (int index){
+                  //     return Tooltip(
+                  //       // decoration: BoxDecoration(color: Color(0xffADD8E6)),
+                  //       message: 'message',
+                  //       child: ItemTags(
+                  //           activeColor: Color(0xffADD8E6),
+                  //           textActiveColor: Colors.black,
+                  //           index: index,
+                  //           title: widget.tags['${index+1}'].toString()
+                  //       ),
+                  //     );
+                  //   },
+                  // ),
+                  Text(widget.introduction, style: TextStyle(fontSize: 15)),
+                ],
+              )
+            ], //children
+          )
+      ),
     );
   }
 }
