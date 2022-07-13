@@ -23,9 +23,9 @@ class _ProfilePageState extends State<ProfilePage> {
             imagePath: user.imagePath,
             onClicked: () async {},
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           buildName(user),
-          const SizedBox(height: 12),
+          const SizedBox(height: 20),
           buildImage(user),
           const SizedBox(height: 12),
           buildTag(user),
@@ -39,13 +39,13 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget buildName(User user) => Column(
         children: [
           Text(
-            user.name,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+            user.nickname,
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 40),
           ),
           const SizedBox(height: 4),
           Text(
-            user.email,
-            style: TextStyle(color: Colors.grey),
+            user.introduction,
+            style: TextStyle(color: Colors.grey, fontSize: 20),
           )
         ],
       );
@@ -56,13 +56,13 @@ class _ProfilePageState extends State<ProfilePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'About',
+              user.title,
               style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 16),
             Text(
               user.about,
-              style: TextStyle(fontSize: 16, height: 1.4),
+              style: TextStyle(fontSize: 20, height: 1.4),
             ),
           ],
         ),
@@ -70,32 +70,32 @@ class _ProfilePageState extends State<ProfilePage> {
 }
 
 Widget buildTag(User user) => Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-            width: 80,
-            height: 20,
+            width: 120,
+            height: 40,
             child: Text(
               user.tag1,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(
-            width: 80,
-            height: 20,
+            width: 120,
+            height: 40,
             child: Text(
               user.tag2,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
           SizedBox(
-            width: 80,
-            height: 20,
+            width: 120,
+            height: 40,
             child: Text(
               user.tag3,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
             ),
           ),
         ],
@@ -103,32 +103,35 @@ Widget buildTag(User user) => Container(
     );
 
 Widget buildImage(User user) => Container(
-      padding: EdgeInsets.symmetric(horizontal: 12),
+      padding: EdgeInsets.symmetric(horizontal: 30),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          SizedBox(
-            width: 80,
-            height: 80,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image.network(
               user.image1,
+              width: 120,
+              height: 120,
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(
-            width: 80,
-            height: 80,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image.network(
               user.image2,
+              width: 120,
+              height: 120,
               fit: BoxFit.cover,
             ),
           ),
-          SizedBox(
-            width: 80,
-            height: 80,
+          ClipRRect(
+            borderRadius: BorderRadius.circular(8),
             child: Image.network(
               user.image3,
               fit: BoxFit.cover,
+              width: 120,
+              height: 120,
             ),
           ),
         ],

@@ -1,7 +1,11 @@
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+
 class User {
   final String imagePath;
-  final String name;
-  final String email;
+  final String nickname;
+  final String introduction;
+  final String title;
   final String about;
   final String image1;
   final String image2;
@@ -12,8 +16,9 @@ class User {
 
   const User({
     required this.imagePath,
-    required this.name,
-    required this.email,
+    required this.nickname,
+    required this.introduction,
+    required this.title,
     required this.about,
     required this.image1,
     required this.image2,
@@ -23,3 +28,16 @@ class User {
     required this.tag3,
   });
 }
+
+// JSON Parsing
+// User.fromJson(Map<String, dynamic> json)
+//     : imagePath = json['imagePath'],
+//       nickname = json['nickname'],
+//       introduction = json['introduction'],
+//       about = json['about'],
+//       image1 = json['image1'],
+//       image2 = json['image2'],
+//       image3 = json['image3'],
+//       tag1 = json['tag1'],
+//       tag2 = json['tag2'],
+//       tag3 = json['tag3'];
