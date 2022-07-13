@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'screens/chatPage.dart';
 
-
 class MessagePage extends StatelessWidget {
   const MessagePage({Key? key}) : super(key: key);
 

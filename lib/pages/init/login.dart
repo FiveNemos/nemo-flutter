@@ -21,6 +21,7 @@ class LoginPage extends StatelessWidget {
         print(jsonBody); // 5
         return true;
       } else {
+        print('error');
         return false;
       }
     } catch (e) {
@@ -181,12 +182,6 @@ class LoginPage extends StatelessWidget {
                     ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
-                    ),
-                    ElevatedButton(
-                      child: const Text('로그인 성공 -> 연락처로'),
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/contacts');
-                      },
                     ),
                   ],
                 )),

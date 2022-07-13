@@ -6,49 +6,78 @@ import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 
+import '../main/sharing/sharing.dart';
+
 Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
     String introduction, dynamic userImage) async {
-  var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
-  var request = http.MultipartRequest('POST', uri);
-  request.headers
-      .addAll({"Content-Type": "multipart/form-data; boundary=----myboundary"});
-  request.files.add(await http.MultipartFile.fromPath("image", userImage.path));
-  request.fields['user_id'] = "9999";
-  request.fields['nickname'] = "Hyunjoo";
-  request.fields['tag_1'] = tags['1'];
-  request.fields['tag_2'] = tags['2'];
-  request.fields['tag_3'] = tags['3'];
-  request.fields['intro'] = introduction;
-
-  final response = await request.send();
-
-  if (response.statusCode == 201) {
-    return showDialog(
+  if (userImage.runtimeType == String) {
+    showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text('저장완료'),
-              content: Text('저장이 완료되었습니다.'),
+              title: Text('Not Yet!!'),
+              content: Text('사진을 바꿔주세요.'),
               actions: [
                 TextButton(
                   // textColor: Colors.black,
                   onPressed: () {
-                    Navigator.pushNamed(context, '/');
+                    Navigator.pop(context);
                   },
                   child: Text('확인'),
                 )
               ]);
         });
   } else {
-    return showDialog(
-        context: context,
-        builder: (context) {
-          return AlertDialog(
-              title: Text('저장실패'),
-              content: Text('재시도하세요'),
-              actions: [IconButton(onPressed: () {}, icon: Icon(Icons.star))]);
-        });
-    // throw Exception('명함 저장 실패');
+    var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
+    var request = http.MultipartRequest('POST', uri);
+    request.headers.addAll(
+        {"Content-Type": "multipart/form-data; boundary=----myboundary"});
+    request.files
+        .add(await http.MultipartFile.fromPath("image", userImage.path));
+    request.fields['user_id'] = "9999";
+    request.fields['nickname'] = "Hyunjoo";
+    request.fields['tag_1'] = tags['1'];
+    request.fields['tag_2'] = tags['2'];
+    request.fields['tag_3'] = tags['3'];
+    request.fields['intro'] = introduction;
+
+    final response = await request.send();
+
+    if (response.statusCode == 201) {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: Text('저장완료'),
+                content: Text('저장이 완료되었습니다.'),
+                actions: [
+                  TextButton(
+                    // textColor: Colors.black,
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => SharingPage(),
+                        ),
+                      );
+                    },
+                    child: Text('확인'),
+                  )
+                ]);
+          });
+    } else {
+      return showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+                title: Text('저장실패'),
+                content: Text('재시도하세요'),
+                actions: [
+                  IconButton(onPressed: () {}, icon: Icon(Icons.star))
+                ]);
+          });
+      // throw Exception('명함 저장 실패');
+    }
   }
 }
 
@@ -125,106 +154,102 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-          appBar: AppBar(title: Text('명함 생성'), actions: [
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
-              child: Text('저장'),
-              onPressed: () {
-                postNameCard(context, nickname, tags, introduction, userImage);
-                // showDialog(
-                //     context: context,
-                //     builder: (context){
-                //       return AlertDialog(
-                //           title: Text('저장완료'),
-                //           content: Text('가입이 완료되었습니다.'),
-                //           actions: [
-                //             TextButton(
-                //               // textColor: Colors.black,
-                //               onPressed: (){
-                //                 Navigator.pushNamed(context, '/');
-                //               },
-                //               child: Text('확인'),
-                //             )
-                //           ]
-                //         );});
-              },
-            )
-          ]),
-          body: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                NameCard(
-                    nickname: nickname,
-                    tags: tags,
-                    introduction: introduction,
-                    userImage: userImage),
-                Container(
-                  child: Column(
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                      ),
-                      nameSpace(
-                        nickname: nickname,
-                        saveName: saveName,
-                      ),
-                      Container(
-                        width: 200,
-                        child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: tagSpace(saveTags: saveTags, num: 1),
-                              ),
-                              SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: tagSpace(saveTags: saveTags, num: 2),
-                              ),
-                              SizedBox(
-                                width: 50,
-                                height: 50,
-                                child: tagSpace(saveTags: saveTags, num: 3),
-                              )
-                            ]),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                      ),
-                      introSpace(
-                        introduction: introduction,
-                        saveIntro: saveIntro,
-                      ),
-                      TextButton(
-                          child: Text('사진 가져오기'),
-                          // icon: Icon(Icons.add_box_rounded),
-                          onPressed: () async {
-                            var picker = ImagePicker();
-                            var image = await picker.pickImage(
-                                source: ImageSource.gallery);
-                            if (image != null) {
-                              setState(() {
-                                // userImage = Image.file(File(image.path), fit: BoxFit.fill);
-                                userImage = File(image.path);
-                              });
-                            }
-                          }),
-                    ], //children
-                  ),
-                ),
-              ],
-            ),
-          ),
-          bottomNavigationBar: ElevatedButton(
-            child: Text('메인 페이지로 이동'),
+        appBar: AppBar(title: Text('명함 생성'), actions: [
+          ElevatedButton(
+            style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
+            child: Text('저장'),
             onPressed: () {
-              Navigator.pushNamed(context, '/');
+              postNameCard(context, nickname, tags, introduction, userImage);
+
+              // showDialog(
+              //     context: context,
+              //     builder: (context){
+              //       return AlertDialog(
+              //           title: Text('저장완료'),
+              //           content: Text('가입이 완료되었습니다.'),
+              //           actions: [
+              //             TextButton(
+              //               // textColor: Colors.black,
+              //               onPressed: (){
+              //                 Navigator.pushNamed(context, '/');
+              //               },
+              //               child: Text('확인'),
+              //             )
+              //           ]
+              //         );});
             },
-          )),
+          )
+        ]),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              NameCard(
+                  nickname: nickname,
+                  tags: tags,
+                  introduction: introduction,
+                  userImage: userImage),
+              Container(
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
+                    ),
+                    nameSpace(
+                      nickname: nickname,
+                      saveName: saveName,
+                    ),
+                    Container(
+                      width: 200,
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: tagSpace(saveTags: saveTags, num: 1),
+                            ),
+                            SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: tagSpace(saveTags: saveTags, num: 2),
+                            ),
+                            SizedBox(
+                              width: 50,
+                              height: 50,
+                              child: tagSpace(saveTags: saveTags, num: 3),
+                            )
+                          ]),
+                    ),
+                    Padding(
+                      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    ),
+                    introSpace(
+                      introduction: introduction,
+                      saveIntro: saveIntro,
+                    ),
+                    TextButton(
+                        child: Text('사진 가져오기'),
+                        // icon: Icon(Icons.add_box_rounded),
+                        onPressed: () async {
+                          var picker = ImagePicker();
+                          var image = await picker.pickImage(
+                              source: ImageSource.gallery);
+                          if (image != null) {
+                            setState(() {
+                              // userImage = Image.file(File(image.path), fit: BoxFit.fill);
+                              userImage = File(image.path);
+                            });
+                          }
+                        }),
+                  ], //children
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }
