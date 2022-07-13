@@ -8,14 +8,14 @@ import '../contacts/utils/user_preferences.dart';
 import '../contacts/utils/user_preferences2.dart';
 import '../contacts/utils/user_preferences3.dart';
 
-class ContactsPage extends StatefulWidget {
-  const ContactsPage({Key? key}) : super(key: key);
+class ContactsPage2 extends StatefulWidget {
+  const ContactsPage2({Key? key}) : super(key: key);
 
   @override
-  State<ContactsPage> createState() => _ContactsPageState();
+  State<ContactsPage2> createState() => _ContactsPageState();
 }
 
-class _ContactsPageState extends State<ContactsPage> {
+class _ContactsPageState extends State<ContactsPage2> {
   final user = UserPreferences.myUser;
   final us3r = UserPreferenc2s.m2User;
   final us5r = UserPreferenc3s.m3User;
@@ -55,59 +55,6 @@ class _ContactsPageState extends State<ContactsPage> {
                       subtitle: Text(us3r.introduction,
                           style: TextStyle(
                               fontSize: 20, fontWeight: FontWeight.w300)),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-          Container(
-            margin: EdgeInsets.all(8.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: InkWell(
-                onTap: () {
-                  Navigator.pushNamed(context, '/mypage');
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch, // add this
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8.0),
-                        topRight: Radius.circular(8.0),
-                      ),
-                      child: Image.network(user.imagePath,
-                          width: 300, height: 280, fit: BoxFit.fill),
-                    ),
-                    Slidable(
-                      key: const ValueKey(0),
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        dismissible: DismissiblePane(onDismissed: () {
-                          Navigator.pushNamed(context, '/contacts2');
-                        }),
-                        children: const [
-                          SlidableAction(
-                            onPressed: doNothing,
-                            backgroundColor: Color(0xFFFE4A49),
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                        ],
-                      ),
-                      child: ListTile(
-                        dense: true,
-                        visualDensity: VisualDensity(vertical: 3),
-                        title: Text(user.nickname,
-                            style: TextStyle(
-                                fontSize: 40, fontWeight: FontWeight.bold)),
-                        subtitle: Text(user.introduction,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w300)),
-                      ),
                     ),
                   ],
                 ),
