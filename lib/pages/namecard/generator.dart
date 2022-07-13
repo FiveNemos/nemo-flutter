@@ -8,21 +8,19 @@ import 'package:http/http.dart' as http;
 
 Future<dynamic> postNameCard
     (dynamic context, String nickname, Map tags, String introduction, Image userImage) async{
-  final response = await http.post(
-    Uri.parse('http://34.64.217.3:3000/api/card/create'),
-      // headers: <String, String>{
-      // "Content-Type": "multipart/form-data"
-      // },
-    body: {
-      "user_id": "9999",
-      "nickname": nickname,
-      "tag_1": tags['0'],
-      "tag_2": tags['1'],
-      "tag_3": tags['2'],
-      "intro": introduction,
-      "image": userImage,
-    },
-  );
+  var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
+  var request = http.MultipartRequest('POST', uri);
+  request.headers.addAll({"Content-Type": "multipart/form-data"});
+  request.files.add(await http.MultipartFile.fromPath("image", "assets/grey_profile.png"));
+  request.fields['user_id'] = "9999";
+  request.fields['nickname'] = "Hyunjoo";
+  request.fields['tag_1'] = tags['1'];
+  request.fields['tag_2'] = tags['2'];
+  request.fields['tag_3'] = tags['3'];
+  request.fields['intro'] = introduction;
+
+  final response = await request.send();
+
   if (response.statusCode == 201){
     return showDialog(
         context: context,
@@ -57,6 +55,21 @@ Future<dynamic> postNameCard
   }
 }
 
+// (
+//   Uri.parse('http://34.64.217.3:3000/api/card/create'),
+//     headers: <String, String>{
+//     "Content-Type": "multipart/form-data"
+//     },
+//   body: {
+//     "user_id": "9999",
+//     "nickname": nickname,
+//     "tag_1": tags['0'],
+//     "tag_2": tags['1'],
+//     "tag_3": tags['2'],
+//     "intro": introduction,
+//     "image": userImage,
+//   },
+// );
 
 
 class NameCardGenerator extends StatefulWidget {
