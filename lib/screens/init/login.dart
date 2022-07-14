@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
 
       if (response.statusCode == 200) {
         final jsonBody = json.decode(response.data['user_id'].toString());
-        print(jsonBody); // 5
+        print('접속 성공!');
         return true;
       } else {
         print('error');
@@ -52,18 +52,21 @@ class LoginPage extends StatelessWidget {
                     ),
                     TextField(
                       controller: inputData,
+                      maxLength: 10, // 입력 값 제한
                       decoration: InputDecoration(
                         labelText: 'Username',
+                        labelStyle: TextStyle(color: Color(0xff8338EC)),
+                        counterText: '', // 입력 문자 개수 제한 걸었을 경우 '' 하면 텍스트 노출 안됨
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(
-                            color: Colors.black,
+                            color: Color(0xff8338EC),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(
-                            color: Colors.black,
+                            color: Color(0xff8338EC),
                           ),
                         ),
                       ),
@@ -73,18 +76,31 @@ class LoginPage extends StatelessWidget {
                     ),
                     TextField(
                       controller: inputData2,
+                      obscureText: true, // 입력문자 가리기
+                      maxLength: 10, // 입력 문자 개수 제한
+                      onSubmitted: (text) async {
+                        if (await getHttp(inputData.text, inputData2.text) ==
+                            true) {
+                          print('로그인 성공');
+                          Navigator.pushNamed(context, '/namecard');
+                        } else {
+                          print('로그인 실패');
+                        }
+                      },
                       decoration: InputDecoration(
                         labelText: 'Password',
+                        labelStyle: TextStyle(color: Color(0xff8338EC)),
+                        counterText: '', // 입력 문자 개수 제한 걸었을 경우 '' 하면 텍스트 노출 안됨
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(
-                            color: Colors.black,
+                            color: Color(0xff8338EC),
                           ),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
                           borderSide: BorderSide(
-                            color: Colors.black,
+                            color: Color(0xff8338EC),
                           ),
                         ),
                       ),
@@ -99,13 +115,14 @@ class LoginPage extends StatelessWidget {
                         onPressed: () async {
                           if (await getHttp(inputData.text, inputData2.text) ==
                               true) {
+                            print('로그인 성공');
                             Navigator.pushNamed(context, '/namecard');
-                          } else {}
+                          } else {
+                            print('로그인 실패');
+                          }
                         },
                         child: Text('Continue'),
                         style: ButtonStyle(
-                            backgroundColor:
-                                MaterialStateProperty.all(Colors.black),
                             textStyle: MaterialStateProperty.all(
                                 TextStyle(fontSize: 17)),
                             shape: MaterialStateProperty.all<
@@ -120,7 +137,8 @@ class LoginPage extends StatelessWidget {
                     TextButton(
                         child: Text(
                           'Create an account',
-                          style: TextStyle(color: Colors.black, fontSize: 16),
+                          style:
+                              TextStyle(color: Color(0xff8338EC), fontSize: 16),
                         ),
                         onPressed: () {
                           Navigator.pushNamed(context, '/signup');
