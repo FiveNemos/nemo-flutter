@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-// import './test/userTestData.dart';
-
 import '../../models/contacts/contacts_user.dart';
 import '../../tests/contacts/contacts_preferences.dart';
 
@@ -15,27 +12,6 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
-  // final user = UserPreferences.myUser;
-  // final us3r = UserPreferenc2s.m2User;
-  // final us5r = UserPreferenc3s.m3User;
-  // Map UserPreferences_db = {
-  //   '정글러버': User(
-  //     imagePath: 'http://34.64.217.3:3000/static/junglelover.gif',
-  //     nickname: '정글러버',
-  //     introduction: 'Pintos 정복자 😎',
-  //   ),
-  //   '배그러버': User(
-  //     imagePath: 'http://34.64.217.3:3000/static/bglover.png',
-  //     nickname: '배그러버',
-  //     introduction: '포친키 탄약도둑 😝',
-  //   ),
-  //   'Opjoobe': User(
-  //     imagePath: 'http://34.64.217.3:3000/static/opjoobe.gif',
-  //     nickname: 'Opjoobe',
-  //     introduction: 'Ball is Life',
-  //   ),
-  // };
-  // List Friends = ['정글러버', '배그러버', 'Opjoobe'];
   deleteFriend(target) {
     setState(() {
       Friends.remove(target);
@@ -118,7 +94,8 @@ class _ContactsPageState extends State<ContactsPage> {
         },
       ),
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        type: BottomNavigationBarType.fixed,
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.contacts),
             label: '연락처',
@@ -137,7 +114,6 @@ class _ContactsPageState extends State<ContactsPage> {
           ),
         ],
         currentIndex: 0,
-        fixedColor: Colors.blue,
         onTap: (int index) {
           switch (index) {
             case 0:

@@ -13,7 +13,8 @@ class SharingPage extends StatelessWidget {
       body: TookPage(),
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
       bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
+        type: BottomNavigationBarType.fixed,
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.contacts),
             label: '연락처',
@@ -32,7 +33,6 @@ class SharingPage extends StatelessWidget {
           ),
         ],
         currentIndex: 1,
-        fixedColor: Colors.blue,
         onTap: (int index) {
           switch (index) {
             case 0:
