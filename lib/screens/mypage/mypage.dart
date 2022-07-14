@@ -55,10 +55,6 @@ class MyProfile extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Colors.blue.shade300,
-        dividerColor: Colors.black,
-      ),
       home: ProfilePage(),
     );
   }

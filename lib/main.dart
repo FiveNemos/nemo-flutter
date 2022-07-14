@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+// import widget style
+import './styles/style.dart' as style;
+
 // import initial page
 import 'screens/init/login.dart';
 import 'screens/init/signup.dart';
@@ -29,6 +32,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Nemo test',
       initialRoute: '/',
+      theme: style.theme,
       routes: {
         '/': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),

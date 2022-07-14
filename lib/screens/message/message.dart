@@ -14,6 +14,7 @@ class MessagePage extends StatelessWidget {
       body: ChatPage(),
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
       bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.contacts),
@@ -33,7 +34,6 @@ class MessagePage extends StatelessWidget {
           ),
         ],
         currentIndex: 2,
-        fixedColor: Colors.blue,
         onTap: (int index) {
           switch (index) {
             case 0:
