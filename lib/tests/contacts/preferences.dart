@@ -1,4 +1,4 @@
-import '../../models/contacts/contacts_user.dart';
+import '../../models/contacts/user.dart';
 
 Map UserPreferences_db = {
   '정글러버': User(

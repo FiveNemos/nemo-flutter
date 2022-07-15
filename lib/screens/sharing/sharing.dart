@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'sharing_tookPage.dart';
+import 'tookpage.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({Key? key}) : super(key: key);
