@@ -9,6 +9,15 @@ class SharingPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('TOOK 페이지'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: new Icon(Icons.edit),
+            onPressed: () {
+              Navigator.pushNamed(context, '/namecard');
+            },
+          ),
+        ],
       ),
       body: TookPage(),
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
@@ -39,7 +48,7 @@ class SharingPage extends StatelessWidget {
               Navigator.pushNamed(context, '/contacts');
               break;
             case 1:
-              Navigator.pushNamed(context, '/sharing');
+              // Navigator.pushNamed(context, '/sharing');
               break;
             case 2:
               Navigator.pushNamed(context, '/message');
