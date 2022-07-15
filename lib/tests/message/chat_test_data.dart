@@ -35,6 +35,14 @@ Map messages_db = {
     ChatMessage(messageContent: "그동안 같이 캠핑해서 즐거웠어요!", messageType: "receiver"),
     ChatMessage(messageContent: "👋👋👋👋👋👋👋", messageType: "sender"),
   ],
+  "배그러버": [
+    ChatMessage(messageContent: "안녕하세요! \n 피시방 가실까요?", messageType: "sender"),
+    ChatMessage(
+        messageContent: "앗!! \n 제가 이사가서 이제 모임 참석이 어려울거 같아요 😢 ",
+        messageType: "receiver"),
+    ChatMessage(messageContent: "그동안 같이 배그해서 즐거웠어요!", messageType: "receiver"),
+    ChatMessage(messageContent: "앗 이런 ㅠㅠ", messageType: "sender"),
+  ],
   "Chani": [
     ChatMessage(messageContent: "안녕하세요 찬익님", messageType: "sender"),
     ChatMessage(messageContent: "블루베리 가자구요?", messageType: "receiver"),
