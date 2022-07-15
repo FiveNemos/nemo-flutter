@@ -16,7 +16,7 @@ import 'screens/sharing/sharing.dart';
 import 'screens/setting/setting.dart';
 
 // name card page
-import 'screens/mypage/mypage_generator.dart';
+import 'screens/mypage/cardgenerator.dart';
 
 // --------------------------------------------------
 

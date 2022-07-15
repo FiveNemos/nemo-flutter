@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'mypage_profile_page.dart';
+import 'profile_page.dart';
 
 import '../message/message.dart';
-import '../message/message_chatDetailPage.dart';
-import '../../providers/message/message_store.dart';
-import '../../models/message/message_chatMessageModel.dart';
+import '../message/chat_detail_page.dart';
+import '../../providers/message/store.dart';
+import '../../models/message/chat_message_model.dart';
 
 import 'package:http/http.dart' as http;
 import 'dart:convert';

@@ -1,4 +1,4 @@
-import '../../models/message/message_chatMessageModel.dart';
+import '../../models/message/chat_message_model.dart';
 
 Map messages_db = {
   "Sanori": [

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import '../../models/contacts/contacts_user.dart';
-import '../../tests/contacts/contacts_preferences.dart';
+import '../../models/contacts/user.dart';
+import '../../tests/contacts/preferences.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({Key? key}) : super(key: key);
