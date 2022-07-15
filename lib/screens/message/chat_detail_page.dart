@@ -1,9 +1,9 @@
 import 'dart:ffi';
 
 import 'package:flutter/material.dart';
-import '../../providers/message/message_store.dart';
-import '../../models/message/message_chatMessageModel.dart';
-import '../../tests/message/message_chatTestData.dart';
+import '../../providers/message/store.dart';
+import '../../models/message/chat_message_model.dart';
+import '../../tests/message/chat_test_data.dart';
 
 class ChatDetailPage extends StatefulWidget {
   String name;

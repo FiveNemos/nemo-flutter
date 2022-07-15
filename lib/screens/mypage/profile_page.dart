@@ -1,9 +1,9 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-import '../../models/mypage/mypage_user.dart';
-import '../../tests/mypage/mypage_preferences.dart';
-import '../../widgets/mypage/mypage_profile_widget.dart';
+import '../../models/mypage/user.dart';
+import '../../tests/mypage/preferences.dart';
+import '../../widgets/mypage/profile_widget.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
