@@ -1,6 +1,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.nemo_flutter">
-    <uses-permission android:name="android.permission.INTERNET"/> //현주 추가
+    <!-- 현주 추가 -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="nemo_flutter"
         android:name="${applicationName}"
