@@ -160,7 +160,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
             child: Text('저장'),
             onPressed: () {
               postNameCard(context, nickname, tags, introduction, userImage);
-
               // showDialog(
               //     context: context,
               //     builder: (context){
@@ -180,74 +179,70 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
             },
           )
         ]),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              NameCard(
-                  nickname: nickname,
-                  tags: tags,
-                  introduction: introduction,
-                  userImage: userImage),
-              Container(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 10),
-                    ),
-                    nameSpace(
+        body: ListView(
+          children: [
+            Container(
+              padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+              child: Column(
+                children: [
+                  NameCard(
                       nickname: nickname,
-                      saveName: saveName,
-                    ),
-                    Container(
-                      width: 200,
-                      child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: tagSpace(saveTags: saveTags, num: 1),
-                            ),
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: tagSpace(saveTags: saveTags, num: 2),
-                            ),
-                            SizedBox(
-                              width: 50,
-                              height: 50,
-                              child: tagSpace(saveTags: saveTags, num: 3),
-                            )
-                          ]),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                    ),
-                    introSpace(
+                      tags: tags,
                       introduction: introduction,
-                      saveIntro: saveIntro,
-                    ),
-                    TextButton(
-                        child: Text('사진 가져오기'),
-                        // icon: Icon(Icons.add_box_rounded),
-                        onPressed: () async {
-                          var picker = ImagePicker();
-                          var image = await picker.pickImage(
-                              source: ImageSource.gallery);
-                          if (image != null) {
-                            setState(() {
-                              // userImage = Image.file(File(image.path), fit: BoxFit.fill);
-                              userImage = File(image.path);
-                            });
-                          }
-                        }),
-                  ], //children
-                ),
+                      userImage: userImage),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  ),
+                  ElevatedButton(
+                    child: Text('사진 가져오기'),
+                    // icon: Icon(Icons.add_box_rounded),
+                    onPressed: () async {
+                      var picker = ImagePicker();
+                      var image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        setState(() {
+                          // userImage = Image.file(File(image.path), fit: BoxFit.fill);
+                          userImage = File(image.path);
+                        });
+                      }
+                    },
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  ),
+                  nameSpace(nickname: nickname, saveName: saveName),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      SizedBox(
+                        width: 70,
+                        height: 50,
+                        child: tagSpace(saveTags: saveTags, num: 1),
+                      ),
+                      SizedBox(
+                        width: 70,
+                        height: 50,
+                        child: tagSpace(saveTags: saveTags, num: 2),
+                      ),
+                      SizedBox(
+                        width: 70,
+                        height: 50,
+                        child: tagSpace(saveTags: saveTags, num: 3),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                  ),
+                  introSpace(
+                    introduction: introduction,
+                    saveIntro: saveIntro,
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -273,19 +268,18 @@ class _nameSpaceState extends State<nameSpace> {
   Widget build(BuildContext context) {
     return TextField(
       decoration: InputDecoration(
-        constraints: BoxConstraints(
-            minWidth: 200, maxWidth: 200, minHeight: 30, maxHeight: 30),
+        constraints: BoxConstraints(maxHeight: 40),
         labelText: '닉네임',
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(
-            color: Colors.black,
+            color: Color(0xff8338EC),
           ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(
-            color: Colors.black,
+            color: Color(0xff8338EC),
           ),
         ),
       ),
@@ -347,24 +341,21 @@ class _introSpaceState extends State<introSpace> {
   Widget build(BuildContext context) {
     return TextField(
         decoration: InputDecoration(
-          constraints: BoxConstraints(
-              minWidth: 200, maxWidth: 200, minHeight: 30, maxHeight: 100),
+          constraints: BoxConstraints(maxHeight: 40),
           labelText: '한줄소개',
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             borderSide: BorderSide(
-              color: Colors.black,
+              color: Color(0xff8338EC),
             ),
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             borderSide: BorderSide(
-              color: Colors.black,
+              color: Color(0xff8338EC),
             ),
           ),
         ),
-        maxLines: 3,
-        maxLength: 40,
         onChanged: (text) {
           if (text != null) {
             // setState(() {
@@ -391,102 +382,66 @@ class _NameState extends State<NameCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
-      child: Container(
-          width: double.infinity,
-          height: 200,
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.all(Radius.circular(20)),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.grey.withOpacity(0.5),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3), // changes position of shadow
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.3),
+            spreadRadius: 1,
+            blurRadius: 3,
+            offset: Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
+          ),
+          Container(
+            width: 100,
+            height: 85,
+            // decoration: BoxDecoration(color: Colors.red),
+            child: widget.userImage.runtimeType == String
+                ? Image.network(widget.userImage, fit: BoxFit.fill)
+                : Image.file(widget.userImage, fit: BoxFit.fill),
+          ),
+          Text(
+            widget.nickname,
+            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+          ),
+          Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              ElevatedButton(
+                  child: Text(widget.tags['1']),
+                  onPressed: () {},
+                  style: ButtonStyle()),
+              OutlinedButton(
+                child: Text(widget.tags['2']),
+                onPressed: () {},
+              ),
+              ElevatedButton(
+                child: Text(widget.tags['3']),
+                onPressed: () {},
+                style: ButtonStyle(),
               ),
             ],
           ),
-          child: Row(
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(10, 0, 0, 0),
-              ),
-              Container(
-                  width: 100,
-                  height: 100,
-                  child: widget.userImage.runtimeType == String
-                      ? Image.network(widget.userImage, fit: BoxFit.fill)
-                      : Image.file(widget.userImage, fit: BoxFit.fill)),
-              Padding(
-                padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
-              ),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  // ItemTags(title: nickname),
-                  Text(widget.nickname,
-                      style:
-                          TextStyle(fontSize: 30, fontWeight: FontWeight.w400)),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      ElevatedButton(
-                          child: Text(widget.tags['1']),
-                          onPressed: () {},
-                          style: ButtonStyle()),
-                      OutlinedButton(
-                        child: Text(widget.tags['2']),
-                        onPressed: () {},
-                      ),
-                      ElevatedButton(
-                        child: Text(widget.tags['3']),
-                        onPressed: () {},
-                        style: ButtonStyle(),
-                      ),
-                    ],
-                  ),
-
-                  // ListView.builder(
-                  //   scrollDirection: Axis.horizontal,
-                  //   itemCount: 3,
-                  //   itemBuilder: (context, i){
-                  //     return ElevatedButton(
-                  //       onPressed: (){},
-                  //       child: Text(widget.tags['${i+1}'].toString()),
-                  //       style: ButtonStyle(
-                  //         shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  //           RoundedRectangleBorder(
-                  //             borderRadius: BorderRadius.circular(18.0),
-                  //             side: BorderSide(color: Color(0xffADD8E6))
-                  //           )
-                  //         )
-                  //       )
-                  //     );
-                  //   },
-                  // ),
-
-                  // Tags(
-                  //   horizontalScroll: true, //이걸 해도 길어졌을 때 소용이 없음...
-                  //   itemCount: 3,
-                  //   itemBuilder: (int index){
-                  //     return Tooltip(
-                  //       // decoration: BoxDecoration(color: Color(0xffADD8E6)),
-                  //       message: 'message',
-                  //       child: ItemTags(
-                  //           activeColor: Color(0xffADD8E6),
-                  //           textActiveColor: Colors.black,
-                  //           index: index,
-                  //           title: widget.tags['${index+1}'].toString()
-                  //       ),
-                  //     );
-                  //   },
-                  // ),
-                  Text(widget.introduction, style: TextStyle(fontSize: 15)),
-                ],
-              )
-            ], //children
-          )),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+          ),
+          Text(widget.introduction, style: TextStyle(fontSize: 14)),
+          Padding(
+            padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
+          ),
+        ], //children
+      ),
     );
   }
 }
