@@ -1,7 +1,7 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-class User {
+class UserProfile {
   final String imagePath;
   final String nickname;
   final String introduction;
@@ -13,20 +13,23 @@ class User {
   final String tag1;
   final String tag2;
   final String tag3;
+  List tag;
+  List<String> image;
 
-  const User({
-    required this.imagePath,
-    required this.nickname,
-    required this.introduction,
-    required this.title,
-    required this.about,
-    required this.image1,
-    required this.image2,
-    required this.image3,
-    required this.tag1,
-    required this.tag2,
-    required this.tag3,
-  });
+  UserProfile(
+      {required this.imagePath,
+      required this.nickname,
+      required this.introduction,
+      required this.title,
+      required this.about,
+      required this.image1,
+      required this.image2,
+      required this.image3,
+      required this.tag1,
+      required this.tag2,
+      required this.tag3,
+      required this.tag,
+      required this.image});
 }
 
 // JSON Parsing
