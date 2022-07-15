@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import '../../models/contacts/user.dart';
 import '../../tests/contacts/preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({Key? key}) : super(key: key);
@@ -12,9 +13,33 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
+  static final storage = FlutterSecureStorage();
+  String? userInfo = '';
+
   deleteFriend(target) {
     setState(() {
       Friends.remove(target);
+    });
+  }
+
+  logout() async {
+    await storage.delete(key: 'login');
+    Navigator.pushNamed(context, '/');
+  }
+
+  checkUserState() async {
+    userInfo = await storage.read(key: 'login');
+    if (userInfo == null) {
+      Navigator.pushNamed(context, '/');
+    }
+  }
+
+  void initState() {
+    super.initState();
+
+    // 비동기로 flutter secure storage 정보를 불러오는 작업
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      checkUserState();
     });
   }
 
@@ -23,6 +48,16 @@ class _ContactsPageState extends State<ContactsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Contacts'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: new Icon(Icons.logout),
+            tooltip: 'logout',
+            onPressed: () {
+              logout();
+            },
+          ),
+        ],
       ),
       body: ListView.builder(
         itemCount: Friends.length,
