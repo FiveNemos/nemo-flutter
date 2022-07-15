@@ -1,4 +1,4 @@
-import '../../models/mypage/mypage_user.dart';
+import '../../models/mypage/user.dart';
 
 class UserPreferences {
   static const myUser = User(
