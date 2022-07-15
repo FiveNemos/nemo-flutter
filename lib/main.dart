@@ -31,8 +31,8 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Nemo test',
-      initialRoute: '/',
       theme: style.theme,
+      initialRoute: '/contacts',
       routes: {
         '/': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
