@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import '../../models/contacts/user.dart';
 import '../../tests/contacts/preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -68,7 +69,11 @@ class _ContactsPageState extends State<ContactsPage> {
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.all(Radius.circular(8.0))),
               child: InkWell(
-                onTap: () => Navigator.pushNamed(context, '/mypage'),
+                // onTap: () => Navigator.pushNamed(context, '/mypage'),
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (c) => ProfilePage(nickname: Friends[i]))),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch, // add this
                   children: <Widget>[
