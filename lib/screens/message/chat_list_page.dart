@@ -22,14 +22,13 @@ class _ChatPageState extends State<ChatPage> {
         image: "http://34.64.217.3:3000/static/junglelover.gif",
         time: "Now"),
     ChatUsers(
+        text: "배그러버",
+        secondaryText: "포친키 탄약도둑",
+        image: "http://34.64.217.3:3000/static/bglover.png",
+        time: "1h"),
+    ChatUsers(
         text: "Opjoobe",
         secondaryText: "Ball is Life",
-        image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U038VG8TD5H-2cdff7f10831-512",
-        time: "3h"),
-    ChatUsers(
-        text: "정글러버",
-        secondaryText: "Pintos 정복자 😎",
         image:
             "https://ca.slack-edge.com/T01FZU4LB4Y-U038VG8TD5H-2cdff7f10831-512",
         time: "3h"),

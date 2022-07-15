@@ -60,79 +60,84 @@ class _ContactsPageState extends State<ContactsPage> {
           ),
         ],
       ),
-      body: ListView.builder(
-        itemCount: Friends.length,
-        itemBuilder: (c, i) {
-          return Container(
-            margin: EdgeInsets.all(8.0),
-            child: Card(
-              shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(8.0))),
-              child: InkWell(
-                // onTap: () => Navigator.pushNamed(context, '/mypage'),
-                onTap: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (c) => ProfilePage(nickname: Friends[i]))),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch, // add this
-                  children: <Widget>[
-                    ClipRRect(
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(8.0),
-                        topRight: Radius.circular(8.0),
-                      ),
-                      child: Image.network(
+      body: ListView.separated(
+          padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+          itemCount: Friends.length,
+          itemBuilder: (c, i) {
+            return Container(
+              // color: Color(0xff8338EC),
+              // padding: EdgeInsets.fromLTRB(15, 20, 20, 15),
+              // margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
+              child: Card(
+                // margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
+                child: InkWell(
+                  // onTap: () => Navigator.pushNamed(context, '/mypage'),
+                  onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (c) => ProfilePage(nickname: Friends[i]))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch, // add this
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(8.0),
+                          topRight: Radius.circular(8.0),
+                        ),
+                        child: Image.network(
                           UserPreferences_db[Friends[i]].imagePath,
-                          width: 300,
-                          height: 280,
-                          fit: BoxFit.fill),
-                    ),
-                    Slidable(
-                      key: UniqueKey(),
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        // dismissible: DismissiblePane(onDismissed: () {
-                        //   // Navigator.pushNamed(context, '/contacts2');
-                        //   doNothing;
-                        // }),
-                        children: [
-                          SlidableAction(
-                            onPressed: (_) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return DialogUI(
-                                        target: Friends[i],
-                                        deleteFriend: deleteFriend);
-                                  });
-                            },
-                            backgroundColor: Color(0xFFFE4A49),
-                            foregroundColor: Colors.white,
-                            icon: Icons.delete,
-                            label: 'Delete',
-                          ),
-                        ],
+                          height: 220,
+                          alignment: Alignment(0, -0.7),
+                          fit: BoxFit.fitWidth,
+                        ),
                       ),
-                      child: ListTile(
-                        dense: true,
-                        visualDensity: VisualDensity(vertical: 3),
-                        title: Text(UserPreferences_db[Friends[i]].nickname,
-                            style: TextStyle(
-                                fontSize: 40, fontWeight: FontWeight.bold)),
-                        subtitle: Text(
-                            UserPreferences_db[Friends[i]].introduction,
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.w300)),
+                      Slidable(
+                        key: UniqueKey(),
+                        startActionPane: ActionPane(
+                          motion: const ScrollMotion(),
+                          // dismissible: DismissiblePane(onDismissed: () {
+                          //   // Navigator.pushNamed(context, '/contacts2');
+                          //   doNothing;
+                          // }),
+                          children: [
+                            SlidableAction(
+                              onPressed: (_) {
+                                showDialog(
+                                    context: context,
+                                    builder: (context) {
+                                      return DialogUI(
+                                          target: Friends[i],
+                                          deleteFriend: deleteFriend);
+                                    });
+                              },
+                              backgroundColor: Color(0xFFFE4A49),
+                              foregroundColor: Colors.white,
+                              icon: Icons.delete,
+                              label: 'Delete',
+                            ),
+                          ],
+                        ),
+                        child: ListTile(
+                          dense: true,
+                          visualDensity: VisualDensity(vertical: 1),
+                          title: Text(UserPreferences_db[Friends[i]].nickname,
+                              style: TextStyle(
+                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          subtitle: Text(
+                              UserPreferences_db[Friends[i]].introduction,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600)),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
-      ),
+            );
+          },
+          separatorBuilder: (context, i) => SizedBox(height: 10)),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
@@ -157,7 +162,7 @@ class _ContactsPageState extends State<ContactsPage> {
         onTap: (int index) {
           switch (index) {
             case 0:
-              Navigator.pushNamed(context, '/contacts');
+              // Navigator.pushNamed(context, '/contacts');
               break;
             case 1:
               Navigator.pushNamed(context, '/sharing');
@@ -186,10 +191,10 @@ class DialogUI extends StatelessWidget {
     return Dialog(
         alignment: Alignment.center,
         child: SizedBox(
-            height: 300,
-            width: 300,
+            height: 200,
+            width: 200,
             child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text("정말 삭제하시겠습니까?"),
                 Row(
