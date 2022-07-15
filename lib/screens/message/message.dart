@@ -43,7 +43,7 @@ class MessagePage extends StatelessWidget {
               Navigator.pushNamed(context, '/sharing');
               break;
             case 2:
-              Navigator.pushNamed(context, '/message');
+              // Navigator.pushNamed(context, '/message');
               break;
             case 3:
               Navigator.pushNamed(context, '/mypage');

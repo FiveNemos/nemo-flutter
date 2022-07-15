@@ -24,25 +24,25 @@ class _MypagePageState extends State<MypagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Profile'),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.send),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => ChatDetailPage(
-                    name: "정글러버",
-                    imageUrl: "http://34.64.217.3:3000/static/junglelover.gif",
-                  ),
-                ),
-              );
-            },
-          ),
-        ],
-      ),
+      // appBar: AppBar(
+      //   title: Text('Profile'),
+      //   actions: [
+      //     IconButton(
+      //       icon: Icon(Icons.send),
+      //       onPressed: () {
+      //         Navigator.push(
+      //           context,
+      //           MaterialPageRoute(
+      //             builder: (context) => ChatDetailPage(
+      //               name: "정글러버",
+      //               imageUrl: "http://34.64.217.3:3000/static/junglelover.gif",
+      //             ),
+      //           ),
+      //         );
+      //       },
+      //     ),
+      //   ],
+      // ),
       body: MyProfile(),
     );
   }
@@ -53,9 +53,6 @@ class MyProfile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: ProfilePage(),
-    );
+    return ProfilePage(nickname: '고니고니');
   }
 }
