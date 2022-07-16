@@ -12,65 +12,88 @@ class TookPage extends StatefulWidget {
 class _TookPageState extends State<TookPage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-            child: Container(
-                color: Colors.white,
-                child: ListView(
-                  physics: BouncingScrollPhysics(),
-                  children: [
-                    generateBlank(),
-                    generateCard(),
-                    generateBlank(),
-                  ],
-                ))));
-  }
-}
-
-generateBlank() {
-  return Container(
-    height: 250,
-    color: Colors.white,
-    child: ListTile(),
-  );
-}
-
-generateCard() {
-  return Container(
-    margin: EdgeInsets.all(8.0),
-    // decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300)),
-    child: Card(
-      elevation: 3,
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(8.0))),
-      child: InkWell(
-        onTap: () => print("test"),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch, // add this
-          children: <Widget>[
-            ClipRRect(
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(8.0),
-                topRight: Radius.circular(8.0),
-              ),
-              child: Image.network(
-                  "http://34.64.217.3:3000/static/gonigoni.gif",
-                  width: 300,
-                  height: 250,
-                  fit: BoxFit.fitWidth),
+    return Container(
+      // color: Colors.red,
+      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+      child: ListView(
+        children: [
+          Container(
+            decoration: BoxDecoration(
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(10)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch, // add this
+              children: <Widget>[
+                ClipRRect(
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(10.0),
+                    topRight: Radius.circular(10.0),
+                  ),
+                  child: Image.network(
+                    "http://34.64.217.3:3000/static/gonigoni.gif",
+                    width: 300,
+                    height: 240,
+                    fit: BoxFit.fitWidth,
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                  decoration: BoxDecoration(
+                      border: Border(top: BorderSide(color: Colors.black))),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            "고니고니",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 21,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                          Text(
+                            "#태그1",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                          Text(
+                            "#태그2",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                          Text(
+                            "#태그3",
+                            style: TextStyle(
+                              color: Colors.black,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ],
+                      ),
+                      Text(
+                        "캣홀릭 오타쿠 캣홀릭 오타쿠 캣홀릭 오타쿠",
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 15,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-            ListTile(
-              tileColor: Color(0xc7ffffff),
-              dense: true,
-              visualDensity: VisualDensity(vertical: 3),
-              title: Text("고니고니",
-                  style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold)),
-              subtitle: Text("캣홀릭 오타쿠",
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300)),
-            ),
-          ],
-        ),
+          )
+        ],
       ),
-    ),
-  );
+    );
+  }
 }
