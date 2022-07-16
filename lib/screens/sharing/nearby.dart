@@ -8,36 +8,12 @@ import 'package:nearby_connections/nearby_connections.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
-// code for launch url
-// final Uri _url = Uri.parse('https://flutter.dev');
-
-void main() => runApp(NearbyPage());
-
-class NearbyPage extends StatefulWidget {
-  @override
-  _MyAppState createState() => _MyAppState();
-}
-
-class _MyAppState extends State<NearbyPage> {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      home: Scaffold(
-        appBar: AppBar(
-          title: const Text('Nearby Connections example app'),
-        ),
-        body: Body(),
-      ),
-    );
-  }
-}
-
-class Body extends StatefulWidget {
+class NearbyConnection extends StatefulWidget {
   @override
   _MyBodyState createState() => _MyBodyState();
 }
 
-class _MyBodyState extends State<Body> {
+class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
   final Strategy strategy = Strategy.P2P_STAR;
   Map<String, ConnectionInfo> endpointMap = Map();
@@ -59,19 +35,6 @@ class _MyBodyState extends State<Body> {
             Wrap(
               children: <Widget>[
                 ElevatedButton(
-                  child: Text("checkLocationPermission"),
-                  onPressed: () async {
-                    if (await Nearby().checkLocationPermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Location permissions granted :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("Location permissions not granted :(")));
-                    }
-                  },
-                ),
-                ElevatedButton(
                   child: Text("askLocationPermission"),
                   onPressed: () async {
                     if (await Nearby().askLocationPermission()) {
@@ -85,36 +48,9 @@ class _MyBodyState extends State<Body> {
                   },
                 ),
                 ElevatedButton(
-                  child: Text("checkExternalStoragePermission"),
-                  onPressed: () async {
-                    if (await Nearby().checkExternalStoragePermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("External Storage permissions granted :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text(
-                              "External Storage permissions not granted :(")));
-                    }
-                  },
-                ),
-                ElevatedButton(
                   child: Text("askExternalStoragePermission"),
                   onPressed: () {
                     Nearby().askExternalStoragePermission();
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("checkBluetoothPermission (Android 12+)"),
-                  onPressed: () async {
-                    if (await Nearby().checkBluetoothPermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Bluethooth permissions granted :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("Bluetooth permissions not granted :(")));
-                    }
                   },
                 ),
                 ElevatedButton(
@@ -129,18 +65,6 @@ class _MyBodyState extends State<Body> {
             Text("Location Enabled"),
             Wrap(
               children: <Widget>[
-                ElevatedButton(
-                  child: Text("checkLocationEnabled"),
-                  onPressed: () async {
-                    if (await Nearby().checkLocationEnabled()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Location is ON :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Location is OFF :(")));
-                    }
-                  },
-                ),
                 ElevatedButton(
                   child: Text("enableLocationServices"),
                   onPressed: () async {
@@ -287,37 +211,6 @@ class _MyBodyState extends State<Body> {
                 });
               },
             ),
-            // ElevatedButton(
-            //   child: Text("Send File Payload"),
-            //   onPressed: () async {
-            //     PickedFile? file =
-            //         await ImagePicker().getImage(source: ImageSource.gallery);
-
-            //     if (file == null) return;
-
-            //     for (MapEntry<String, ConnectionInfo> m
-            //         in endpointMap.entries) {
-            //       int payloadId =
-            //           await Nearby().sendFilePayload(m.key, file.path);
-            //       showSnackbar("Sending file to ${m.key}");
-            //       Nearby().sendBytesPayload(
-            //           m.key,
-            //           Uint8List.fromList(
-            //               "$payloadId:${file.path.split('/').last}".codeUnits));
-            //     }
-            //   },
-            // ),
-            ElevatedButton(
-              child: Text("Print file names."),
-              onPressed: () async {
-                final dir = (await getExternalStorageDirectory())!;
-                final files = (await dir.list(recursive: true).toList())
-                    .map((f) => f.path)
-                    .toList()
-                    .join('\n');
-                showSnackbar(files);
-              },
-            ),
           ],
         ),
       ),
@@ -363,7 +256,7 @@ class _MyBodyState extends State<Body> {
                     id,
                     onPayLoadRecieved: (endid, payload) async {
                       if (payload.type == PayloadType.BYTES) {
-                        String b = "https://swjungle.net?id=" + id;
+                        String b = "https://swjungle.net";
 
                         final url = Uri.parse(b);
 
@@ -374,7 +267,8 @@ class _MyBodyState extends State<Body> {
                         }
 
                         String str = String.fromCharCodes(payload.bytes!);
-                        showSnackbar(endid + ": " + str);
+                        // showSnackbar(endid + ": " + str);
+                        showSnackbar("명함 수신 완료");
 
                         if (str.contains(':')) {
                           // used for file payload as file payload is mapped as
@@ -408,17 +302,17 @@ class _MyBodyState extends State<Body> {
                         showSnackbar(endid + ": FAILED to transfer file");
                       } else if (payloadTransferUpdate.status ==
                           PayloadStatus.SUCCESS) {
-                        showSnackbar(
-                            "$endid success, total bytes = ${payloadTransferUpdate.totalBytes}");
+                        // showSnackbar(
+                        //     "$endid success, total bytes = ${payloadTransferUpdate.totalBytes}");
 
-                        if (map.containsKey(payloadTransferUpdate.id)) {
-                          //rename the file now
-                          String name = map[payloadTransferUpdate.id]!;
-                          moveFile(tempFileUri!, name);
-                        } else {
-                          //bytes not received till yet
-                          map[payloadTransferUpdate.id] = "";
-                        }
+                        // if (map.containsKey(payloadTransferUpdate.id)) {
+                        //   //rename the file now
+                        //   String name = map[payloadTransferUpdate.id]!;
+                        //   moveFile(tempFileUri!, name);
+                        // } else {
+                        //   //bytes not received till yet
+                        //   map[payloadTransferUpdate.id] = "";
+                        // }
                       }
                     },
                   );
