@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'tookpage.dart';
+import '../../tests/sharing/test.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({Key? key}) : super(key: key);
@@ -19,8 +20,8 @@ class SharingPage extends StatelessWidget {
           ),
         ],
       ),
+      // body: TookPage(),
       body: TookPage(),
-      // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
