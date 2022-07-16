@@ -1,5 +1,7 @@
 import '../../models/mypage/user.dart';
 
+List Friends = ['정글러버', '배그러버', 'Opjoobe'];
+
 Map UserProfiles = {
   '정글러버': UserProfile(
     imagePath: 'http://34.64.217.3:3000/static/junglelover.gif',
@@ -97,6 +99,7 @@ Map UserProfiles = {
     tag: ['#고양이', '#독서', '#코딩'],
   ),
 };
+
 // class UserPreferences {
 //   static const myUser = UserProfile(
 //     imagePath: 'http://34.64.217.3:3000/static/junglelover.gif',
