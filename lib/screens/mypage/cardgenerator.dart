@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
+import '../../tests/mypage/preferences.dart';
 
 import '../sharing/sharing.dart';
 
@@ -106,10 +107,8 @@ class NameCardGenerator extends StatefulWidget {
 
 class _NameCardGeneratorState extends State<NameCardGenerator> {
   var nickname = '닉네임';
-  // var tag1 = '태그1', tag2 = '태그2', tag3 = '태그3';
-  var tags = {'1': 'one', '2': 'two', '3': 'three'};
+  var tags = {'1': '#', '2': '#', '3': '#'};
   var introduction = '한줄소개';
-  // var userImage = Image.asset('assets/grey_profile.png', fit: BoxFit.fill); //이건 파일형태가 아니군!
   dynamic userImage =
       'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
 
@@ -123,19 +122,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     setState(() {
       tags['${num}'] = value;
     });
-    // if (num == 1){
-    //   setState(() {
-    //     tag1 = value;
-    //   });
-    // } else if (num == 2){
-    //   setState(() {
-    //     tag2 = value;
-    //   });
-    // } else {
-    //   setState(() {
-    //     tag3 = value;
-    //   });
-    // }
   }
 
   saveIntro(String value) {
@@ -148,9 +134,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // FocusScopeNode currentFocus = FocusScope.of(context);
-        // if (!currentFocus.hasPrimaryFocus){
-        //   currentFocus.unfocus();
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
@@ -184,17 +167,17 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
             Container(
               padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   NameCard(
-                      nickname: nickname,
-                      tags: tags,
-                      introduction: introduction,
-                      userImage: userImage),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
+                    nickname: nickname,
+                    tags: tags,
+                    introduction: introduction,
+                    userImage: userImage,
                   ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                   ElevatedButton(
-                    child: Text('사진 가져오기'),
+                    child: Text('+ 프로필 사진'),
                     // icon: Icon(Icons.add_box_rounded),
                     onPressed: () async {
                       var picker = ImagePicker();
@@ -208,37 +191,33 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                       }
                     },
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  ),
-                  nameSpace(nickname: nickname, saveName: saveName),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                  NameSpace(nickname: nickname, saveName: saveName),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                  IntroSpace(introduction: introduction, saveIntro: saveIntro),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                  Wrap(
+                    spacing: 8, // main axis of the wrap
+                    runSpacing: 20, // cross axis of the wrap
                     children: [
                       SizedBox(
                         width: 70,
                         height: 50,
-                        child: tagSpace(saveTags: saveTags, num: 1),
+                        child: TagSpace(saveTags: saveTags, num: 1),
                       ),
                       SizedBox(
                         width: 70,
                         height: 50,
-                        child: tagSpace(saveTags: saveTags, num: 2),
+                        child: TagSpace(saveTags: saveTags, num: 2),
                       ),
                       SizedBox(
                         width: 70,
                         height: 50,
-                        child: tagSpace(saveTags: saveTags, num: 3),
+                        child: TagSpace(saveTags: saveTags, num: 3),
                       )
                     ],
                   ),
-                  Padding(
-                    padding: EdgeInsets.fromLTRB(0, 0, 0, 20),
-                  ),
-                  introSpace(
-                    introduction: introduction,
-                    saveIntro: saveIntro,
-                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20)),
                 ],
               ),
             ),
@@ -249,8 +228,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   }
 }
 
-class nameSpace extends StatefulWidget {
-  nameSpace({
+class NameSpace extends StatefulWidget {
+  NameSpace({
     Key? key,
     this.nickname,
     this.saveName,
@@ -258,10 +237,10 @@ class nameSpace extends StatefulWidget {
   var nickname, saveName;
 
   @override
-  State<nameSpace> createState() => _nameSpaceState();
+  State<NameSpace> createState() => _NameSpaceState();
 }
 
-class _nameSpaceState extends State<nameSpace> {
+class _NameSpaceState extends State<NameSpace> {
   var controller = TextEditingController();
 
   @override
@@ -297,44 +276,59 @@ class _nameSpaceState extends State<nameSpace> {
   }
 }
 
-class tagSpace extends StatefulWidget {
-  tagSpace({Key? key, this.saveTags, this.num}) : super(key: key);
+class TagSpace extends StatefulWidget {
+  TagSpace({Key? key, this.saveTags, this.num}) : super(key: key);
   var saveTags;
   var num;
 
   @override
-  State<tagSpace> createState() => _tagSpaceState();
+  State<TagSpace> createState() => _TagSpaceState();
 }
 
-class _tagSpaceState extends State<tagSpace> {
+class _TagSpaceState extends State<TagSpace> {
   var controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      decoration: const InputDecoration(
-        constraints: BoxConstraints(maxHeight: 50, maxWidth: 70),
-        hintText: '',
-        labelText: '태그 *',
-      ),
       controller: controller,
       onChanged: (text) {
         if (text != null) {
           widget.saveTags(widget.num, text);
         }
       },
+      decoration: InputDecoration(
+        constraints: BoxConstraints(maxHeight: 40),
+        hintText: '',
+        labelText: '태그',
+        labelStyle: TextStyle(
+            // color: Colors.red,
+            ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(
+            color: Color(0xff8338EC),
+          ),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+          borderSide: BorderSide(
+            color: Color(0xff8338EC),
+          ),
+        ),
+      ),
     );
   }
 }
 
-class introSpace extends StatefulWidget {
-  introSpace({Key? key, this.introduction, this.saveIntro}) : super(key: key);
+class IntroSpace extends StatefulWidget {
+  IntroSpace({Key? key, this.introduction, this.saveIntro}) : super(key: key);
   var introduction, saveIntro;
 
   @override
-  State<introSpace> createState() => _introSpaceState();
+  State<IntroSpace> createState() => _IntroSpaceState();
 }
 
-class _introSpaceState extends State<introSpace> {
+class _IntroSpaceState extends State<IntroSpace> {
   var controller = TextEditingController();
 
   @override
@@ -368,9 +362,14 @@ class _introSpaceState extends State<introSpace> {
 }
 
 class NameCard extends StatefulWidget {
-  NameCard(
-      {Key? key, this.nickname, this.tags, this.introduction, this.userImage})
-      : super(key: key);
+  NameCard({
+    Key? key,
+    this.nickname,
+    this.tags,
+    this.introduction,
+    this.userImage,
+  }) : super(key: key);
+
   var nickname, tags, introduction;
   dynamic userImage;
 
@@ -383,6 +382,7 @@ class _NameState extends State<NameCard> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
+      padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -395,52 +395,60 @@ class _NameState extends State<NameCard> {
           ),
         ],
       ),
-      child: Column(
+      child: Row(
         children: [
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 15, 0, 0),
-          ),
-          Container(
-            width: 100,
-            height: 85,
-            // decoration: BoxDecoration(color: Colors.red),
-            child: widget.userImage.runtimeType == String
-                ? Image.network(widget.userImage, fit: BoxFit.fill)
-                : Image.file(widget.userImage, fit: BoxFit.fill),
-          ),
-          Text(
-            widget.nickname,
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.w400),
-          ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
-          ),
           Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              ElevatedButton(
-                  child: Text(widget.tags['1']),
-                  onPressed: () {},
-                  style: ButtonStyle()),
-              OutlinedButton(
-                child: Text(widget.tags['2']),
-                onPressed: () {},
-              ),
-              ElevatedButton(
-                child: Text(widget.tags['3']),
-                onPressed: () {},
-                style: ButtonStyle(),
+            children: [
+              Container(
+                width: 100,
+                height: 85,
+                margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                decoration: BoxDecoration(color: Colors.red),
+                child: widget.userImage.runtimeType == String
+                    ? Image.network(widget.userImage, fit: BoxFit.fill)
+                    : Image.file(widget.userImage, fit: BoxFit.fill),
               ),
             ],
           ),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 5),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(padding: EdgeInsets.fromLTRB(0, 2, 0, 0)),
+              Text(
+                widget.nickname,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
+              Text(widget.introduction,
+                  style: TextStyle(
+                    fontSize: 13,
+                  )),
+              Wrap(
+                direction: Axis.horizontal, // 정렬 방향
+                alignment: WrapAlignment.start, // 정렬 방식
+                spacing: 10, // main axis of the wrap
+                runSpacing: 20, // cross axis of the wrap
+                children: <Widget>[
+                  ElevatedButton(
+                      child: Text(widget.tags['1']),
+                      onPressed: () {},
+                      style: ButtonStyle()),
+                  OutlinedButton(
+                    child: Text(widget.tags['2']),
+                    onPressed: () {},
+                  ),
+                  ElevatedButton(
+                    child: Text(widget.tags['3']),
+                    onPressed: () {},
+                    style: ButtonStyle(),
+                  ),
+                ],
+              ),
+            ],
           ),
-          Text(widget.introduction, style: TextStyle(fontSize: 14)),
-          Padding(
-            padding: EdgeInsets.fromLTRB(0, 0, 0, 15),
-          ),
-        ], //children
+        ],
       ),
     );
   }
