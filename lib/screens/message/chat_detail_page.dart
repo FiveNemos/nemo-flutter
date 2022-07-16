@@ -3,7 +3,7 @@ import 'dart:ffi';
 import 'package:flutter/material.dart';
 import '../../providers/message/store.dart';
 import '../../models/message/chat_message_model.dart';
-import '../../tests/message/chat_test_data.dart';
+import '../../tests/message/chat_user_test_data.dart';
 
 class ChatDetailPage extends StatefulWidget {
   String name;
@@ -23,19 +23,20 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   }
   // ScrollController _scrollController = new ScrollController();
 
-  final ScrollController _controller = ScrollController();
+  late ScrollController _controller;
 
   void _scrollDown() {
     _controller.animateTo(_controller.position.maxScrollExtent,
-        duration: Duration(seconds: 2), curve: Curves.fastOutSlowIn);
+        duration: Duration(seconds: 1), curve: Curves.ease);
   }
 
-  // @override
-  // void initState() {
-  //   // TODO: implement initState
-  //   super.initState();
-  //
-  // }
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _controller = ScrollController();
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -121,14 +122,14 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                       EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
                   child: Align(
                     alignment: (messages_db[widget.name][index].messageType ==
-                            "receiver"
+                            'receiver'
                         ? Alignment.topLeft
                         : Alignment.topRight),
                     child: Container(
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20),
                         color: (messages_db[widget.name][index].messageType ==
-                                "receiver"
+                                'receiver'
                             ? Colors.grey.shade200
                             : Colors.blue[200]),
                       ),
@@ -142,68 +143,75 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 );
               },
             ),
-            Align(
-              alignment: Alignment.bottomLeft,
-              child: Container(
-                padding: EdgeInsets.only(left: 10, bottom: 10, top: 10),
-                height: 60,
-                width: double.infinity,
-                color: Colors.white,
-                child: Row(
-                  children: <Widget>[
-                    GestureDetector(
-                      onTap: () {},
-                      child: Container(
-                        height: 30,
-                        width: 30,
-                        decoration: BoxDecoration(
-                          color: Colors.lightBlue,
-                          borderRadius: BorderRadius.circular(30),
-                        ),
-                        child: Icon(
-                          Icons.add,
-                          color: Colors.white,
-                          size: 20,
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                            hintText: "Write message...",
-                            hintStyle: TextStyle(color: Colors.black54),
-                            border: InputBorder.none),
-                        controller: inputData,
-                      ),
-                    ),
-                    SizedBox(
-                      width: 15,
-                    ),
-                    FloatingActionButton(
-                      onPressed: () {
-                        if (inputData.text.isNotEmpty) {
-                          _scrollDown();
-                          addMessage(widget.name, inputData.text);
-                          inputData.clear();
-                        }
-                        // messages_db[widget.name].add(ChatMessage(messageContent: inputData.text, messageType: "sender"));
-                      },
-                      child: Icon(
-                        Icons.send,
-                        color: Colors.white,
-                        size: 18,
-                      ),
-                      backgroundColor: Colors.blue,
-                      elevation: 0,
-                    ),
-                  ],
-                ),
-              ),
-            ),
           ],
+        ),
+        bottomNavigationBar: Padding(
+          padding:
+              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+          child: Container(
+            height: 45,
+            width: MediaQuery.of(context).size.width,
+            color: Colors.white,
+            child: Row(
+              children: [
+                SizedBox(
+                  width: 10,
+                ),
+                GestureDetector(
+                  onTap: () {},
+                  child: Container(
+                    height: 30,
+                    width: 30,
+                    decoration: BoxDecoration(
+                      color: Colors.lightBlue,
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                    child: Icon(
+                      Icons.add,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                Expanded(
+                  child: TextField(
+                    onTap: () {
+                      _scrollDown();
+                    },
+                    decoration: InputDecoration(
+                        hintText: 'Write message...',
+                        hintStyle: TextStyle(color: Colors.black54),
+                        border: InputBorder.none),
+                    controller: inputData,
+                  ),
+                ),
+                SizedBox(
+                  width: 15,
+                ),
+                // Send Button
+                FloatingActionButton(
+                  onPressed: () {
+                    _scrollDown();
+                    if (inputData.text.isNotEmpty) {
+                      addMessage(widget.name, inputData.text);
+                      inputData.clear();
+                    }
+                    // messages_db[widget.name].add(ChatMessage(messageContent: inputData.text, messageType: "sender"));
+                  },
+                  backgroundColor: Colors.blue,
+                  elevation: 0,
+                  child: Icon(
+                    Icons.send,
+                    color: Colors.white,
+                    size: 18,
+                  ),
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );
