@@ -52,7 +52,7 @@ class _ContactsPageState extends State<ContactsPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: new Icon(Icons.logout),
+            icon: Icon(Icons.logout),
             tooltip: 'logout',
             onPressed: () {
               logout();
@@ -64,80 +64,121 @@ class _ContactsPageState extends State<ContactsPage> {
           padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
           itemCount: Friends.length,
           itemBuilder: (c, i) {
-            return Container(
-              // color: Color(0xff8338EC),
-              // padding: EdgeInsets.fromLTRB(15, 20, 20, 15),
-              // margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-              child: Card(
-                // margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(8.0))),
-                child: InkWell(
-                  // onTap: () => Navigator.pushNamed(context, '/mypage'),
-                  onTap: () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (c) => ProfilePage(nickname: Friends[i]))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch, // add this
-                    children: <Widget>[
-                      ClipRRect(
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(8.0),
-                          topRight: Radius.circular(8.0),
+            return InkWell(
+              onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (c) => ProfilePage(nickname: Friends[i]))),
+              child: Container(
+                // color: Colors.black,
+                decoration: BoxDecoration(
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10)),
+                // margin: EdgeInsets.all(5),
+                height: 150,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Slidable(
+                    key: UniqueKey(),
+                    startActionPane: ActionPane(
+                      motion: const ScrollMotion(),
+                      // dismissible: DismissiblePane(onDismissed: () {
+                      //   // Navigator.pushNamed(context, '/contacts2');
+                      //   doNothing;
+                      // }),
+                      children: [
+                        SlidableAction(
+                          onPressed: (_) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return DialogUI(
+                                      target: Friends[i],
+                                      deleteFriend: deleteFriend);
+                                });
+                          },
+                          backgroundColor: Color(0xFFFE4A49),
+                          foregroundColor: Colors.white,
+                          icon: Icons.delete,
+                          label: 'Delete',
                         ),
-                        child: Image.network(
-                          UserPreferences_db[Friends[i]].imagePath,
-                          height: 220,
-                          alignment: Alignment(0, -0.7),
-                          fit: BoxFit.fitWidth,
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment
+                          .start, // 정글러버, Pintos 정복자의 컬럼위치(위, 중간, 아래)
+                      children: [
+                        Container(
+                          decoration: BoxDecoration(
+                            border: Border(
+                                right: BorderSide(
+                              color: Colors.black,
+                            )),
+                          ),
+                          child: Image.network(
+                            UserPreferences_db[Friends[i]].imagePath,
+                            height: 150,
+                            width: 150,
+                            // alignment: Alignment(-1, -0.7),
+                            // fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      Slidable(
-                        key: UniqueKey(),
-                        startActionPane: ActionPane(
-                          motion: const ScrollMotion(),
-                          // dismissible: DismissiblePane(onDismissed: () {
-                          //   // Navigator.pushNamed(context, '/contacts2');
-                          //   doNothing;
-                          // }),
-                          children: [
-                            SlidableAction(
-                              onPressed: (_) {
-                                showDialog(
-                                    context: context,
-                                    builder: (context) {
-                                      return DialogUI(
-                                          target: Friends[i],
-                                          deleteFriend: deleteFriend);
-                                    });
-                              },
-                              backgroundColor: Color(0xFFFE4A49),
-                              foregroundColor: Colors.white,
-                              icon: Icons.delete,
-                              label: 'Delete',
+                        Expanded(
+                          flex: 1,
+                          child: Container(
+                            padding: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.start, // 사진 옆 박스 row 시작점
+                              children: [
+                                Text(UserPreferences_db[Friends[i]].nickname,
+                                    style: TextStyle(
+                                        fontSize: 23,
+                                        fontWeight: FontWeight.bold)),
+                                Text(
+                                    UserPreferences_db[Friends[i]].introduction,
+                                    style: TextStyle(
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w600,
+                                        color: Colors.grey.shade600)),
+                                Row(
+                                  // for TAGS
+                                  // mainAxisAlignment: MainAxisAlignment.end, // 태그만 오른쪽 배치하고 싶다면
+                                  children: [
+                                    Text(
+                                      UserPreferences_db[Friends[i]].tag[0],
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      UserPreferences_db[Friends[i]].tag[1],
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                    Text(
+                                      UserPreferences_db[Friends[i]].tag[2],
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: ListTile(
-                          dense: true,
-                          visualDensity: VisualDensity(vertical: 1),
-                          title: Text(UserPreferences_db[Friends[i]].nickname,
-                              style: TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
-                          subtitle: Text(
-                              UserPreferences_db[Friends[i]].introduction,
-                              style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.w600)),
-                        ),
-                      ),
-                    ],
+                          ),
+                        )
+                      ],
+                    ),
                   ),
                 ),
               ),
             );
           },
-          separatorBuilder: (context, i) => SizedBox(height: 10)),
+          separatorBuilder: (context, i) => SizedBox(height: 20)),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
