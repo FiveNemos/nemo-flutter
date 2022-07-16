@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'tookpage.dart';
+import 'package:nemo_flutter/screens/sharing/nearby.dart';
+import 'nearby.dart';
 import '../../tests/sharing/test.dart';
 
 class SharingPage extends StatelessWidget {
@@ -21,7 +22,7 @@ class SharingPage extends StatelessWidget {
         ],
       ),
       // body: TookPage(),
-      body: TookPage(),
+      body: NearbyConnection(),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
