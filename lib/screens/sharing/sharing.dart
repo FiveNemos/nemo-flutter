@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nemo_flutter/screens/sharing/nearby.dart';
 // import 'nearby.dart';
 import 'merge.dart';
-import '../../tests/sharing/test.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({Key? key}) : super(key: key);
