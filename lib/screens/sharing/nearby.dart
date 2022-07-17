@@ -39,12 +39,43 @@ class _MyBodyState extends State<NearbyConnection> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            Text(
-              'Permissions',
-            ),
             Swipe(
-              child:
-                  SizedBox(width: 500, height: 300, child: Text('swipe me up')),
+              child: SizedBox(
+                width: 500,
+                height: 300,
+                child: Column(
+                  children: [
+                    Text('Swipe Up to Send!!'),
+                    ElevatedButton(
+                      child: Text('Stop Advertising'),
+                      onPressed: () async {
+                        await Nearby().stopAdvertising();
+                      },
+                    ),
+                    ElevatedButton(
+                        child: Text('Start Discovery'),
+                        onPressed: () {
+                          startDiscovery();
+                        }),
+                    ElevatedButton(
+                      child: Text('Stop Discovery'),
+                      onPressed: () async {
+                        await Nearby().stopDiscovery();
+                      },
+                    ),
+                    ElevatedButton(
+                      child: Text('Stop All Endpoints'),
+                      onPressed: () async {
+                        await Nearby().stopAllEndpoints();
+                        setState(() {
+                          endpointMap.clear();
+                        });
+                      },
+                    ),
+                    Text('Number of connected devices: ${endpointMap.length}'),
+                  ],
+                ),
+              ),
               onSwipeUp: () async {
                 try {
                   bool a = await Nearby().startAdvertising(
@@ -92,273 +123,66 @@ class _MyBodyState extends State<NearbyConnection> {
                 }
               },
             ),
-            // Wrap(
-            //   children: <Widget>[
-            //     ElevatedButton(
-            //       child: Text("checkLocationPermission"),
-            //       onPressed: () async {
-            //         if (await Nearby().checkLocationPermission()) {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content: Text("Location permissions granted :)")));
-            //         } else {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content:
-            //                   Text("Location permissions not granted :(")));
-            //         }
-            //       },
-            //     ),
-            //     ElevatedButton(
-            //       child: Text("askLocationPermission"),
-            //       onPressed: () async {
-            //         if (await Nearby().askLocationPermission()) {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content: Text("Location Permission granted :)")));
-            //         } else {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content:
-            //                   Text("Location permissions not granted :(")));
-            //         }
-            //       },
-            //     ),
-            //     ElevatedButton(
-            //       child: Text("checkExternalStoragePermission"),
-            //       onPressed: () async {
-            //         if (await Nearby().checkExternalStoragePermission()) {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content:
-            //                   Text("External Storage permissions granted :)")));
-            //         } else {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content: Text(
-            //                   "External Storage permissions not granted :(")));
-            //         }
-            //       },
-            //     ),
-            //     ElevatedButton(
-            //       child: Text("askExternalStoragePermission"),
-            //       onPressed: () {
-            //         Nearby().askExternalStoragePermission();
-            //       },
-            //     ),
-            //     ElevatedButton(
-            //       child: Text("checkBluetoothPermission (Android 12+)"),
-            //       onPressed: () async {
-            //         if (await Nearby().checkBluetoothPermission()) {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content: Text("Bluethooth permissions granted :)")));
-            //         } else {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content:
-            //                   Text("Bluetooth permissions not granted :(")));
-            //         }
-            //       },
-            //     ),
-            //     ElevatedButton(
-            //       child: Text("askBluetoothPermission (Android 12+)"),
-            //       onPressed: () {
-            //         Nearby().askBluetoothPermission();
-            //       },
-            //     ),
-            //   ],
-            // ),
-            Divider(),
-            Text('Location Enabled'),
-            Wrap(
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text('checkLocationEnabled'),
-                  onPressed: () async {
-                    if (await Nearby().checkLocationEnabled()) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Location is ON :)')));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('Location is OFF :(')));
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: Text('enableLocationServices'),
-                  onPressed: () async {
-                    if (await Nearby().enableLocationServices()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text('Location Service Enabled :)')));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text('Enabling Location Service Failed :(')));
-                    }
-                  },
-                ),
-              ],
-            ),
-            Divider(),
-            Text('User Name: $userName'),
-            Wrap(
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text('Start Advertising'),
-                  onPressed: () async {
-                    try {
-                      bool a = await Nearby().startAdvertising(
-                        userName,
-                        strategy,
-                        onConnectionInitiated: onConnectionInit,
-                        onConnectionResult: (id, status) {
-                          showSnackbar(status);
-                        },
-                        onDisconnected: (id) {
-                          showSnackbar(
-                              'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
-                          setState(() {
-                            endpointMap.remove(id);
-                          });
-                        },
-                      );
-                      showSnackbar('ADVERTISING: $a');
-                    } catch (exception) {
-                      showSnackbar(exception);
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: Text('Stop Advertising'),
-                  onPressed: () async {
-                    await Nearby().stopAdvertising();
-                  },
-                ),
-              ],
-            ),
-            Wrap(
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text('Start Discovery'),
-                  onPressed: () async {
-                    try {
-                      bool a = await Nearby().startDiscovery(
-                        userName,
-                        strategy,
-                        onEndpointFound: (id, name, serviceId) {
-                          // show sheet automatically to request connection
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (builder) {
-                              return Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text('id: $id'),
-                                    Text('Name: $name'),
-                                    Text('ServiceId: $serviceId'),
-                                    ElevatedButton(
-                                      child: Text('Request Connection'),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        Nearby().requestConnection(
-                                          userName,
-                                          id,
-                                          onConnectionInitiated: (id, info) {
-                                            onConnectionInit(id, info);
-                                          },
-                                          onConnectionResult: (id, status) {
-                                            showSnackbar(status);
-                                          },
-                                          onDisconnected: (id) {
-                                            setState(() {
-                                              endpointMap.remove(id);
-                                            });
-                                            showSnackbar(
-                                                'Disconnected from: ${endpointMap[id]!.endpointName}, id $id');
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        onEndpointLost: (id) {
-                          showSnackbar(
-                              'Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id');
-                        },
-                      );
-                      showSnackbar('DISCOVERING: $a');
-                    } catch (e) {
-                      showSnackbar(e);
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: Text('Stop Discovery'),
-                  onPressed: () async {
-                    await Nearby().stopDiscovery();
-                  },
-                ),
-              ],
-            ),
-            Text('Number of connected devices: ${endpointMap.length}'),
-            ElevatedButton(
-              child: Text('Stop All Endpoints'),
-              onPressed: () async {
-                await Nearby().stopAllEndpoints();
-                setState(() {
-                  endpointMap.clear();
-                });
-              },
-            ),
-            Divider(),
-            Text(
-              'Sending Data',
-            ),
-            ElevatedButton(
-              child: Text('Send Namecard'),
-              onPressed: () async {
-                endpointMap.forEach((key, value) {
-                  String a = Random().nextInt(100).toString();
-
-                  showSnackbar('Sending $a to ${value.endpointName}, id: $key');
-                  Nearby()
-                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
-                });
-              },
-            ),
-
-            // ElevatedButton(
-            //   child: Text("Send File Payload"),
-            //   onPressed: () async {
-            //     PickedFile? file =
-            //         await ImagePicker().getImage(source: ImageSource.gallery);
-
-            //     if (file == null) return;
-
-            //     for (MapEntry<String, ConnectionInfo> m
-            //         in endpointMap.entries) {
-            //       int payloadId =
-            //           await Nearby().sendFilePayload(m.key, file.path);
-            //       showSnackbar("Sending file to ${m.key}");
-            //       Nearby().sendBytesPayload(
-            //           m.key,
-            //           Uint8List.fromList(
-            //               "$payloadId:${file.path.split('/').last}".codeUnits));
-            //     }
-            //   },
-            // ),
-            // ElevatedButton(
-            //   child: Text("Print file names."),
-            //   onPressed: () async {
-            //     final dir = (await getExternalStorageDirectory())!;
-            //     final files = (await dir.list(recursive: true).toList())
-            //         .map((f) => f.path)
-            //         .toList()
-            //         .join('\n');
-            //     showSnackbar(files);
-            //   },
-            // ),
           ],
         ),
       ),
     );
+  }
+
+  startDiscovery() async {
+    try {
+      bool a = await Nearby().startDiscovery(
+        userName,
+        strategy,
+        onEndpointFound: (id, name, serviceId) {
+          // show sheet automatically to request connection
+          showModalBottomSheet(
+            context: context,
+            builder: (builder) {
+              return Center(
+                child: Column(
+                  children: <Widget>[
+                    Text('id: $id'),
+                    Text('Name: $name'),
+                    Text('ServiceId: $serviceId'),
+                    ElevatedButton(
+                      child: Text('Request Connection'),
+                      onPressed: () {
+                        Navigator.pop(context);
+                        Nearby().requestConnection(
+                          userName,
+                          id,
+                          onConnectionInitiated: (id, info) {
+                            onConnectionInit(id, info);
+                          },
+                          onConnectionResult: (id, status) {
+                            showSnackbar(status);
+                          },
+                          onDisconnected: (id) {
+                            setState(() {
+                              endpointMap.remove(id);
+                            });
+                            showSnackbar(
+                                'Disconnected from: ${endpointMap[id]!.endpointName}, id $id');
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            },
+          );
+        },
+        onEndpointLost: (id) {
+          showSnackbar(
+              'Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id');
+        },
+      );
+      showSnackbar('DISCOVERING: $a');
+    } catch (e) {
+      showSnackbar(e);
+    }
   }
 
   void showSnackbar(dynamic a) {
@@ -400,7 +224,7 @@ class _MyBodyState extends State<NearbyConnection> {
                     id,
                     onPayLoadRecieved: (endid, payload) async {
                       if (payload.type == PayloadType.BYTES) {
-                        String b = "https://swjungle.net";
+                        String b = 'https://swjungle.net';
 
                         final url = Uri.parse(b);
 
@@ -412,7 +236,7 @@ class _MyBodyState extends State<NearbyConnection> {
 
                         String str = String.fromCharCodes(payload.bytes!);
                         // showSnackbar(endid + ": " + str);
-                        showSnackbar("명함 수신 완료");
+                        showSnackbar('명함 수신 완료');
 
                         if (str.contains(':')) {
                           // used for file payload as file payload is mapped as
