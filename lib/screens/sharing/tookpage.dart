@@ -34,7 +34,7 @@ class _TookPageState extends State<TookPage> {
                     topRight: Radius.circular(10.0),
                   ),
                   child: Image.network(
-                    "http://34.64.217.3:3000/static/gonigoni.gif",
+                    'http://34.64.217.3:3000/static/gonigoni.gif',
                     width: 300,
                     height: 240,
                     fit: BoxFit.fitWidth,
@@ -50,7 +50,7 @@ class _TookPageState extends State<TookPage> {
                       Row(
                         children: [
                           Text(
-                            "고니고니",
+                            '고니고니',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 21,
@@ -59,7 +59,7 @@ class _TookPageState extends State<TookPage> {
                           ),
                           Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
                           Text(
-                            "#태그1",
+                            '#태그1',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -67,7 +67,7 @@ class _TookPageState extends State<TookPage> {
                           ),
                           Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
                           Text(
-                            "#태그2",
+                            '#태그2',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -75,7 +75,7 @@ class _TookPageState extends State<TookPage> {
                           ),
                           Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
                           Text(
-                            "#태그3",
+                            '#태그3',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 16,
@@ -84,7 +84,7 @@ class _TookPageState extends State<TookPage> {
                         ],
                       ),
                       Text(
-                        "캣홀릭 오타쿠 캣홀릭 오타쿠 캣홀릭 오타쿠",
+                        '캣홀릭 오타쿠 캣홀릭 오타쿠 캣홀릭 오타쿠',
                         style: TextStyle(
                           color: Colors.black,
                           fontSize: 15,

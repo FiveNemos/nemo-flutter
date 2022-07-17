@@ -3,10 +3,11 @@ import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 
 import 'package:url_launcher/url_launcher.dart';
+import 'package:permission_handler/permission_handler.dart';
+import 'package:swipe/swipe.dart';
 
 class NearbyConnection extends StatefulWidget {
   @override
@@ -16,40 +17,187 @@ class NearbyConnection extends StatefulWidget {
 class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
   final Strategy strategy = Strategy.P2P_STAR;
-  Map<String, ConnectionInfo> endpointMap = Map();
+  Map<String, ConnectionInfo> endpointMap = {};
 
   String? tempFileUri; //reference to the file currently being transferred
-  Map<int, String> map =
-      Map(); //store filename mapped to corresponding payloadId
+  Map<int, String> map = {}; //store filename mapped to corresponding payloadId
+  checkPermissions() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.location,
+      Permission.storage,
+      Permission.bluetooth,
+      //add more permission to request here.
+    ].request();
+  }
 
   @override
   Widget build(BuildContext context) {
+    checkPermissions();
+
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
             Text(
-              "Sending Data",
+              'Permissions',
             ),
-            ElevatedButton(
-              child: Text("Send Namecard"),
-              onPressed: () async {
-                endpointMap.forEach((key, value) {
-                  String a = Random().nextInt(100).toString();
-
-                  showSnackbar("Sending $a to ${value.endpointName}, id: $key");
-                  Nearby()
-                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
-                });
+            Swipe(
+              child:
+                  SizedBox(width: 500, height: 300, child: Text('swipe me up')),
+              onSwipeUp: () async {
+                try {
+                  bool a = await Nearby().startAdvertising(
+                    userName,
+                    strategy,
+                    onConnectionInitiated: onConnectionInit,
+                    onConnectionResult: (id, status) {
+                      showSnackbar(status);
+                    },
+                    onDisconnected: (id) {
+                      showSnackbar(
+                          'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
+                      setState(() {
+                        endpointMap.remove(id);
+                      });
+                    },
+                  );
+                  showSnackbar('ADVERTISING: $a');
+                  showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          title: Text('Let\'s send!'),
+                          content: Text('명함을 보내시겠습니까?'),
+                          actions: [
+                            TextButton(
+                              // textColor: Colors.black,
+                              onPressed: () async {
+                                endpointMap.forEach((key, value) {
+                                  String a = Random().nextInt(100).toString();
+                                  showSnackbar(
+                                      'Sending $a to ${value.endpointName}, id: $key');
+                                  Nearby().sendBytesPayload(
+                                      key, Uint8List.fromList(a.codeUnits));
+                                });
+                                Navigator.pop(context);
+                              },
+                              child: Text('확인'),
+                            ),
+                          ],
+                        );
+                      });
+                } catch (exception) {
+                  showSnackbar(exception);
+                }
               },
             ),
+            // Wrap(
+            //   children: <Widget>[
+            //     ElevatedButton(
+            //       child: Text("checkLocationPermission"),
+            //       onPressed: () async {
+            //         if (await Nearby().checkLocationPermission()) {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content: Text("Location permissions granted :)")));
+            //         } else {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content:
+            //                   Text("Location permissions not granted :(")));
+            //         }
+            //       },
+            //     ),
+            //     ElevatedButton(
+            //       child: Text("askLocationPermission"),
+            //       onPressed: () async {
+            //         if (await Nearby().askLocationPermission()) {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content: Text("Location Permission granted :)")));
+            //         } else {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content:
+            //                   Text("Location permissions not granted :(")));
+            //         }
+            //       },
+            //     ),
+            //     ElevatedButton(
+            //       child: Text("checkExternalStoragePermission"),
+            //       onPressed: () async {
+            //         if (await Nearby().checkExternalStoragePermission()) {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content:
+            //                   Text("External Storage permissions granted :)")));
+            //         } else {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content: Text(
+            //                   "External Storage permissions not granted :(")));
+            //         }
+            //       },
+            //     ),
+            //     ElevatedButton(
+            //       child: Text("askExternalStoragePermission"),
+            //       onPressed: () {
+            //         Nearby().askExternalStoragePermission();
+            //       },
+            //     ),
+            //     ElevatedButton(
+            //       child: Text("checkBluetoothPermission (Android 12+)"),
+            //       onPressed: () async {
+            //         if (await Nearby().checkBluetoothPermission()) {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content: Text("Bluethooth permissions granted :)")));
+            //         } else {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content:
+            //                   Text("Bluetooth permissions not granted :(")));
+            //         }
+            //       },
+            //     ),
+            //     ElevatedButton(
+            //       child: Text("askBluetoothPermission (Android 12+)"),
+            //       onPressed: () {
+            //         Nearby().askBluetoothPermission();
+            //       },
+            //     ),
+            //   ],
+            // ),
             Divider(),
-            Text("User Name: " + userName),
+            Text('Location Enabled'),
             Wrap(
               children: <Widget>[
                 ElevatedButton(
-                  child: Text("Start Advertising"),
+                  child: Text('checkLocationEnabled'),
+                  onPressed: () async {
+                    if (await Nearby().checkLocationEnabled()) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Location is ON :)')));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text('Location is OFF :(')));
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: Text('enableLocationServices'),
+                  onPressed: () async {
+                    if (await Nearby().enableLocationServices()) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Location Service Enabled :)')));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text('Enabling Location Service Failed :(')));
+                    }
+                  },
+                ),
+              ],
+            ),
+            Divider(),
+            Text('User Name: $userName'),
+            Wrap(
+              children: <Widget>[
+                ElevatedButton(
+                  child: Text('Start Advertising'),
                   onPressed: () async {
                     try {
                       bool a = await Nearby().startAdvertising(
@@ -61,20 +209,20 @@ class _MyBodyState extends State<NearbyConnection> {
                         },
                         onDisconnected: (id) {
                           showSnackbar(
-                              "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                              'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
                           setState(() {
                             endpointMap.remove(id);
                           });
                         },
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
+                      showSnackbar('ADVERTISING: $a');
                     } catch (exception) {
                       showSnackbar(exception);
                     }
                   },
                 ),
                 ElevatedButton(
-                  child: Text("Stop Advertising"),
+                  child: Text('Stop Advertising'),
                   onPressed: () async {
                     await Nearby().stopAdvertising();
                   },
@@ -84,7 +232,7 @@ class _MyBodyState extends State<NearbyConnection> {
             Wrap(
               children: <Widget>[
                 ElevatedButton(
-                  child: Text("Start Discovery"),
+                  child: Text('Start Discovery'),
                   onPressed: () async {
                     try {
                       bool a = await Nearby().startDiscovery(
@@ -98,11 +246,11 @@ class _MyBodyState extends State<NearbyConnection> {
                               return Center(
                                 child: Column(
                                   children: <Widget>[
-                                    Text("id: " + id),
-                                    Text("Name: " + name),
-                                    Text("ServiceId: " + serviceId),
+                                    Text('id: $id'),
+                                    Text('Name: $name'),
+                                    Text('ServiceId: $serviceId'),
                                     ElevatedButton(
-                                      child: Text("Request Connection"),
+                                      child: Text('Request Connection'),
                                       onPressed: () {
                                         Navigator.pop(context);
                                         Nearby().requestConnection(
@@ -119,7 +267,7 @@ class _MyBodyState extends State<NearbyConnection> {
                                               endpointMap.remove(id);
                                             });
                                             showSnackbar(
-                                                "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
+                                                'Disconnected from: ${endpointMap[id]!.endpointName}, id $id');
                                           },
                                         );
                                       },
@@ -132,26 +280,26 @@ class _MyBodyState extends State<NearbyConnection> {
                         },
                         onEndpointLost: (id) {
                           showSnackbar(
-                              "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
+                              'Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id');
                         },
                       );
-                      showSnackbar("DISCOVERING: " + a.toString());
+                      showSnackbar('DISCOVERING: $a');
                     } catch (e) {
                       showSnackbar(e);
                     }
                   },
                 ),
                 ElevatedButton(
-                  child: Text("Stop Discovery"),
+                  child: Text('Stop Discovery'),
                   onPressed: () async {
                     await Nearby().stopDiscovery();
                   },
                 ),
               ],
             ),
-            Text("Number of connected devices: ${endpointMap.length}"),
+            Text('Number of connected devices: ${endpointMap.length}'),
             ElevatedButton(
-              child: Text("Stop All Endpoints"),
+              child: Text('Stop All Endpoints'),
               onPressed: () async {
                 await Nearby().stopAllEndpoints();
                 setState(() {
@@ -161,55 +309,51 @@ class _MyBodyState extends State<NearbyConnection> {
             ),
             Divider(),
             Text(
-              "Permissions",
+              'Sending Data',
             ),
-            Wrap(
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text("askLocationPermission"),
-                  onPressed: () async {
-                    if (await Nearby().askLocationPermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Location Permission granted :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("Location permissions not granted :(")));
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("askExternalStoragePermission"),
-                  onPressed: () {
-                    Nearby().askExternalStoragePermission();
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("askBluetoothPermission (Android 12+)"),
-                  onPressed: () {
-                    Nearby().askBluetoothPermission();
-                  },
-                ),
-              ],
+            ElevatedButton(
+              child: Text('Send Namecard'),
+              onPressed: () async {
+                endpointMap.forEach((key, value) {
+                  String a = Random().nextInt(100).toString();
+
+                  showSnackbar('Sending $a to ${value.endpointName}, id: $key');
+                  Nearby()
+                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
+                });
+              },
             ),
-            // Divider(),
-            // Text("Location Enabled"),
-            // Wrap(
-            //   children: <Widget>[
-            //     ElevatedButton(
-            //       child: Text("enableLocationServices"),
-            //       onPressed: () async {
-            //         if (await Nearby().enableLocationServices()) {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content: Text("Location Service Enabled :)")));
-            //         } else {
-            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            //               content:
-            //                   Text("Enabling Location Service Failed :(")));
-            //         }
-            //       },
-            //     ),
-            //   ],
+
+            // ElevatedButton(
+            //   child: Text("Send File Payload"),
+            //   onPressed: () async {
+            //     PickedFile? file =
+            //         await ImagePicker().getImage(source: ImageSource.gallery);
+
+            //     if (file == null) return;
+
+            //     for (MapEntry<String, ConnectionInfo> m
+            //         in endpointMap.entries) {
+            //       int payloadId =
+            //           await Nearby().sendFilePayload(m.key, file.path);
+            //       showSnackbar("Sending file to ${m.key}");
+            //       Nearby().sendBytesPayload(
+            //           m.key,
+            //           Uint8List.fromList(
+            //               "$payloadId:${file.path.split('/').last}".codeUnits));
+            //     }
+            //   },
+            // ),
+            // ElevatedButton(
+            //   child: Text("Print file names."),
+            //   onPressed: () async {
+            //     final dir = (await getExternalStorageDirectory())!;
+            //     final files = (await dir.list(recursive: true).toList())
+            //         .map((f) => f.path)
+            //         .toList()
+            //         .join('\n');
+            //     showSnackbar(files);
+            //   },
             // ),
           ],
         ),
@@ -228,7 +372,7 @@ class _MyBodyState extends State<NearbyConnection> {
     final b =
         await Nearby().copyFileAndDeleteOriginal(uri, '$parentDir/$fileName');
 
-    showSnackbar("Moved file:" + b.toString());
+    showSnackbar('Moved file:$b');
     return b;
   }
 
@@ -241,12 +385,12 @@ class _MyBodyState extends State<NearbyConnection> {
         return Center(
           child: Column(
             children: <Widget>[
-              Text("id: " + id),
-              Text("Token: " + info.authenticationToken),
-              Text("Name" + info.endpointName),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
+              Text('id: $id'),
+              Text('Token: ${info.authenticationToken}'),
+              Text('Name${info.endpointName}'),
+              Text('Incoming: ${info.isIncomingConnection}'),
               ElevatedButton(
-                child: Text("Accept Connection"),
+                child: Text('Accept Connection'),
                 onPressed: () {
                   Navigator.pop(context);
                   setState(() {
@@ -288,7 +432,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           }
                         }
                       } else if (payload.type == PayloadType.FILE) {
-                        showSnackbar(endid + ": File transfer started");
+                        showSnackbar('$endid: File transfer started');
                         tempFileUri = payload.uri;
                       }
                     },
@@ -298,28 +442,28 @@ class _MyBodyState extends State<NearbyConnection> {
                         print(payloadTransferUpdate.bytesTransferred);
                       } else if (payloadTransferUpdate.status ==
                           PayloadStatus.FAILURE) {
-                        print("failed");
-                        showSnackbar(endid + ": FAILED to transfer file");
+                        print('failed');
+                        showSnackbar('$endid: FAILED to transfer file');
                       } else if (payloadTransferUpdate.status ==
                           PayloadStatus.SUCCESS) {
-                        // showSnackbar(
-                        //     "$endid success, total bytes = ${payloadTransferUpdate.totalBytes}");
+                        showSnackbar(
+                            '$endid success, total bytes = ${payloadTransferUpdate.totalBytes}');
 
-                        // if (map.containsKey(payloadTransferUpdate.id)) {
-                        //   //rename the file now
-                        //   String name = map[payloadTransferUpdate.id]!;
-                        //   moveFile(tempFileUri!, name);
-                        // } else {
-                        //   //bytes not received till yet
-                        //   map[payloadTransferUpdate.id] = "";
-                        // }
+                        if (map.containsKey(payloadTransferUpdate.id)) {
+                          //rename the file now
+                          String name = map[payloadTransferUpdate.id]!;
+                          moveFile(tempFileUri!, name);
+                        } else {
+                          //bytes not received till yet
+                          map[payloadTransferUpdate.id] = '';
+                        }
                       }
                     },
                   );
                 },
               ),
               ElevatedButton(
-                child: Text("Reject Connection"),
+                child: Text('Reject Connection'),
                 onPressed: () async {
                   Navigator.pop(context);
                   try {

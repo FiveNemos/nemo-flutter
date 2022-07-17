@@ -1,15 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'profile_page.dart';
-
-import '../message/message.dart';
-import '../message/chat_detail_page.dart';
-import '../../providers/message/store.dart';
-import '../../models/message/chat_message_model.dart';
-
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'dart:async';
 
 class MypagePage extends StatefulWidget {
   const MypagePage({Key? key}) : super(key: key);

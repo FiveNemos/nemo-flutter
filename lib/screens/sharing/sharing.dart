@@ -15,7 +15,7 @@ class SharingPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: new Icon(Icons.edit),
+            icon: Icon(Icons.edit),
             onPressed: () {
               Navigator.pushNamed(context, '/namecard');
             },

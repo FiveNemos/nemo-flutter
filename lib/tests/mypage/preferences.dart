@@ -92,7 +92,7 @@ Map UserProfiles = {
     tag2: '#독서',
     tag3: '#다리우스',
     image: [
-      "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIif2z4TG9JnFW9iyzMQvvbRxCfIqpDyisKQ&usqp=CAU",
+      'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSIif2z4TG9JnFW9iyzMQvvbRxCfIqpDyisKQ&usqp=CAU',
       'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80',
       'https://thumb.mt.co.kr/06/2021/04/2021040215304223096_1.jpg/dims/optimize/'
     ],
