@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nemo_flutter/screens/sharing/nearby.dart';
-import 'nearby.dart';
+// import 'nearby.dart';
+import 'merge.dart';
 import '../../tests/sharing/test.dart';
 
 class SharingPage extends StatelessWidget {
@@ -21,8 +22,7 @@ class SharingPage extends StatelessWidget {
           ),
         ],
       ),
-      // body: TookPage(),
-      body: NearbyConnection(),
+      body: TookPage(), // redirect to merge.dart
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
@@ -50,7 +50,7 @@ class SharingPage extends StatelessWidget {
               Navigator.pushNamed(context, '/contacts');
               break;
             case 1:
-              Navigator.pushNamed(context, '/nearby');
+              // Navigator.pushNamed(context, '/nearby');
               break;
             case 2:
               Navigator.pushNamed(context, '/message');

@@ -27,8 +27,11 @@ class _TookPageState extends State<TookPage> {
       // color: Colors.red,
       padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
       child: ListView(
+        scrollDirection: Axis.vertical,
+        shrinkWrap: true,
         children: [
           Container(
+            // height: 500,
             decoration: BoxDecoration(
                 border: Border.all(color: Colors.black),
                 borderRadius: BorderRadius.circular(10)),
@@ -100,10 +103,13 @@ class _TookPageState extends State<TookPage> {
                     ],
                   ),
                 ),
-                NearbyConnection(),
               ],
             ),
           ),
+          Container(
+            height: 500,
+            child: NearbyConnection(),
+          )
         ],
       ),
     );

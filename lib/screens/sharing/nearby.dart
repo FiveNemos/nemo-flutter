@@ -30,55 +30,19 @@ class _MyBodyState extends State<NearbyConnection> {
         child: ListView(
           children: <Widget>[
             Text(
-              "Permissions",
+              "Sending Data",
             ),
-            Wrap(
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text("askLocationPermission"),
-                  onPressed: () async {
-                    if (await Nearby().askLocationPermission()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Location Permission granted :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("Location permissions not granted :(")));
-                    }
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("askExternalStoragePermission"),
-                  onPressed: () {
-                    Nearby().askExternalStoragePermission();
-                  },
-                ),
-                ElevatedButton(
-                  child: Text("askBluetoothPermission (Android 12+)"),
-                  onPressed: () {
-                    Nearby().askBluetoothPermission();
-                  },
-                ),
-              ],
-            ),
-            Divider(),
-            Text("Location Enabled"),
-            Wrap(
-              children: <Widget>[
-                ElevatedButton(
-                  child: Text("enableLocationServices"),
-                  onPressed: () async {
-                    if (await Nearby().enableLocationServices()) {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content: Text("Location Service Enabled :)")));
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                          content:
-                              Text("Enabling Location Service Failed :(")));
-                    }
-                  },
-                ),
-              ],
+            ElevatedButton(
+              child: Text("Send Namecard"),
+              onPressed: () async {
+                endpointMap.forEach((key, value) {
+                  String a = Random().nextInt(100).toString();
+
+                  showSnackbar("Sending $a to ${value.endpointName}, id: $key");
+                  Nearby()
+                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
+                });
+              },
             ),
             Divider(),
             Text("User Name: " + userName),
@@ -197,20 +161,56 @@ class _MyBodyState extends State<NearbyConnection> {
             ),
             Divider(),
             Text(
-              "Sending Data",
+              "Permissions",
             ),
-            ElevatedButton(
-              child: Text("Send Namecard"),
-              onPressed: () async {
-                endpointMap.forEach((key, value) {
-                  String a = Random().nextInt(100).toString();
-
-                  showSnackbar("Sending $a to ${value.endpointName}, id: $key");
-                  Nearby()
-                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
-                });
-              },
+            Wrap(
+              children: <Widget>[
+                ElevatedButton(
+                  child: Text("askLocationPermission"),
+                  onPressed: () async {
+                    if (await Nearby().askLocationPermission()) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Location Permission granted :)")));
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content:
+                              Text("Location permissions not granted :(")));
+                    }
+                  },
+                ),
+                ElevatedButton(
+                  child: Text("askExternalStoragePermission"),
+                  onPressed: () {
+                    Nearby().askExternalStoragePermission();
+                  },
+                ),
+                ElevatedButton(
+                  child: Text("askBluetoothPermission (Android 12+)"),
+                  onPressed: () {
+                    Nearby().askBluetoothPermission();
+                  },
+                ),
+              ],
             ),
+            // Divider(),
+            // Text("Location Enabled"),
+            // Wrap(
+            //   children: <Widget>[
+            //     ElevatedButton(
+            //       child: Text("enableLocationServices"),
+            //       onPressed: () async {
+            //         if (await Nearby().enableLocationServices()) {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content: Text("Location Service Enabled :)")));
+            //         } else {
+            //           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            //               content:
+            //                   Text("Enabling Location Service Failed :(")));
+            //         }
+            //       },
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),
