@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
-import '../../models/contacts/user.dart';
 import '../../tests/contacts/preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -35,6 +33,7 @@ class _ContactsPageState extends State<ContactsPage> {
     }
   }
 
+  @override
   void initState() {
     super.initState();
 
@@ -237,7 +236,7 @@ class DialogUI extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text("정말 삭제하시겠습니까?"),
+                Text('정말 삭제하시겠습니까?'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
