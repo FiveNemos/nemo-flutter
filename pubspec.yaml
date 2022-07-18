@@ -47,6 +47,7 @@ dependencies:
       ref: chan # branch name
   permission_handler: ^8.3.0
   swipe: ^0.0.1
+  flutter_nfc_reader: ^0.1.0
 #  image_picker_form_field: ^0.0.1
 
 dev_dependencies:

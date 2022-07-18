@@ -8,6 +8,7 @@ import 'package:nearby_connections/nearby_connections.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:swipe/swipe.dart';
+import 'package:flutter_nfc_reader/flutter_nfc_reader.dart';
 
 class NearbyConnection extends StatefulWidget {
   @override
@@ -33,6 +34,16 @@ class _MyBodyState extends State<NearbyConnection> {
   @override
   Widget build(BuildContext context) {
     checkPermissions();
+    FlutterNfcReader.read().then((response) {
+      showDialog(
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text(
+                  '${response.id}\n${response.content}\n${response.error}'),
+            );
+          });
+    });
 
     return Center(
       child: Padding(
