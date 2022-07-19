@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,7 +15,7 @@ class NearbyConnection extends StatefulWidget {
 
 class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
-  final Strategy strategy = Strategy.P2P_STAR;
+  final Strategy strategy = Strategy.P2P_POINT_TO_POINT;
   Map<String, ConnectionInfo> endpointMap = Map();
 
   String? tempFileUri; //reference to the file currently being transferred
@@ -92,41 +92,22 @@ class _MyBodyState extends State<NearbyConnection> {
                         strategy,
                         onEndpointFound: (id, name, serviceId) {
                           // show sheet automatically to request connection
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (builder) {
-                              return Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text("id: " + id),
-                                    Text("Name: " + name),
-                                    Text("ServiceId: " + serviceId),
-                                    ElevatedButton(
-                                      child: Text("Request Connection"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        Nearby().requestConnection(
-                                          userName,
-                                          id,
-                                          onConnectionInitiated: (id, info) {
-                                            onConnectionInit(id, info);
-                                          },
-                                          onConnectionResult: (id, status) {
-                                            showSnackbar(status);
-                                          },
-                                          onDisconnected: (id) {
-                                            setState(() {
-                                              endpointMap.remove(id);
-                                            });
-                                            showSnackbar(
-                                                "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
+                          // Navigator.pop(context);
+                          Nearby().requestConnection(
+                            userName,
+                            id,
+                            onConnectionInitiated: (id, info) {
+                              onConnectionInit(id, info);
+                            },
+                            onConnectionResult: (id, status) {
+                              showSnackbar(status);
+                            },
+                            onDisconnected: (id) {
+                              setState(() {
+                                endpointMap.remove(id);
+                              });
+                              showSnackbar(
+                                  "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
                             },
                           );
                         },
@@ -241,10 +222,6 @@ class _MyBodyState extends State<NearbyConnection> {
         return Center(
           child: Column(
             children: <Widget>[
-              Text("id: " + id),
-              Text("Token: " + info.authenticationToken),
-              Text("Name" + info.endpointName),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
               ElevatedButton(
                 child: Text("Accept Connection"),
                 onPressed: () {
@@ -268,7 +245,7 @@ class _MyBodyState extends State<NearbyConnection> {
 
                         String str = String.fromCharCodes(payload.bytes!);
                         // showSnackbar(endid + ": " + str);
-                        showSnackbar("명함 수신 완료");
+                        // showSnackbar("명함 수신 완료");
 
                         if (str.contains(':')) {
                           // used for file payload as file payload is mapped as
@@ -280,7 +257,7 @@ class _MyBodyState extends State<NearbyConnection> {
                             if (tempFileUri != null) {
                               moveFile(tempFileUri!, fileName);
                             } else {
-                              showSnackbar("File doesn't exist");
+                              // showSnackbar("File doesn't exist");
                             }
                           } else {
                             //add to map if not already
@@ -288,7 +265,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           }
                         }
                       } else if (payload.type == PayloadType.FILE) {
-                        showSnackbar(endid + ": File transfer started");
+                        // showSnackbar(endid + ": File transfer started");
                         tempFileUri = payload.uri;
                       }
                     },
