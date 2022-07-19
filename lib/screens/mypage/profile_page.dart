@@ -4,6 +4,10 @@ import '../../models/mypage/user.dart';
 import '../../tests/mypage/preferences.dart';
 import '../../widgets/mypage/profile_widget.dart';
 import '../message/chat_detail_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
+import 'package:dio/dio.dart';
+import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.nickname}) : super(key: key);
@@ -14,50 +18,106 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+  var id;
+  var user2;
+  saveData() async {
+    var storage = await SharedPreferences.getInstance();
+    setState(() {
+      id = storage.getInt('id');
+    });
+    getMyCard(id);
+  }
+
+  getMyCard(id) async {
+    print('http://34.64.217.3:3000/api/card/$id');
+    try {
+      var dio = Dio();
+      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+
+      if (response.statusCode == 200) {
+        final json = response.data;
+        setState(() {
+          user2 = UserProfile(
+            imagePath: json['img_url'],
+            nickname: json['nickname'],
+            introduction: json['intro'],
+            title: json['intro'], // title로 변경 필요
+            about: json['intro'], // about로 변경 필요
+            image1:
+                'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1780&q=80',
+            image2:
+                'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80',
+            image3: 'https://wallpaperaccess.com/full/1935243.jpg',
+            tag1: json['tag_1'],
+            tag2: json['tag_2'],
+            tag3: json['tag_3'],
+            image: [
+              'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1780&q=80',
+              'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80',
+              'https://wallpaperaccess.com/full/1935243.jpg',
+            ], // tag_image로 변경이 필요
+            tag: [
+              json['tag_1'],
+              json['tag_2'],
+              json['tag_3'],
+            ],
+          );
+        });
+        print('접속 성공!');
+        print('json : $json');
+        print(json['img_url']);
+        print(json['img_url'].runtimeType);
+        // print('jsonBody : $jsonBody');
+        return true;
+      } else {
+        print('error');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    saveData();
+  }
+
   @override
   Widget build(BuildContext context) {
     // final user = UserPreferences.myUser;
-    var user = UserProfiles[widget.nickname];
+    // var user = UserProfiles[widget.nickname];
+    var user = user2;
     List buildList = [
       buildAvatar,
       buildName,
       buildImageTag,
       buildAbout,
     ];
-    List tagList = [
-      buildAvatar,
-      buildName,
-      buildImageTag,
-      buildAbout,
-    ];
+    String path = user2.imagePath;
+    print("path: $path");
     return Scaffold(
-        appBar: AppBar(),
-        body: ListView.separated(
-          // shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
-          itemCount: buildList.length,
-          itemBuilder: (context, i) {
-            return buildList[i](user);
-          },
-          separatorBuilder: (context, i) => SizedBox(height: 15),
-        ));
-
-    // return Scaffold(
-    //     appBar: AppBar(),
-    //     body: ListView.separated(
-    //       // shrinkWrap: true,
-    //       physics: BouncingScrollPhysics(),
-    //       scrollDirection: Axis.vertical,
-    //       padding: EdgeInsets.fromLTRB(10, 30, 10, 10),
-    //       itemCount: buildList.length,
-    //       itemBuilder: (context, i) {
-    //         return buildList[i](user);
-    //       },
-    //       separatorBuilder: (context, i) => SizedBox(height: 15),
-    //     ));
+      appBar: AppBar(),
+      body: ListView.separated(
+        // shrinkWrap: true,
+        physics: BouncingScrollPhysics(),
+        scrollDirection: Axis.vertical,
+        padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
+        itemCount: buildList.length,
+        itemBuilder: (context, i) {
+          return buildList[i](user);
+        },
+        separatorBuilder: (context, i) => SizedBox(height: 15),
+      ),
+    );
   }
+
+  Widget buildAvatar2(UserProfile user) => ProfileWidget(
+        imagePath: user.imagePath,
+        onClicked: () async {},
+      );
 
   Widget buildAvatar(UserProfile user) => ProfileWidget(
         imagePath: user.imagePath,

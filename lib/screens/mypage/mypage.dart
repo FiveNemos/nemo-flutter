@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 
 class MypagePage extends StatefulWidget {
   const MypagePage({Key? key}) : super(key: key);
@@ -9,8 +11,6 @@ class MypagePage extends StatefulWidget {
 }
 
 class _MypagePageState extends State<MypagePage> {
-  getData() async {}
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -38,11 +38,31 @@ class _MypagePageState extends State<MypagePage> {
   }
 }
 
-class MyProfile extends StatelessWidget {
+class MyProfile extends StatefulWidget {
   const MyProfile({Key? key}) : super(key: key);
 
   @override
+  State<MyProfile> createState() => _MyProfileState();
+}
+
+class _MyProfileState extends State<MyProfile> {
+  var id;
+  saveData() async {
+    var storage = await SharedPreferences.getInstance();
+    setState(() {
+      id = storage.getInt('id');
+    });
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    saveData();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return ProfilePage(nickname: '고니고니');
+    return ProfilePage(nickname: '고니고니'); // 여기에 id 넘겨주기
   }
 }
