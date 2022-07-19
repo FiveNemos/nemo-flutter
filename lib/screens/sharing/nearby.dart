@@ -4,7 +4,7 @@ import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-// import 'package:permission_handler/permission_handler.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -23,6 +23,7 @@ class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
   final Strategy strategy = Strategy.P2P_POINT_TO_POINT;
   Map<String, ConnectionInfo> endpointMap = Map();
+  static final storage = FlutterSecureStorage();
 
   String? tempFileUri; //reference to the file currently being transferred
   Map<int, String> map = {}; //store filename mapped to corresponding payloadId
@@ -38,16 +39,6 @@ class _MyBodyState extends State<NearbyConnection> {
   @override
   Widget build(BuildContext context) {
     checkPermissions();
-    FlutterNfcReader.read().then((response) {
-      showDialog(
-          context: context,
-          builder: (context) {
-            return AlertDialog(
-              title: Text(
-                  '${response.id}\n${response.content}\n${response.error}'),
-            );
-          });
-    });
 
     return Center(
       child: Padding(
@@ -60,11 +51,16 @@ class _MyBodyState extends State<NearbyConnection> {
                 ElevatedButton(
                   child: Text("Send Namecard"),
                   onPressed: () async {
-                    endpointMap.forEach((key, value) {
-                      String a = Random().nextInt(100).toString();
+                    endpointMap.forEach((key, value) async {
+                      dynamic userInfo = await storage.read(key: 'login');
+                      Map userMap = jsonDecode(userInfo);
+                      String a = userMap['user_id'];
 
-                      // showSnackbar(
-                      //     "Sending $a to ${value.endpointName}, id: $key");
+
+                      // String a = Random().nextInt(100).toString();
+
+                      showSnackbar(
+                          "Sending $a to ${value.endpointName}, id: $key");
                       Nearby().sendBytesPayload(
                           key, Uint8List.fromList(a.codeUnits));
                     });
