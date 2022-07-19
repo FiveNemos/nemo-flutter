@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 import 'dart:io';
-import 'dart:convert';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
-import '../../tests/mypage/preferences.dart';
 
 import '../sharing/sharing.dart';
 
@@ -32,11 +29,11 @@ Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
     var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
-        {"Content-Type": "multipart/form-data; boundary=----myboundary"});
+        {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
-        .add(await http.MultipartFile.fromPath("image", userImage.path));
-    request.fields['user_id'] = "9999";
-    request.fields['nickname'] = "Hyunjoo";
+        .add(await http.MultipartFile.fromPath('image', userImage.path));
+    request.fields['user_id'] = '9999';
+    request.fields['nickname'] = 'Hyunjoo';
     request.fields['tag_1'] = tags['1'];
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
@@ -120,7 +117,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
 
   saveTags(int num, String value) {
     setState(() {
-      tags['${num}'] = value;
+      tags['$num'] = value;
     });
   }
 
@@ -264,13 +261,7 @@ class _NameSpaceState extends State<NameSpace> {
       ),
       // controller: controller,
       onChanged: (text) {
-        if (text != null) {
-          // setState(() {
-          //   widget.nickname = text;
-          // });
-          // print(widget.nickname);
-          widget.saveName(text);
-        }
+        widget.saveName(text);
       },
     );
   }
@@ -292,9 +283,7 @@ class _TagSpaceState extends State<TagSpace> {
     return TextFormField(
       controller: controller,
       onChanged: (text) {
-        if (text != null) {
-          widget.saveTags(widget.num, text);
-        }
+        widget.saveTags(widget.num, text);
       },
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
@@ -351,12 +340,7 @@ class _IntroSpaceState extends State<IntroSpace> {
           ),
         ),
         onChanged: (text) {
-          if (text != null) {
-            // setState(() {
-            //   widget.introduction = controller.text;
-            // });
-            widget.saveIntro(text);
-          }
+          widget.saveIntro(text);
         });
   }
 }
@@ -432,17 +416,17 @@ class _NameState extends State<NameCard> {
                 runSpacing: 20, // cross axis of the wrap
                 children: <Widget>[
                   ElevatedButton(
-                      child: Text(widget.tags['1']),
                       onPressed: () {},
-                      style: ButtonStyle()),
+                      style: ButtonStyle(),
+                      child: Text(widget.tags['1'])),
                   OutlinedButton(
                     child: Text(widget.tags['2']),
                     onPressed: () {},
                   ),
                   ElevatedButton(
-                    child: Text(widget.tags['3']),
                     onPressed: () {},
                     style: ButtonStyle(),
+                    child: Text(widget.tags['3']),
                   ),
                 ],
               ),

@@ -259,7 +259,7 @@ class DialogUI extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text("정말 삭제하시겠습니까?"),
+                Text('정말 삭제하시겠습니까?'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
