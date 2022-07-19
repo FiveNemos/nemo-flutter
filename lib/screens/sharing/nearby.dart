@@ -3,8 +3,8 @@ import 'dart:typed_data';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+// import 'package:permission_handler/permission_handler.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
@@ -15,7 +15,7 @@ class NearbyConnection extends StatefulWidget {
 
 class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
-  final Strategy strategy = Strategy.P2P_STAR;
+  final Strategy strategy = Strategy.P2P_POINT_TO_POINT;
   Map<String, ConnectionInfo> endpointMap = Map();
 
   String? tempFileUri; //reference to the file currently being transferred
@@ -29,25 +29,22 @@ class _MyBodyState extends State<NearbyConnection> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            Text(
-              "Sending Data",
-            ),
-            ElevatedButton(
-              child: Text("Send Namecard"),
-              onPressed: () async {
-                endpointMap.forEach((key, value) {
-                  String a = Random().nextInt(100).toString();
-
-                  showSnackbar("Sending $a to ${value.endpointName}, id: $key");
-                  Nearby()
-                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
-                });
-              },
-            ),
-            Divider(),
             Text("User Name: " + userName),
             Wrap(
               children: <Widget>[
+                ElevatedButton(
+                  child: Text("Send Namecard"),
+                  onPressed: () async {
+                    endpointMap.forEach((key, value) {
+                      String a = Random().nextInt(100).toString();
+
+                      // showSnackbar(
+                      //     "Sending $a to ${value.endpointName}, id: $key");
+                      Nearby().sendBytesPayload(
+                          key, Uint8List.fromList(a.codeUnits));
+                    });
+                  },
+                ),
                 ElevatedButton(
                   child: Text("Start Advertising"),
                   onPressed: () async {
@@ -57,7 +54,18 @@ class _MyBodyState extends State<NearbyConnection> {
                         strategy,
                         onConnectionInitiated: onConnectionInit,
                         onConnectionResult: (id, status) {
-                          showSnackbar(status);
+                          if (status == Status.CONNECTED) {
+                            endpointMap.forEach((key, value) {
+                              String a = Random().nextInt(100).toString();
+
+                              showSnackbar(
+                                  "Sending $a to ${value.endpointName}, id: $key");
+                              Nearby().sendBytesPayload(
+                                  key, Uint8List.fromList(a.codeUnits));
+                            });
+                          } else {
+                            showSnackbar("Connection to $id failed");
+                          }
                         },
                         onDisconnected: (id) {
                           showSnackbar(
@@ -67,7 +75,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           });
                         },
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
+                      // showSnackbar("ADVERTISING: " + a.toString());
                     } catch (exception) {
                       showSnackbar(exception);
                     }
@@ -92,41 +100,22 @@ class _MyBodyState extends State<NearbyConnection> {
                         strategy,
                         onEndpointFound: (id, name, serviceId) {
                           // show sheet automatically to request connection
-                          showModalBottomSheet(
-                            context: context,
-                            builder: (builder) {
-                              return Center(
-                                child: Column(
-                                  children: <Widget>[
-                                    Text("id: " + id),
-                                    Text("Name: " + name),
-                                    Text("ServiceId: " + serviceId),
-                                    ElevatedButton(
-                                      child: Text("Request Connection"),
-                                      onPressed: () {
-                                        Navigator.pop(context);
-                                        Nearby().requestConnection(
-                                          userName,
-                                          id,
-                                          onConnectionInitiated: (id, info) {
-                                            onConnectionInit(id, info);
-                                          },
-                                          onConnectionResult: (id, status) {
-                                            showSnackbar(status);
-                                          },
-                                          onDisconnected: (id) {
-                                            setState(() {
-                                              endpointMap.remove(id);
-                                            });
-                                            showSnackbar(
-                                                "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
-                                          },
-                                        );
-                                      },
-                                    ),
-                                  ],
-                                ),
-                              );
+                          // Navigator.pop(context);
+                          Nearby().requestConnection(
+                            userName,
+                            id,
+                            onConnectionInitiated: (id, info) {
+                              onConnectionInit(id, info);
+                            },
+                            onConnectionResult: (id, status) {
+                              showSnackbar(status);
+                            },
+                            onDisconnected: (id) {
+                              setState(() {
+                                endpointMap.remove(id);
+                              });
+                              showSnackbar(
+                                  "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
                             },
                           );
                         },
@@ -223,115 +212,33 @@ class _MyBodyState extends State<NearbyConnection> {
     ));
   }
 
-  Future<bool> moveFile(String uri, String fileName) async {
-    String parentDir = (await getExternalStorageDirectory())!.absolute.path;
-    final b =
-        await Nearby().copyFileAndDeleteOriginal(uri, '$parentDir/$fileName');
-
-    showSnackbar("Moved file:" + b.toString());
-    return b;
-  }
-
   /// Called upon Connection request (on both devices)
   /// Both need to accept connection to start sending/receiving
   void onConnectionInit(String id, ConnectionInfo info) {
-    showModalBottomSheet(
-      context: context,
-      builder: (builder) {
-        return Center(
-          child: Column(
-            children: <Widget>[
-              Text("id: " + id),
-              Text("Token: " + info.authenticationToken),
-              Text("Name" + info.endpointName),
-              Text("Incoming: " + info.isIncomingConnection.toString()),
-              ElevatedButton(
-                child: Text("Accept Connection"),
-                onPressed: () {
-                  Navigator.pop(context);
-                  setState(() {
-                    endpointMap[id] = info;
-                  });
-                  Nearby().acceptConnection(
-                    id,
-                    onPayLoadRecieved: (endid, payload) async {
-                      if (payload.type == PayloadType.BYTES) {
-                        String b = "https://swjungle.net";
+    setState(() {
+      endpointMap[id] = info;
+    });
+    Nearby().acceptConnection(
+      id,
+      onPayLoadRecieved: (endid, payload) async {
+        if (payload.type == PayloadType.BYTES) {
+          String b = "https://swjungle.net";
 
-                        final url = Uri.parse(b);
+          final url = Uri.parse(b);
 
-                        if (await canLaunchUrl(url)) {
-                          launchUrl(url);
-                        } else {
-                          print('Could not launch $url');
-                        }
+          if (await canLaunchUrl(url)) {
+            launchUrl(url);
+          } else {
+            print('Could not launch $url');
+          }
 
-                        String str = String.fromCharCodes(payload.bytes!);
-                        // showSnackbar(endid + ": " + str);
-                        showSnackbar("명함 수신 완료");
+          String str = String.fromCharCodes(payload.bytes!);
 
-                        if (str.contains(':')) {
-                          // used for file payload as file payload is mapped as
-                          // payloadId:filename
-                          int payloadId = int.parse(str.split(':')[0]);
-                          String fileName = (str.split(':')[1]);
-
-                          if (map.containsKey(payloadId)) {
-                            if (tempFileUri != null) {
-                              moveFile(tempFileUri!, fileName);
-                            } else {
-                              showSnackbar("File doesn't exist");
-                            }
-                          } else {
-                            //add to map if not already
-                            map[payloadId] = fileName;
-                          }
-                        }
-                      } else if (payload.type == PayloadType.FILE) {
-                        showSnackbar(endid + ": File transfer started");
-                        tempFileUri = payload.uri;
-                      }
-                    },
-                    onPayloadTransferUpdate: (endid, payloadTransferUpdate) {
-                      if (payloadTransferUpdate.status ==
-                          PayloadStatus.IN_PROGRESS) {
-                        print(payloadTransferUpdate.bytesTransferred);
-                      } else if (payloadTransferUpdate.status ==
-                          PayloadStatus.FAILURE) {
-                        print("failed");
-                        showSnackbar(endid + ": FAILED to transfer file");
-                      } else if (payloadTransferUpdate.status ==
-                          PayloadStatus.SUCCESS) {
-                        // showSnackbar(
-                        //     "$endid success, total bytes = ${payloadTransferUpdate.totalBytes}");
-
-                        // if (map.containsKey(payloadTransferUpdate.id)) {
-                        //   //rename the file now
-                        //   String name = map[payloadTransferUpdate.id]!;
-                        //   moveFile(tempFileUri!, name);
-                        // } else {
-                        //   //bytes not received till yet
-                        //   map[payloadTransferUpdate.id] = "";
-                        // }
-                      }
-                    },
-                  );
-                },
-              ),
-              ElevatedButton(
-                child: Text("Reject Connection"),
-                onPressed: () async {
-                  Navigator.pop(context);
-                  try {
-                    await Nearby().rejectConnection(id);
-                  } catch (e) {
-                    showSnackbar(e);
-                  }
-                },
-              ),
-            ],
-          ),
-        );
+          if (str.contains(':')) {
+            int payloadId = int.parse(str.split(':')[0]);
+            String fileName = (str.split(':')[1]);
+          }
+        }
       },
     );
   }
