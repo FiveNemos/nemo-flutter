@@ -1,14 +1,11 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:url_launcher/url_launcher.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:swipe/swipe.dart';
 // import 'package:flutter_nfc_reader/flutter_nfc_reader.dart';
 // import 'package:geolocator/geolocator.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -22,7 +19,7 @@ class NearbyConnection extends StatefulWidget {
 class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
   final Strategy strategy = Strategy.P2P_POINT_TO_POINT;
-  Map<String, ConnectionInfo> endpointMap = Map();
+  Map<String, ConnectionInfo> endpointMap = {};
   static final storage = FlutterSecureStorage();
 
   String? tempFileUri; //reference to the file currently being transferred
@@ -45,29 +42,28 @@ class _MyBodyState extends State<NearbyConnection> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            Text("User Name: " + userName),
+            Text('User Name: $userName'),
             Wrap(
               children: <Widget>[
                 ElevatedButton(
-                  child: Text("Send Namecard"),
+                  child: Text('Send Namecard'),
                   onPressed: () async {
                     endpointMap.forEach((key, value) async {
                       dynamic userInfo = await storage.read(key: 'login');
                       Map userMap = jsonDecode(userInfo);
                       String a = userMap['user_id'];
 
-
                       // String a = Random().nextInt(100).toString();
 
                       showSnackbar(
-                          "Sending $a to ${value.endpointName}, id: $key");
+                          'Sending $a to ${value.endpointName}, id: $key');
                       Nearby().sendBytesPayload(
                           key, Uint8List.fromList(a.codeUnits));
                     });
                   },
                 ),
                 ElevatedButton(
-                  child: Text("Start Advertising"),
+                  child: Text('Start Advertising'),
                   onPressed: () async {
                     try {
                       bool a = await Nearby().startAdvertising(
@@ -80,17 +76,17 @@ class _MyBodyState extends State<NearbyConnection> {
                               String a = Random().nextInt(100).toString();
 
                               showSnackbar(
-                                  "Sending $a to ${value.endpointName}, id: $key");
+                                  'Sending $a to ${value.endpointName}, id: $key');
                               Nearby().sendBytesPayload(
                                   key, Uint8List.fromList(a.codeUnits));
                             });
                           } else {
-                            showSnackbar("Connection to $id failed");
+                            showSnackbar('Connection to $id failed');
                           }
                         },
                         onDisconnected: (id) {
                           showSnackbar(
-                              "Disconnected: ${endpointMap[id]!.endpointName}, id $id");
+                              'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
                           setState(() {
                             endpointMap.remove(id);
                           });
@@ -103,7 +99,7 @@ class _MyBodyState extends State<NearbyConnection> {
                   },
                 ),
                 ElevatedButton(
-                  child: Text("Stop Advertising"),
+                  child: Text('Stop Advertising'),
                   onPressed: () async {
                     await Nearby().stopAdvertising();
                   },
@@ -113,7 +109,7 @@ class _MyBodyState extends State<NearbyConnection> {
             Wrap(
               children: <Widget>[
                 ElevatedButton(
-                  child: Text("Start Discovery"),
+                  child: Text('Start Discovery'),
                   onPressed: () async {
                     try {
                       bool a = await Nearby().startDiscovery(
@@ -136,74 +132,28 @@ class _MyBodyState extends State<NearbyConnection> {
                                 endpointMap.remove(id);
                               });
                               showSnackbar(
-                                  "Disconnected from: ${endpointMap[id]!.endpointName}, id $id");
+                                  'Disconnected from: ${endpointMap[id]!.endpointName}, id $id');
                             },
                           );
                         },
                         onEndpointLost: (id) {
                           showSnackbar(
-                              "Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id");
+                              'Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id');
                         },
                       );
-                      showSnackbar("DISCOVERING: " + a.toString());
+                      showSnackbar('DISCOVERING: $a');
                     } catch (e) {
                       showSnackbar(e);
                     }
                   },
                 ),
                 ElevatedButton(
-                  child: Text("Stop Discovery"),
+                  child: Text('Stop Discovery'),
                   onPressed: () async {
                     await Nearby().stopDiscovery();
                   },
                 ),
-              ),
-              onSwipeUp: () async {
-                try {
-                  bool a = await Nearby().startAdvertising(
-                    userName,
-                    strategy,
-                    onConnectionInitiated: onConnectionInit,
-                    onConnectionResult: (id, status) {
-                      showSnackbar(status);
-                    },
-                    onDisconnected: (id) {
-                      showSnackbar(
-                          'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
-                      setState(() {
-                        endpointMap.remove(id);
-                      });
-                    },
-                  );
-                  showSnackbar('ADVERTISING: $a');
-                  showDialog(
-                      context: context,
-                      builder: (context) {
-                        return AlertDialog(
-                          title: Text('Let\'s send!'),
-                          content: Text('명함을 보내시겠습니까?'),
-                          actions: [
-                            TextButton(
-                              // textColor: Colors.black,
-                              onPressed: () async {
-                                endpointMap.forEach((key, value) {
-                                  String a = Random().nextInt(100).toString();
-                                  showSnackbar(
-                                      'Sending $a to ${value.endpointName}, id: $key');
-                                  Nearby().sendBytesPayload(
-                                      key, Uint8List.fromList(a.codeUnits));
-                                });
-                                Navigator.pop(context);
-                              },
-                              child: Text('확인'),
-                            ),
-                          ],
-                        );
-                      });
-                } catch (exception) {
-                  showSnackbar(exception);
-                }
-              },
+              ],
             ),
           ],
         ),
@@ -283,7 +233,7 @@ class _MyBodyState extends State<NearbyConnection> {
       id,
       onPayLoadRecieved: (endid, payload) async {
         if (payload.type == PayloadType.BYTES) {
-          String b = "https://swjungle.net";
+          String b = 'https://swjungle.net';
 
           final url = Uri.parse(b);
 
