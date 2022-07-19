@@ -105,42 +105,45 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
             ),
           ),
         ),
-        body: Stack(
-          children: <Widget>[
-            ListView.builder(
-              controller: _controller,
-              itemCount: messages_db[widget.name].length,
-              shrinkWrap: true,
-              padding: EdgeInsets.only(top: 10, bottom: 10),
-              // physics: NeverScrollableScrollPhysics(), // 이거 있으면 대화창 스크롤이 안됨
-              itemBuilder: (context, index) {
-                return Container(
-                  padding:
-                      EdgeInsets.only(left: 14, right: 14, top: 10, bottom: 10),
-                  child: Align(
-                    alignment: (messages_db[widget.name][index].messageType ==
-                            'receiver'
-                        ? Alignment.topLeft
-                        : Alignment.topRight),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        color: (messages_db[widget.name][index].messageType ==
-                                'receiver'
-                            ? Colors.grey.shade200
-                            : Colors.blue[200]),
-                      ),
-                      padding: EdgeInsets.all(16),
-                      child: Text(
-                        messages_db[widget.name][index].messageContent,
-                        style: TextStyle(fontSize: 15),
+        body: SingleChildScrollView(
+          reverse: true,
+          child: Column(
+            children: <Widget>[
+              ListView.builder(
+                controller: _controller,
+                itemCount: messages_db[widget.name].length,
+                shrinkWrap: true,
+                padding: EdgeInsets.only(top: 10, bottom: 10),
+                // physics: NeverScrollableScrollPhysics(), // 이거 있으면 대화창 스크롤이 안됨
+                itemBuilder: (context, index) {
+                  return Container(
+                    padding: EdgeInsets.only(
+                        left: 14, right: 14, top: 10, bottom: 10),
+                    child: Align(
+                      alignment: (messages_db[widget.name][index].messageType ==
+                              'receiver'
+                          ? Alignment.topLeft
+                          : Alignment.topRight),
+                      child: Container(
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(20),
+                          color: (messages_db[widget.name][index].messageType ==
+                                  'receiver'
+                              ? Colors.grey.shade200
+                              : Colors.blue[200]),
+                        ),
+                        padding: EdgeInsets.all(16),
+                        child: Text(
+                          messages_db[widget.name][index].messageContent,
+                          style: TextStyle(fontSize: 15),
+                        ),
                       ),
                     ),
-                  ),
-                );
-              },
-            ),
-          ],
+                  );
+                },
+              ),
+            ],
+          ),
         ),
         bottomNavigationBar: Padding(
           padding:
@@ -175,14 +178,13 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 ),
                 Expanded(
                   child: TextField(
-                    onTap: () {
-                      _scrollDown();
-                    },
+                    onTap: () {},
                     decoration: InputDecoration(
                         hintText: 'Write message...',
                         hintStyle: TextStyle(color: Colors.black54),
                         border: InputBorder.none),
                     controller: inputData,
+                    scrollPadding: EdgeInsets.only(bottom: 40),
                   ),
                 ),
                 SizedBox(
@@ -191,10 +193,10 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                 // Send Button
                 FloatingActionButton(
                   onPressed: () {
-                    _scrollDown();
                     if (inputData.text.isNotEmpty) {
                       addMessage(widget.name, inputData.text);
                       inputData.clear();
+                      _scrollDown();
                     }
                     // messages_db[widget.name].add(ChatMessage(messageContent: inputData.text, messageType: "sender"));
                   },
