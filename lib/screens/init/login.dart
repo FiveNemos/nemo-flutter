@@ -3,6 +3,8 @@ import 'package:dio/dio.dart';
 import 'dart:convert'; // json decode 등등 관련 패키지
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../models/init/login.dart';
+// shared preference
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -42,6 +44,13 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
+  saveData(id) async {
+    var storage = await SharedPreferences.getInstance();
+    storage.setInt('id', id);
+    var result = storage.getInt('id');
+    print("saveData result: $result");
+  }
+
   getHttp(accountName, password) async {
     try {
       var dio = Dio();
@@ -52,6 +61,7 @@ class _LoginPageState extends State<LoginPage> {
           await dio.post('http://34.64.217.3:3000/api/user/login', data: param);
 
       if (response.statusCode == 200) {
+        saveData(response.data['user_id']);
         final jsonBody = json.decode(response.data['user_id'].toString());
         var val = jsonEncode(Login('$accountName', '$password', '$jsonBody'));
         await storage.write(
