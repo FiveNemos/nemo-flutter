@@ -29,25 +29,22 @@ class _MyBodyState extends State<NearbyConnection> {
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           children: <Widget>[
-            Text(
-              "Sending Data",
-            ),
-            ElevatedButton(
-              child: Text("Send Namecard"),
-              onPressed: () async {
-                endpointMap.forEach((key, value) {
-                  String a = Random().nextInt(100).toString();
-
-                  showSnackbar("Sending $a to ${value.endpointName}, id: $key");
-                  Nearby()
-                      .sendBytesPayload(key, Uint8List.fromList(a.codeUnits));
-                });
-              },
-            ),
-            Divider(),
             Text("User Name: " + userName),
             Wrap(
               children: <Widget>[
+                ElevatedButton(
+                  child: Text("Send Namecard"),
+                  onPressed: () async {
+                    endpointMap.forEach((key, value) {
+                      String a = Random().nextInt(100).toString();
+
+                      // showSnackbar(
+                      //     "Sending $a to ${value.endpointName}, id: $key");
+                      Nearby().sendBytesPayload(
+                          key, Uint8List.fromList(a.codeUnits));
+                    });
+                  },
+                ),
                 ElevatedButton(
                   child: Text("Start Advertising"),
                   onPressed: () async {
@@ -57,7 +54,18 @@ class _MyBodyState extends State<NearbyConnection> {
                         strategy,
                         onConnectionInitiated: onConnectionInit,
                         onConnectionResult: (id, status) {
-                          showSnackbar(status);
+                          if (status == Status.CONNECTED) {
+                            endpointMap.forEach((key, value) {
+                              String a = Random().nextInt(100).toString();
+
+                              showSnackbar(
+                                  "Sending $a to ${value.endpointName}, id: $key");
+                              Nearby().sendBytesPayload(
+                                  key, Uint8List.fromList(a.codeUnits));
+                            });
+                          } else {
+                            showSnackbar("Connection to $id failed");
+                          }
                         },
                         onDisconnected: (id) {
                           showSnackbar(
@@ -67,7 +75,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           });
                         },
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
+                      // showSnackbar("ADVERTISING: " + a.toString());
                     } catch (exception) {
                       showSnackbar(exception);
                     }
@@ -204,15 +212,6 @@ class _MyBodyState extends State<NearbyConnection> {
     ));
   }
 
-  Future<bool> moveFile(String uri, String fileName) async {
-    String parentDir = (await getExternalStorageDirectory())!.absolute.path;
-    final b =
-        await Nearby().copyFileAndDeleteOriginal(uri, '$parentDir/$fileName');
-
-    showSnackbar("Moved file:" + b.toString());
-    return b;
-  }
-
   /// Called upon Connection request (on both devices)
   /// Both need to accept connection to start sending/receiving
   void onConnectionInit(String id, ConnectionInfo info) {
@@ -234,25 +233,10 @@ class _MyBodyState extends State<NearbyConnection> {
           }
 
           String str = String.fromCharCodes(payload.bytes!);
-          // showSnackbar(endid + ": " + str);
-          // showSnackbar("명함 수신 완료");
 
           if (str.contains(':')) {
-            // used for file payload as file payload is mapped as
-            // payloadId:filename
             int payloadId = int.parse(str.split(':')[0]);
             String fileName = (str.split(':')[1]);
-
-            if (map.containsKey(payloadId)) {
-              if (tempFileUri != null) {
-                moveFile(tempFileUri!, fileName);
-              } else {
-                // showSnackbar("File doesn't exist");
-              }
-            } else {
-              //add to map if not already
-              map[payloadId] = fileName;
-            }
           }
         }
       },
