@@ -8,8 +8,10 @@ import 'package:nearby_connections/nearby_connections.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:swipe/swipe.dart';
-import 'package:flutter_nfc_reader/flutter_nfc_reader.dart';
-import 'package:geolocator/geolocator.dart';
+// import 'package:flutter_nfc_reader/flutter_nfc_reader.dart';
+// import 'package:geolocator/geolocator.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 
 class NearbyConnection extends StatefulWidget {
   @override
@@ -20,6 +22,7 @@ class _MyBodyState extends State<NearbyConnection> {
   final String userName = Random().nextInt(10000).toString();
   final Strategy strategy = Strategy.P2P_STAR;
   Map<String, ConnectionInfo> endpointMap = {};
+  static final storage = FlutterSecureStorage();
 
   String? tempFileUri; //reference to the file currently being transferred
   Map<int, String> map = {}; //store filename mapped to corresponding payloadId
@@ -58,15 +61,16 @@ class _MyBodyState extends State<NearbyConnection> {
                 child: Column(
                   children: [
                     ElevatedButton(
-                      child: Text('Get Position'),
-                      onPressed: () {
-                        _determinePosition().then((val) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(child: Text(val.toString()));
-                              });
-                        });
+                      child: Text('Get my id'),
+                      onPressed: () async {
+                        dynamic userInfo = await storage.read(key: 'login');
+                        // Map userMap = jsonDecode(userInfo);
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                  child: Text(userInfo.split(' ')[1]));
+                            });
                       },
                     ),
                     Text('Swipe Up to Send!!'),
@@ -151,43 +155,6 @@ class _MyBodyState extends State<NearbyConnection> {
         ),
       ),
     );
-  }
-
-  Future<Position> _determinePosition() async {
-    bool serviceEnabled;
-    LocationPermission permission;
-
-    // Test if location services are enabled.
-    serviceEnabled = await Geolocator.isLocationServiceEnabled();
-    if (!serviceEnabled) {
-      // Location services are not enabled don't continue
-      // accessing the position and request users of the
-      // App to enable the location services.
-      return Future.error('Location services are disabled.');
-    }
-
-    permission = await Geolocator.checkPermission();
-    if (permission == LocationPermission.denied) {
-      permission = await Geolocator.requestPermission();
-      if (permission == LocationPermission.denied) {
-        // Permissions are denied, next time you could try
-        // requesting permissions again (this is also where
-        // Android's shouldShowRequestPermissionRationale
-        // returned true. According to Android guidelines
-        // your App should show an explanatory UI now.
-        return Future.error('Location permissions are denied');
-      }
-    }
-
-    if (permission == LocationPermission.deniedForever) {
-      // Permissions are denied forever, handle appropriately.
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
-    }
-
-    // When we reach here, permissions are granted and we can
-    // continue accessing the position of the device.
-    return await Geolocator.getCurrentPosition();
   }
 
   startDiscovery() async {

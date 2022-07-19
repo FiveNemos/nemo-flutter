@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:io';
+import 'dart:convert'; // json decode 등등 관리
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import '../../tests/contacts/preferences.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../models/contacts/user.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({Key? key}) : super(key: key);
@@ -13,7 +16,7 @@ class ContactsPage extends StatefulWidget {
 
 class _ContactsPageState extends State<ContactsPage> {
   static final storage = FlutterSecureStorage();
-  String? userInfo = '';
+  dynamic userInfo = '';
 
   deleteFriend(target) {
     setState(() {
@@ -29,11 +32,24 @@ class _ContactsPageState extends State<ContactsPage> {
   checkUserState() async {
     userInfo = await storage.read(key: 'login');
     if (userInfo == null) {
+      print('로그아웃 합니다');
       Navigator.pushNamed(context, '/');
+    } else {
+      print('로그인 중');
     }
   }
 
-  @override
+  checkUser() async {
+    userInfo = await storage.read(key: 'login');
+    Map userMap = jsonDecode(userInfo);
+    print('userMap');
+    print(userMap.runtimeType);
+    print('accountName 값');
+    print(userMap['accountName']);
+    print('user_id 값');
+    print(userMap['user_id']);
+  }
+
   void initState() {
     super.initState();
 
@@ -55,6 +71,13 @@ class _ContactsPageState extends State<ContactsPage> {
             tooltip: 'logout',
             onPressed: () {
               logout();
+            },
+          ),
+          IconButton(
+            icon: Icon(Icons.star),
+            tooltip: 'star',
+            onPressed: () {
+              checkUser();
             },
           ),
         ],

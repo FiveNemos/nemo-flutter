@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert'; // json decode 등등 관련 패키지
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../models/init/login.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -16,7 +17,7 @@ class _LoginPageState extends State<LoginPage> {
 
   static final storage = FlutterSecureStorage();
 
-  String? userInfo = '';
+  dynamic userInfo = '';
   //flutter_secure_storage 사용을 위한 초기화 작업
   @override
   void initState() {
@@ -32,11 +33,12 @@ class _LoginPageState extends State<LoginPage> {
     //read 함수를 통하여 key값에 맞는 정보를 불러오게 됩니다. 이때 불러오는 결과의 타입은 String 타입임을 기억해야 합니다.
     //(데이터가 없을때는 null을 반환을 합니다.)
     userInfo = await storage.read(key: 'login');
-    print(userInfo);
 
-    //user의 정보가 있다면 바로 로그아웃 페이지로 넘어가게 합니다.
+    //user의 정보가 있다면 바로 contacts 페이지로 넘어가게 합니다.
     if (userInfo != null) {
       Navigator.pushNamed(context, '/contacts');
+    } else {
+      print('로그인이 필요합니다');
     }
   }
 
@@ -44,12 +46,18 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var dio = Dio();
       var param = {'account_name': '$accountName', 'password': '$password'};
+      print(param);
 
       Response response =
           await dio.post('http://34.64.217.3:3000/api/user/login', data: param);
 
       if (response.statusCode == 200) {
         final jsonBody = json.decode(response.data['user_id'].toString());
+        var val = jsonEncode(Login('$accountName', '$password', '$jsonBody'));
+        await storage.write(
+          key: 'login',
+          value: val,
+        );
         print('접속 성공!');
         return true;
       } else {
@@ -114,13 +122,6 @@ class _LoginPageState extends State<LoginPage> {
                         if (await getHttp(inputData.text, inputData2.text) ==
                             true) {
                           print('로그인 성공');
-                          print(storage.read(key: 'login'));
-                          await storage.write(
-                            key: 'login',
-                            value:
-                                'id ${inputData.text} password ${inputData2.text}',
-                          );
-                          print('SecureStorage 저장 성공');
                           Navigator.pushNamed(context, '/contacts');
                         } else {
                           print('로그인 실패');
@@ -155,13 +156,6 @@ class _LoginPageState extends State<LoginPage> {
                           if (await getHttp(inputData.text, inputData2.text) ==
                               true) {
                             print('로그인 성공');
-                            print(storage.read(key: 'login'));
-                            await storage.write(
-                              key: 'login',
-                              value:
-                                  'id ${inputData.text} password ${inputData2.text}',
-                            );
-                            print('SecureStorage 저장 성공');
                             Navigator.pushNamed(context, '/contacts');
                           } else {
                             print('로그인 실패');
