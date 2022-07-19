@@ -1,7 +1,4 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
-import '../../providers/message/store.dart';
 import '../../models/message/chat_message_model.dart';
 import '../../tests/message/chat_user_test_data.dart';
 
@@ -18,7 +15,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
   addMessage(name, text) {
     setState(() {
       messages_db[name]
-          .add(ChatMessage(messageContent: text, messageType: "sender"));
+          .add(ChatMessage(messageContent: text, messageType: 'sender'));
     });
   }
   // ScrollController _scrollController = new ScrollController();
@@ -92,7 +89,7 @@ class _ChatDetailPageState extends State<ChatDetailPage> {
                           height: 6,
                         ),
                         Text(
-                          "Online",
+                          'Online',
                           style: TextStyle(
                               color: Colors.grey.shade600, fontSize: 13),
                         ),

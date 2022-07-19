@@ -11,63 +11,63 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<ChatUsers> original_chatUsers = [
     ChatUsers(
-        text: "고니고니",
-        secondaryText: "캣홀릭 오타쿠",
+        text: '고니고니',
+        secondaryText: '캣홀릭 오타쿠',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U038SKSQH0D-5494a00d9938-512",
-        time: "Now"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U038SKSQH0D-5494a00d9938-512',
+        time: 'Now'),
     ChatUsers(
-        text: "정글러버",
-        secondaryText: "Pintos 정복자 😎",
-        image: "http://34.64.217.3:3000/static/junglelover.gif",
-        time: "Now"),
+        text: '정글러버',
+        secondaryText: 'Pintos 정복자 😎',
+        image: 'http://34.64.217.3:3000/static/junglelover.gif',
+        time: 'Now'),
     ChatUsers(
-        text: "배그러버",
-        secondaryText: "포친키 탄약도둑",
-        image: "http://34.64.217.3:3000/static/bglover.png",
-        time: "1h"),
+        text: '배그러버',
+        secondaryText: '포친키 탄약도둑',
+        image: 'http://34.64.217.3:3000/static/bglover.png',
+        time: '1h'),
     ChatUsers(
-        text: "Opjoobe",
-        secondaryText: "Ball is Life",
+        text: 'Opjoobe',
+        secondaryText: 'Ball is Life',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U038VG8TD5H-2cdff7f10831-512",
-        time: "3h"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U038VG8TD5H-2cdff7f10831-512',
+        time: '3h'),
     ChatUsers(
-        text: "Jessy",
-        secondaryText: "Just Dance",
+        text: 'Jessy',
+        secondaryText: 'Just Dance',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U038NSLLYUE-61acb0b06e68-512",
-        time: "5h"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U038NSLLYUE-61acb0b06e68-512',
+        time: '5h'),
     ChatUsers(
-        text: "Jocy",
-        secondaryText: "Coffee Coffee",
+        text: 'Jocy',
+        secondaryText: 'Coffee Coffee',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U038NSL7XAA-29c3e7232b89-512",
-        time: "8 Jul"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U038NSL7XAA-29c3e7232b89-512',
+        time: '8 Jul'),
     ChatUsers(
-        text: "Chani",
-        secondaryText: "PingPong is Life",
+        text: 'Chani',
+        secondaryText: 'PingPong is Life',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U038XSFUSMS-5562753ddde3-512",
-        time: "6 Jul"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U038XSFUSMS-5562753ddde3-512',
+        time: '6 Jul'),
     ChatUsers(
-        text: "Krafton",
-        secondaryText: "니 인생은 너꺼야!",
+        text: 'Krafton',
+        secondaryText: '니 인생은 너꺼야!',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U01GQQQGCBX-64f84f2f3f49-512",
-        time: "30 Jun"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U01GQQQGCBX-64f84f2f3f49-512',
+        time: '30 Jun'),
     ChatUsers(
-        text: "Sanori",
-        secondaryText: "정글러버",
+        text: 'Sanori',
+        secondaryText: '정글러버',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U024206FLQM-239a518483a5-512",
-        time: "28 Jun"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U024206FLQM-239a518483a5-512',
+        time: '28 Jun'),
     ChatUsers(
-        text: "Sparta",
-        secondaryText: "TEAM SPARTA",
+        text: 'Sparta',
+        secondaryText: 'TEAM SPARTA',
         image:
-            "https://ca.slack-edge.com/T01FZU4LB4Y-U01F70TFLCV-c33569d65252-512",
-        time: "2 Jun"),
+            'https://ca.slack-edge.com/T01FZU4LB4Y-U01F70TFLCV-c33569d65252-512',
+        time: '2 Jun'),
   ]; // 이걸 DB에서 받아오는거로 바꾸면 될듯
 
   List chatUsers = [];
@@ -79,11 +79,11 @@ class _ChatPageState extends State<ChatPage> {
 
   searchConversation(text) {
     var temp = [];
-    original_chatUsers.forEach((e) {
+    for (var e in original_chatUsers) {
       if (e.text.startsWith(text)) {
         temp.add(e);
       }
-    });
+    }
     setState(() {
       chatUsers = temp;
     });
@@ -135,7 +135,7 @@ class _ChatPageState extends State<ChatPage> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: <Widget>[
                       Text(
-                        "Conversations",
+                        'Conversations',
                         style: TextStyle(
                             fontSize: 24, fontWeight: FontWeight.bold),
                       ),
@@ -158,7 +158,7 @@ class _ChatPageState extends State<ChatPage> {
                               width: 2,
                             ),
                             Text(
-                              "Add New",
+                              'Add New',
                               style: TextStyle(
                                   fontSize: 14, fontWeight: FontWeight.w800),
                             ),
@@ -180,7 +180,7 @@ class _ChatPageState extends State<ChatPage> {
                     }
                   },
                   decoration: InputDecoration(
-                    hintText: "Search...",
+                    hintText: 'Search...',
                     hintStyle: TextStyle(color: Colors.grey.shade600),
                     prefixIcon: Icon(
                       Icons.search,

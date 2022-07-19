@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nemo_flutter/screens/sharing/nearby.dart';
 // import 'nearby.dart';
 import 'merge.dart';
-import '../../tests/sharing/test.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({Key? key}) : super(key: key);
@@ -15,7 +13,7 @@ class SharingPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: new Icon(Icons.edit),
+            icon: Icon(Icons.edit),
             onPressed: () {
               Navigator.pushNamed(context, '/namecard');
             },

@@ -161,7 +161,6 @@ class _LoginPageState extends State<LoginPage> {
                             print('로그인 실패');
                           }
                         },
-                        child: Text('Continue'),
                         style: ButtonStyle(
                             textStyle: MaterialStateProperty.all(
                                 TextStyle(fontSize: 17)),
@@ -169,6 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                                 RoundedRectangleBorder>(RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(12.0),
                             ))),
+                        child: Text('Continue'),
                       ),
                     ),
                     Padding(
