@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
-import 'dart:io';
 import 'dart:convert'; // json decode 등등 관리
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import '../../tests/contacts/preferences.dart';
-import '../../models/contacts/user.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({Key? key}) : super(key: key);
@@ -50,6 +48,7 @@ class _ContactsPageState extends State<ContactsPage> {
     print(userMap['user_id']);
   }
 
+  @override
   void initState() {
     super.initState();
 
