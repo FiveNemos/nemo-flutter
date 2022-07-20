@@ -62,6 +62,6 @@ class _MyProfileState extends State<MyProfile> {
 
   @override
   Widget build(BuildContext context) {
-    return ProfilePage(nickname: '고니고니'); // 여기에 id 넘겨주기
+    return ProfilePage(); // 여기에 id 넘겨주기
   }
 }
