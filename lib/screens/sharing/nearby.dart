@@ -32,9 +32,19 @@ class _MyBodyState extends State<NearbyConnection> {
     ].request();
   }
 
+  checkBluetooth() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.bluetooth,
+      Permission.bluetoothAdvertise,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan
+    ].request();
+  }
+
   @override
   Widget build(BuildContext context) {
     checkPermissions();
+    checkBluetooth();
 
     return Center(
       child: Padding(
@@ -44,23 +54,23 @@ class _MyBodyState extends State<NearbyConnection> {
             Text('User Name: $userName'),
             Wrap(
               children: <Widget>[
-                ElevatedButton(
-                  child: Text('Send Namecard'),
-                  onPressed: () async {
-                    endpointMap.forEach((key, value) async {
-                      dynamic userInfo = await storage.read(key: 'login');
-                      Map userMap = jsonDecode(userInfo);
-                      String a = userMap['user_id'];
-
-                      // String a = Random().nextInt(100).toString();
-
-                      showSnackbar(
-                          'Sending $a to ${value.endpointName}, id: $key');
-                      Nearby().sendBytesPayload(
-                          key, Uint8List.fromList(a.codeUnits));
-                    });
-                  },
-                ),
+                // ElevatedButton(
+                //   child: Text('Send Namecard'),
+                //   onPressed: () async {
+                //     endpointMap.forEach((key, value) async {
+                //       dynamic userInfo = await storage.read(key: 'login');
+                //       Map userMap = jsonDecode(userInfo);
+                //       String a = userMap['user_id'];
+                //
+                //       // String a = Random().nextInt(100).toString();
+                //
+                //       showSnackbar(
+                //           'Sending $a to ${value.endpointName}, id: $key');
+                //       Nearby().sendBytesPayload(
+                //           key, Uint8List.fromList(a.codeUnits));
+                //     });
+                //   },
+                // ),
                 ElevatedButton(
                   child: Text('Start Advertising'),
                   onPressed: () async {

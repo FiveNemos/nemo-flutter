@@ -17,13 +17,6 @@ class _ContactsPageState extends State<ContactsPage> {
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
 
-  checkBluetooth() async {
-    var status = await Permission.bluetooth.status;
-    if (status.isDenied) {
-      Permission.bluetooth.request();
-    }
-  }
-
   deleteFriend(target) {
     setState(() {
       Friends.remove(target);
@@ -63,7 +56,6 @@ class _ContactsPageState extends State<ContactsPage> {
     // 비동기로 flutter secure storage 정보를 불러오는 작업
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkUserState();
-      checkBluetooth();
     });
   }
 
