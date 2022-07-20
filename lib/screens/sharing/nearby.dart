@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -35,15 +36,6 @@ class _MyBodyState extends State<NearbyConnection> {
       //add more permission to request here.
     ].request();
   }
-
-  // checkBluetooth() async {
-  //   Map<Permission, PermissionStatus> statuses = await [
-  //     Permission.bluetooth,
-  //     Permission.bluetoothAdvertise,
-  //     Permission.bluetoothConnect,
-  //     Permission.bluetoothScan
-  //   ].request();
-  // }
 
   @override
   Widget build(BuildContext context) {
@@ -98,7 +90,8 @@ class _MyBodyState extends State<NearbyConnection> {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ContactsPage()));
+                                      builder: (context) =>
+                                          ProfilePage(friendId: id)));
                             });
                           } else {
                             showSnackbar('Connection to $id failed');
@@ -292,12 +285,14 @@ class _MyBodyState extends State<NearbyConnection> {
         var request = http.MultipartRequest('GET', uri);
 
         final response = await request.send();
-        // if (response.statusCode == 200) {
-
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => ContactsPage()));
-        Navigator.pushNamed(context, '/');
-        // }
+        if (response.statusCode == 200) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfilePage(friendId: id_2)));
+          // Navigator.pushNamed(context, '/');
+          // }
+        }
       }
     });
   }
