@@ -4,6 +4,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import '../../tests/contacts/preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({Key? key}) : super(key: key);
@@ -15,6 +16,13 @@ class ContactsPage extends StatefulWidget {
 class _ContactsPageState extends State<ContactsPage> {
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
+
+  checkBluetooth() async {
+    var status = await Permission.bluetooth.status;
+    if (status.isDenied) {
+      Permission.bluetooth.request();
+    }
+  }
 
   deleteFriend(target) {
     setState(() {
@@ -55,6 +63,7 @@ class _ContactsPageState extends State<ContactsPage> {
     // 비동기로 flutter secure storage 정보를 불러오는 작업
     WidgetsBinding.instance.addPostFrameCallback((_) {
       checkUserState();
+      checkBluetooth();
     });
   }
 
