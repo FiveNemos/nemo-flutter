@@ -26,25 +26,28 @@ class _MyBodyState extends State<NearbyConnection> {
   checkPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
       // Permission.bluetooth,
+      Permission.bluetooth,
+      Permission.bluetoothAdvertise,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
       Permission.location,
       Permission.storage,
       //add more permission to request here.
     ].request();
   }
 
-  checkBluetooth() async {
-    Map<Permission, PermissionStatus> statuses = await [
-      Permission.bluetooth,
-      Permission.bluetoothAdvertise,
-      Permission.bluetoothConnect,
-      Permission.bluetoothScan
-    ].request();
-  }
+  // checkBluetooth() async {
+  //   Map<Permission, PermissionStatus> statuses = await [
+  //     Permission.bluetooth,
+  //     Permission.bluetoothAdvertise,
+  //     Permission.bluetoothConnect,
+  //     Permission.bluetoothScan
+  //   ].request();
+  // }
 
   @override
   Widget build(BuildContext context) {
     checkPermissions();
-    checkBluetooth();
 
     return Center(
       child: Padding(
@@ -287,9 +290,6 @@ class _MyBodyState extends State<NearbyConnection> {
         var uri = Uri.parse(
             'http://34.64.217.3:3000/api/friend?id_1=$id_1&id_2=$id_2');
         var request = http.MultipartRequest('GET', uri);
-        // request.headers.addAll({'Content-Type': 'application/json'});
-        // request.fields['id_1'] = id_1;
-        // request.fields['id_2'] = String.fromCharCodes(payload.bytes!);
 
         final response = await request.send();
         // if (response.statusCode == 200) {
