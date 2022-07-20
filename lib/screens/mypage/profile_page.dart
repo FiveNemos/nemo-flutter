@@ -19,7 +19,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   var id;
-  var user2;
+  var user;
   saveData() async {
     var storage = await SharedPreferences.getInstance();
     setState(() {
@@ -33,11 +33,12 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       var dio = Dio();
       Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
 
       if (response.statusCode == 200) {
         final json = response.data;
         setState(() {
-          user2 = UserProfile(
+          user = UserProfile(
             imagePath: json['img_url'],
             nickname: json['nickname'],
             introduction: json['intro'],
@@ -67,6 +68,20 @@ class _ProfilePageState extends State<ProfilePage> {
         print('json : $json');
         print(json['img_url']);
         print(json['img_url'].runtimeType);
+        // /* 여기부턴 실험중 */
+        // final json2 = response2.data;
+        // var result = json2['tag_1'];
+        // print("json2: ${result}");
+        // print(result.runtimeType);
+        // List result2 = result.split(' ');
+        // // result2.remove , result2.add
+        // String json3 = result2.join(' ');
+        // print("here");
+        // print("result2: $result2");
+        // print(result2.runtimeType);
+        // var string1 = '1658212922913-image_picker855487046303368457.png';
+        // print(string1.length);
+
         // print('jsonBody : $jsonBody');
         return true;
       } else {
@@ -89,29 +104,34 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     // final user = UserPreferences.myUser;
     // var user = UserProfiles[widget.nickname];
-    var user = user2;
     List buildList = [
       buildAvatar,
       buildName,
       buildImageTag,
       buildAbout,
     ];
-    String path = user2.imagePath;
-    print("path: $path");
-    return Scaffold(
-      appBar: AppBar(),
-      body: ListView.separated(
-        // shrinkWrap: true,
-        physics: BouncingScrollPhysics(),
-        scrollDirection: Axis.vertical,
-        padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
-        itemCount: buildList.length,
-        itemBuilder: (context, i) {
-          return buildList[i](user);
-        },
-        separatorBuilder: (context, i) => SizedBox(height: 15),
-      ),
-    );
+    if (user != null) {
+      return Scaffold(
+        appBar: AppBar(),
+        body: ListView.separated(
+          // shrinkWrap: true,
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
+          itemCount: buildList.length,
+          itemBuilder: (context, i) {
+            return buildList[i](user);
+          },
+          separatorBuilder: (context, i) => SizedBox(height: 15),
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      );
+    }
   }
 
   Widget buildAvatar2(UserProfile user) => ProfileWidget(
@@ -120,7 +140,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
   Widget buildAvatar(UserProfile user) => ProfileWidget(
-        imagePath: user.imagePath,
+        imagePath: 'http://34.64.217.3:3000/static/${user.imagePath}',
         onClicked: () async {},
       );
 
