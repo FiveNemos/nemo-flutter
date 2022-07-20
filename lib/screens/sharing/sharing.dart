@@ -422,11 +422,6 @@ class _TookPageState extends State<TookPage> {
               ],
             ),
           ),
-          SizedBox(
-            // decoration: BoxDecoration(color: Colors.pink),
-            height: 500,
-            child: NearbyConnection(),
-          )
         ],
       ),
     );
