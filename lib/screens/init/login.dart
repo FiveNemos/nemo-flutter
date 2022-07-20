@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
     var storage = await SharedPreferences.getInstance();
     storage.setInt('id', id);
     var result = storage.getInt('id');
-    print("saveData result: $result");
+    print('saveData result: $result');
   }
 
   getHttp(accountName, password) async {

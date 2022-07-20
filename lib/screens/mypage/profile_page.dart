@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 
 import '../../models/mypage/user.dart';
-import '../../tests/mypage/preferences.dart';
 import '../../widgets/mypage/profile_widget.dart';
 import '../message/chat_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'dart:io';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.nickname}) : super(key: key);
