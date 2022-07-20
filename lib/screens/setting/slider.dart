@@ -7,6 +7,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
+import '../mypage/profile_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -144,16 +145,9 @@ class _DraggableCardState extends State<DraggableCard>
                       dynamic userInfo = await storage.read(key: 'login');
                       Map userMap = jsonDecode(userInfo);
                       String a = userMap['user_id'];
-                      // String a = Random().nextInt(100).toString();
 
-                      // showSnackbar(
-                      //     'Sending $a to ${value.endpointName}, id: $key');
                       Nearby().sendBytesPayload(
                           key, Uint8List.fromList(a.codeUnits));
-                      Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => ContactsPage()));
                     });
                   } else {
                     showSnackbar('Connection to $id failed');
@@ -167,6 +161,7 @@ class _DraggableCardState extends State<DraggableCard>
                   });
                 },
               );
+              showSnackbar("ADVERTISING: " + a.toString());
             } catch (exception) {
               showSnackbar(exception);
             }
@@ -189,7 +184,18 @@ class _DraggableCardState extends State<DraggableCard>
                       onConnectionInit(id, info);
                     },
                     onConnectionResult: (id, status) {
-                      // showSnackbar(status);
+                      if (status == Status.CONNECTED) {
+                        endpointMap.forEach((key, value) async {
+                          dynamic userInfo = await storage.read(key: 'login');
+                          Map userMap = jsonDecode(userInfo);
+                          String a = userMap['user_id'];
+
+                          Nearby().sendBytesPayload(
+                              key, Uint8List.fromList(a.codeUnits));
+                        });
+                      } else {
+                        showSnackbar('Connection to $id failed');
+                      }
                     },
                     onDisconnected: (id) {
                       setState(() {
@@ -246,12 +252,12 @@ class _DraggableCardState extends State<DraggableCard>
         var request = http.MultipartRequest('GET', uri);
 
         final response = await request.send();
-        // if (response.statusCode == 200) {
-
-        // Navigator.push(
-        //     context, MaterialPageRoute(builder: (context) => ContactsPage()));
-        Navigator.pushNamed(context, '/');
-        // }
+        if (response.statusCode == 200) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => ProfilePage(friendId: id_2)));
+        }
       }
     });
   }
