@@ -9,7 +9,6 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../contacts/contacts.dart';
 
 class NearbyConnection extends StatefulWidget {
   @override
@@ -49,23 +48,6 @@ class _MyBodyState extends State<NearbyConnection> {
             Text('User Name: $userName'),
             Wrap(
               children: <Widget>[
-                // ElevatedButton(
-                //   child: Text('Send Namecard'),
-                //   onPressed: () async {
-                //     endpointMap.forEach((key, value) async {
-                //       dynamic userInfo = await storage.read(key: 'login');
-                //       Map userMap = jsonDecode(userInfo);
-                //       String a = userMap['user_id'];
-                //
-                //       // String a = Random().nextInt(100).toString();
-                //
-                //       showSnackbar(
-                //           'Sending $a to ${value.endpointName}, id: $key');
-                //       Nearby().sendBytesPayload(
-                //           key, Uint8List.fromList(a.codeUnits));
-                //     });
-                //   },
-                // ),
                 ElevatedButton(
                   child: Text('Start Advertising'),
                   onPressed: () async {
@@ -81,17 +63,9 @@ class _MyBodyState extends State<NearbyConnection> {
                                   await storage.read(key: 'login');
                               Map userMap = jsonDecode(userInfo);
                               String a = userMap['user_id'];
-                              // String a = Random().nextInt(100).toString();
 
-                              showSnackbar(
-                                  'Sending $a to ${value.endpointName}, id: $key');
                               Nearby().sendBytesPayload(
                                   key, Uint8List.fromList(a.codeUnits));
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) =>
-                                          ProfilePage(friendId: id)));
                             });
                           } else {
                             showSnackbar('Connection to $id failed');
@@ -105,7 +79,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           });
                         },
                       );
-                      // showSnackbar("ADVERTISING: " + a.toString());
+                      showSnackbar("ADVERTISING: " + a.toString());
                     } catch (exception) {
                       showSnackbar(exception);
                     }
@@ -138,7 +112,19 @@ class _MyBodyState extends State<NearbyConnection> {
                               onConnectionInit(id, info);
                             },
                             onConnectionResult: (id, status) {
-                              showSnackbar(status);
+                              if (status == Status.CONNECTED) {
+                                endpointMap.forEach((key, value) async {
+                                  dynamic userInfo =
+                                      await storage.read(key: 'login');
+                                  Map userMap = jsonDecode(userInfo);
+                                  String a = userMap['user_id'];
+
+                                  Nearby().sendBytesPayload(
+                                      key, Uint8List.fromList(a.codeUnits));
+                                });
+                              } else {
+                                showSnackbar('Connection to $id failed');
+                              }
                             },
                             onDisconnected: (id) {
                               setState(() {
@@ -173,62 +159,6 @@ class _MyBodyState extends State<NearbyConnection> {
       ),
     );
   }
-
-  // startDiscovery() async {
-  //   try {
-  //     bool a = await Nearby().startDiscovery(
-  //       userName,
-  //       strategy,
-  //       onEndpointFound: (id, name, serviceId) {
-  //         // show sheet automatically to request connection
-  //         showModalBottomSheet(
-  //           context: context,
-  //           builder: (builder) {
-  //             return Center(
-  //               child: Column(
-  //                 children: <Widget>[
-  //                   Text('id: $id'),
-  //                   Text('Name: $name'),
-  //                   Text('ServiceId: $serviceId'),
-  //                   ElevatedButton(
-  //                     child: Text('Request Connection'),
-  //                     onPressed: () {
-  //                       Navigator.pop(context);
-  //                       Nearby().requestConnection(
-  //                         userName,
-  //                         id,
-  //                         onConnectionInitiated: (id, info) {
-  //                           onConnectionInit(id, info);
-  //                         },
-  //                         onConnectionResult: (id, status) {
-  //                           showSnackbar(status);
-  //                         },
-  //                         onDisconnected: (id) {
-  //                           setState(() {
-  //                             endpointMap.remove(id);
-  //                           });
-  //                           showSnackbar(
-  //                               'Disconnected from: ${endpointMap[id]!.endpointName}, id $id');
-  //                         },
-  //                       );
-  //                     },
-  //                   ),
-  //                 ],
-  //               ),
-  //             );
-  //           },
-  //         );
-  //       },
-  //       onEndpointLost: (id) {
-  //         showSnackbar(
-  //             'Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id');
-  //       },
-  //     );
-  //     showSnackbar('DISCOVERING: $a');
-  //   } catch (e) {
-  //     showSnackbar(e);
-  //   }
-  // }
 
   void showSnackbar(dynamic a) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
