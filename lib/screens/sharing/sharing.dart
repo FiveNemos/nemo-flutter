@@ -48,7 +48,7 @@ class SharingPage extends StatelessWidget {
               Navigator.pushNamed(context, '/contacts');
               break;
             case 1:
-              // Navigator.pushNamed(context, '/nearby');
+              Navigator.pushNamed(context, '/setting');
               break;
             case 2:
               Navigator.pushNamed(context, '/message');
