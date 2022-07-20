@@ -13,7 +13,8 @@ import 'screens/contacts/contacts.dart';
 import 'screens/message/message.dart';
 import 'screens/mypage/mypage.dart';
 import 'screens/sharing/sharing.dart';
-import 'screens/setting/setting.dart';
+// import 'screens/setting/setting.dart';
+import 'screens/setting/slider.dart';
 
 // name card page
 import 'screens/mypage/cardgenerator.dart';
@@ -40,7 +41,7 @@ class MyApp extends StatelessWidget {
         '/message': (context) => MessagePage(),
         '/mypage': (context) => MypagePage(),
         '/sharing': (context) => SharingPage(),
-        '/setting': (context) => SettingPage(),
+        '/setting': (context) => PhysicsCardDragDemo(),
         '/namecard': (context) => NameCardGenerator(),
       }, // end routes
     );
