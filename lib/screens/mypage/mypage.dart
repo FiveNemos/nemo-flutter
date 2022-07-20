@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
 
 class MypagePage extends StatefulWidget {
   const MypagePage({Key? key}) : super(key: key);
