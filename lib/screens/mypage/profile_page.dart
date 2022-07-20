@@ -7,25 +7,29 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key, this.nickname}) : super(key: key);
-  var nickname;
+  ProfilePage({Key? key, this.friendId}) : super(key: key);
+  var friendId;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  var id;
+  var myId;
   var user;
   saveData() async {
     var storage = await SharedPreferences.getInstance();
     setState(() {
-      id = storage.getInt('id');
+      myId = storage.getInt('id');
     });
-    getMyCard(id);
+    if (widget.friendId != null) {
+      getCard(widget.friendId);
+    } else {
+      getCard(myId);
+    }
   }
 
-  getMyCard(id) async {
+  getCard(id) async {
     print('http://34.64.217.3:3000/api/card/$id');
     try {
       var dio = Dio();
