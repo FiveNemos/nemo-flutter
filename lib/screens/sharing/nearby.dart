@@ -25,7 +25,7 @@ class _MyBodyState extends State<NearbyConnection> {
   Map<int, String> map = {}; //store filename mapped to corresponding payloadId
   checkPermissions() async {
     Map<Permission, PermissionStatus> statuses = await [
-      Permission.bluetooth,
+      // Permission.bluetooth,
       Permission.location,
       Permission.storage,
       //add more permission to request here.
