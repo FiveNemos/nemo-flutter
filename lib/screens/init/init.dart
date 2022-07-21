@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 // import 'dart:convert'; // json decode 등등 관리
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:nemo_flutter/screens/init/login.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 // import '../../tests/contacts/preferences.dart';
@@ -21,11 +22,11 @@ class _InitPageState extends State<InitPage> {
 
   checkUserState() async {
     if (await isLogined() == false) {
-      Navigator.pushNamed(context, '/login');
+      // Navigator.pushNamed(context, '/login');
     } else if (await findCard(userInfo['user_id']) == false) {
-      Navigator.pushNamed(context, '/namecard');
+      // Navigator.pushNamed(context, '/namecard');
     } else {
-      Navigator.pushNamed(context, '/contacts');
+      // Navigator.pushNamed(context, '/contacts');
     }
   }
 
@@ -68,10 +69,21 @@ class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: Center(
-      child: CircularProgressIndicator(
-        color: Colors.black,
+      body: Center(
+        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+          CircularProgressIndicator(
+            color: Colors.black,
+          ),
+          SizedBox(
+            height: 20,
+          ),
+          ElevatedButton(
+              onPressed: () {
+                Navigator.pushNamed(context, '/login');
+              },
+              child: Text('로그인 페이지로'))
+        ]),
       ),
-    ));
+    );
   }
 }
