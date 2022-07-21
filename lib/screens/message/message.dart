@@ -10,6 +10,7 @@ class MessagePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text('메시지 페이지'),
+        automaticallyImplyLeading: false,
       ),
       body: ChatPage(),
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage

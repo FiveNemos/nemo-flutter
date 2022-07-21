@@ -24,17 +24,7 @@ class _ContactsPageState extends State<ContactsPage> {
 
   logout() async {
     await storage.delete(key: 'login');
-    Navigator.pushNamed(context, '/');
-  }
-
-  checkUserState() async {
-    userInfo = await storage.read(key: 'login');
-    if (userInfo == null) {
-      print('로그아웃 합니다');
-      Navigator.pushNamed(context, '/');
-    } else {
-      print('로그인 중');
-    }
+    Navigator.pushNamed(context, '/login');
   }
 
   checkUser() async {
@@ -46,16 +36,6 @@ class _ContactsPageState extends State<ContactsPage> {
     print(userMap['accountName']);
     print('user_id 값');
     print(userMap['user_id']);
-  }
-
-  @override
-  void initState() {
-    super.initState();
-
-    // 비동기로 flutter secure storage 정보를 불러오는 작업
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkUserState();
-    });
   }
 
   @override

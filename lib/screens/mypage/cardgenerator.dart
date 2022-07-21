@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../sharing/sharing.dart';
 
@@ -104,11 +105,18 @@ class NameCardGenerator extends StatefulWidget {
 }
 
 class _NameCardGeneratorState extends State<NameCardGenerator> {
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
   var nickname = '닉네임';
   var tags = {'1': '#', '2': '#', '3': '#'};
   var introduction = '한줄소개';
   dynamic userImage =
       'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
+
+  logout() async {
+    await storage.delete(key: 'login');
+    Navigator.pushNamed(context, '/login');
+  }
 
   saveName(String value) {
     setState(() {
@@ -137,32 +145,42 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('명함 생성'), actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
-            child: Text('저장'),
-            onPressed: () {
-              postNameCard(context, arguments['nowId'], nickname, tags,
-                  introduction, userImage);
-              // showDialog(
-              //     context: context,
-              //     builder: (context){
-              //       return AlertDialog(
-              //           title: Text('저장완료'),
-              //           content: Text('가입이 완료되었습니다.'),
-              //           actions: [
-              //             TextButton(
-              //               // textColor: Colors.black,
-              //               onPressed: (){
-              //                 Navigator.pushNamed(context, '/');
-              //               },
-              //               child: Text('확인'),
-              //             )
-              //           ]
-              //         );});
-            },
-          )
-        ]),
+        appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text('명함 생성'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
+                child: Text('저장'),
+                onPressed: () {
+                  postNameCard(context, arguments['nowId'], nickname, tags,
+                      introduction, userImage);
+                  // showDialog(
+                  //     context: context,
+                  //     builder: (context){
+                  //       return AlertDialog(
+                  //           title: Text('저장완료'),
+                  //           content: Text('가입이 완료되었습니다.'),
+                  //           actions: [
+                  //             TextButton(
+                  //               // textColor: Colors.black,
+                  //               onPressed: (){
+                  //                 Navigator.pushNamed(context, '/');
+                  //               },
+                  //               child: Text('확인'),
+                  //             )
+                  //           ]
+                  //         );});
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.logout),
+                tooltip: 'logout',
+                onPressed: () {
+                  logout();
+                },
+              ),
+            ]),
         body: ListView(
           children: [
             Container(

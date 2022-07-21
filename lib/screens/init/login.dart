@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert'; // json decode 등등 관련 패키지
@@ -16,6 +18,8 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var inputData = TextEditingController();
   var inputData2 = TextEditingController();
+  var loginID;
+  var errorDetail;
 
   static final storage = FlutterSecureStorage();
 
@@ -47,8 +51,11 @@ class _LoginPageState extends State<LoginPage> {
   saveData(id) async {
     var storage = await SharedPreferences.getInstance();
     storage.setInt('id', id);
-    var result = storage.getInt('id');
-    print('saveData result: $result');
+    // var result = storage.getInt('id');
+    // print('saveData result: $result');
+    setState(() {
+      loginID = id;
+    });
   }
 
   getHttp(accountName, password) async {
@@ -71,12 +78,48 @@ class _LoginPageState extends State<LoginPage> {
         print('접속 성공!');
         return true;
       } else {
-        print('error');
+        print('error404');
+        return false;
+      }
+    } on DioError catch (e) {
+      setState(() {
+        errorDetail = e.response.toString();
+      });
+      return false;
+    }
+  }
+
+  findCard(id) async {
+    try {
+      var dio = Dio();
+
+      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      print(response.data);
+      print(response.data.runtimeType);
+
+      if (response.data.runtimeType != bool) {
+        print('카드 존재 확인!');
+        return true;
+      } else {
+        print('카드 미생성 확인');
         return false;
       }
     } catch (e) {
+      print('카드 미생성 확인 @ 에러');
       return false;
     }
+  }
+
+  errorDialog(msg) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: DialogUI(
+              errorMsg: msg,
+            ),
+          );
+        });
   }
 
   @override
@@ -128,15 +171,15 @@ class _LoginPageState extends State<LoginPage> {
                       controller: inputData2,
                       obscureText: true, // 입력문자 가리기
                       maxLength: 10, // 입력 문자 개수 제한
-                      onSubmitted: (text) async {
-                        if (await getHttp(inputData.text, inputData2.text) ==
-                            true) {
-                          print('로그인 성공');
-                          Navigator.pushNamed(context, '/contacts');
-                        } else {
-                          print('로그인 실패');
-                        }
-                      },
+                      // onSubmitted: (text) async {
+                      //   if (await getHttp(inputData.text, inputData2.text) ==
+                      //       true) {
+                      //     print('로그인 성공');
+                      //     Navigator.pushNamed(context, '/contacts');
+                      //   } else {
+                      //     print('로그인 실패');
+                      //   }
+                      // },
                       decoration: InputDecoration(
                         labelText: 'Password',
                         labelStyle: TextStyle(color: Color(0xff8338EC)),
@@ -166,9 +209,17 @@ class _LoginPageState extends State<LoginPage> {
                           if (await getHttp(inputData.text, inputData2.text) ==
                               true) {
                             print('로그인 성공');
-                            Navigator.pushNamed(context, '/contacts');
+                            print('loginID : $loginID');
+                            if (await findCard(loginID) == true) {
+                              print("card 찾음");
+                              Navigator.pushNamed(context, '/contacts');
+                            } else {
+                              print('card 못찾음');
+                              Navigator.pushNamed(context, '/namecard',
+                                  arguments: {'nowId': loginID});
+                            }
                           } else {
-                            print('로그인 실패');
+                            errorDialog(errorDetail);
                           }
                         },
                         style: ButtonStyle(
@@ -257,5 +308,25 @@ class _LoginPageState extends State<LoginPage> {
         ),
       ),
     );
+  }
+}
+
+class DialogUI extends StatelessWidget {
+  DialogUI({Key? key, this.errorMsg}) : super(key: key);
+  var errorMsg;
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        alignment: Alignment.center,
+        child: SizedBox(
+          height: 100,
+          width: double.infinity,
+          child: Center(
+            child: Text(
+              errorMsg,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ));
   }
 }
