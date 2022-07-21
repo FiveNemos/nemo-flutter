@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:nemo_flutter/screens/contacts/contacts.dart';
-import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -90,7 +89,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           });
                         },
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
+                      showSnackbar('ADVERTISING: $a');
                     } catch (exception) {
                       showSnackbar(exception);
                     }
