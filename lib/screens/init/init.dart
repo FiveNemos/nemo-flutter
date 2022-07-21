@@ -22,11 +22,11 @@ class _InitPageState extends State<InitPage> {
 
   checkUserState() async {
     if (await isLogined() == false) {
-      // Navigator.pushNamed(context, '/login');
+      Navigator.pushNamed(context, '/login');
     } else if (await findCard(userInfo['user_id']) == false) {
-      // Navigator.pushNamed(context, '/namecard');
+      Navigator.pushNamed(context, '/namecard');
     } else {
-      // Navigator.pushNamed(context, '/contacts');
+      Navigator.pushNamed(context, '/contacts');
     }
   }
 
