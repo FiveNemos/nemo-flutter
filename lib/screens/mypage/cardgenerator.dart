@@ -3,11 +3,13 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../sharing/sharing.dart';
 
-Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
-    String introduction, dynamic userImage) async {
+Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
+    Map tags, String introduction, dynamic userImage) async {
+  print("nowID : $nowID");
   if (userImage.runtimeType == String) {
     showDialog(
         context: context,
@@ -32,8 +34,8 @@ Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
         .add(await http.MultipartFile.fromPath('image', userImage.path));
-    request.fields['user_id'] = '9999';
-    request.fields['nickname'] = 'Hyunjoo';
+    request.fields['user_id'] = nowID.toString();
+    request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
@@ -103,11 +105,18 @@ class NameCardGenerator extends StatefulWidget {
 }
 
 class _NameCardGeneratorState extends State<NameCardGenerator> {
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
   var nickname = '닉네임';
   var tags = {'1': '#', '2': '#', '3': '#'};
   var introduction = '한줄소개';
   dynamic userImage =
       'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
+
+  logout() async {
+    await storage.delete(key: 'login');
+    Navigator.pushNamed(context, '/login');
+  }
 
   saveName(String value) {
     setState(() {
@@ -129,36 +138,49 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(title: Text('명함 생성'), actions: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
-            child: Text('저장'),
-            onPressed: () {
-              postNameCard(context, nickname, tags, introduction, userImage);
-              // showDialog(
-              //     context: context,
-              //     builder: (context){
-              //       return AlertDialog(
-              //           title: Text('저장완료'),
-              //           content: Text('가입이 완료되었습니다.'),
-              //           actions: [
-              //             TextButton(
-              //               // textColor: Colors.black,
-              //               onPressed: (){
-              //                 Navigator.pushNamed(context, '/');
-              //               },
-              //               child: Text('확인'),
-              //             )
-              //           ]
-              //         );});
-            },
-          )
-        ]),
+        appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text('명함 생성'),
+            actions: [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
+                child: Text('저장'),
+                onPressed: () {
+                  postNameCard(context, arguments['nowId'], nickname, tags,
+                      introduction, userImage);
+                  // showDialog(
+                  //     context: context,
+                  //     builder: (context){
+                  //       return AlertDialog(
+                  //           title: Text('저장완료'),
+                  //           content: Text('가입이 완료되었습니다.'),
+                  //           actions: [
+                  //             TextButton(
+                  //               // textColor: Colors.black,
+                  //               onPressed: (){
+                  //                 Navigator.pushNamed(context, '/');
+                  //               },
+                  //               child: Text('확인'),
+                  //             )
+                  //           ]
+                  //         );});
+                },
+              ),
+              IconButton(
+                icon: Icon(Icons.logout),
+                tooltip: 'logout',
+                onPressed: () {
+                  logout();
+                },
+              ),
+            ]),
         body: ListView(
           children: [
             Container(
