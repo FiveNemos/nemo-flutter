@@ -30,6 +30,11 @@ class _InitPageState extends State<InitPage> {
     }
   }
 
+  emergency() async {
+    await storage.delete(key: 'login');
+    Navigator.pushNamed(context, '/login');
+  }
+
   isLogined() async {
     print('isLogined start');
     userInfo = await storage.read(key: 'login');
@@ -69,20 +74,15 @@ class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-          CircularProgressIndicator(
+      body: GestureDetector(
+        onLongPress: () {
+          emergency();
+        },
+        child: Center(
+          child: CircularProgressIndicator(
             color: Colors.black,
           ),
-          SizedBox(
-            height: 20,
-          ),
-          ElevatedButton(
-              onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              },
-              child: Text('로그인 페이지로'))
-        ]),
+        ),
       ),
     );
   }
