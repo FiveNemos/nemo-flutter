@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import './styles/style.dart' as style;
 
 // import initial page
+import 'screens/init/init.dart';
 import 'screens/init/login.dart';
 import 'screens/init/signup.dart';
 
@@ -31,9 +32,10 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Nemo test',
       theme: style.theme,
-      initialRoute: '/contacts',
+      initialRoute: '/',
       routes: {
-        '/': (context) => LoginPage(),
+        '/': (context) => InitPage(),
+        '/login': (context) => LoginPage(),
         '/signup': (context) => SignupPage(),
         '/contacts': (context) => ContactsPage(),
         '/message': (context) => MessagePage(),
