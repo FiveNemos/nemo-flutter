@@ -6,8 +6,9 @@ import 'package:http/http.dart' as http;
 
 import '../sharing/sharing.dart';
 
-Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
-    String introduction, dynamic userImage) async {
+Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
+    Map tags, String introduction, dynamic userImage) async {
+  print("nowID : $nowID");
   if (userImage.runtimeType == String) {
     showDialog(
         context: context,
@@ -32,8 +33,8 @@ Future<dynamic> postNameCard(dynamic context, String nickname, Map tags,
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
         .add(await http.MultipartFile.fromPath('image', userImage.path));
-    request.fields['user_id'] = '9999';
-    request.fields['nickname'] = 'Hyunjoo';
+    request.fields['user_id'] = nowID.toString();
+    request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
@@ -129,6 +130,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
 
   @override
   Widget build(BuildContext context) {
+    final arguments = (ModalRoute.of(context)?.settings.arguments ??
+        <String, dynamic>{}) as Map;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -139,7 +142,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
             style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
             child: Text('저장'),
             onPressed: () {
-              postNameCard(context, nickname, tags, introduction, userImage);
+              postNameCard(context, arguments['nowId'], nickname, tags,
+                  introduction, userImage);
               // showDialog(
               //     context: context,
               //     builder: (context){
