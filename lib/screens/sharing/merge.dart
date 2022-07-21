@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 // import 'package:nemo_flutter/screens/sharing/nearby.dart';
 
-import 'nearby.dart';
-
 class TookPage extends StatefulWidget {
   const TookPage({Key? key}) : super(key: key);
 
