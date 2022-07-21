@@ -16,6 +16,8 @@ class _SignupPageState extends State<SignupPage> {
   var passwordAgain;
   var phoneNumber;
   var accountName2 = TextEditingController();
+  var errorDetail;
+  var uniqueID;
 
   showNemo() {
     return Center(
@@ -105,25 +107,44 @@ class _SignupPageState extends State<SignupPage> {
         });
   }
 
-  // getMyCard(id) async {
-  //   // print('http://34.64.217.3:3000/api/card/$id');
-  //   try {
-  //     var dio = Dio();
-  //     Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
-  //     if (response.statusCode == 200) {
-  //       final json = response.data;
-  //       setState(() {});
-  //       print('접속 성공!');
-  //       print('json : $json');
-  //       return true;
-  //     } else {
-  //       print('error');
-  //       return false;
-  //     }
-  //   } catch (e) {
-  //     return false;
-  //   }
-  // }
+  postUser(account, password, phonenumber) async {
+    // print('http://34.64.217.3:3000/api/card/$id');
+    // Response response;
+    try {
+      var dio = Dio();
+      var param = {
+        'account_name': '$account',
+        'password': '$password',
+        'phone_number': '$phonenumber'
+      };
+      print('gopostUser');
+      Response response = await dio
+          .post('http://34.64.217.3:3000/api/user/signup', data: param);
+      print('response status: ${response.statusCode}');
+      if (response.statusCode == 201) {
+        print("go success");
+        final json = response.data;
+        print(json['id']);
+        setState(() {
+          uniqueID = json['id'];
+        });
+        print('접속 성공!');
+        print('success : $json');
+        return true;
+      } else {
+        print('go fail, statusCode: ${response.statusCode}');
+        print('error');
+        return false;
+      }
+    } on DioError catch (e) {
+      final errorjson = jsonDecode(e.response.toString());
+      setState(() {
+        errorDetail = errorjson['msg'];
+      });
+      print('catched error');
+      return false;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -143,9 +164,10 @@ class _SignupPageState extends State<SignupPage> {
         appBar: AppBar(
           title: Text('회원가입 페이지'),
           actions: [
-            FloatingActionButton(
+            ElevatedButton(
+                style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
                 child: Text('확인'),
-                onPressed: () {
+                onPressed: () async {
                   RegExp accountNameExp = RegExp(r'[a-z0-9]{5,20}$');
                   RegExp passwordExp = RegExp(r'[A-Za-z0-9!@^]{5,16}$');
                   RegExp phoneNumberExp = RegExp(r'010\d{8}');
@@ -158,8 +180,14 @@ class _SignupPageState extends State<SignupPage> {
                   } else if (!phoneNumberExp.hasMatch(phoneNumber)) {
                     errorDialog('유효하지 않은 전화번호입니다.\n -을 제외한 11자리 번호만 입력해주세요!');
                   } else {
-                    errorDialog(
-                        '정상적으로 완료!'); // 여기에 POST 작업 + cardgenerator로 이어지도록.
+                    print('Trying to POST signup. . . ');
+                    if (await postUser(accountName, password, phoneNumber) ==
+                        true) {
+                      Navigator.pushNamed(context, '/namecard',
+                          arguments: {'nowId': uniqueID});
+                    } else {
+                      errorDialog(errorDetail);
+                    }
                   }
                   // ElevatedButton(
                   //           child: const Text('메인'),
