@@ -3,12 +3,13 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:nearby_connections/nearby_connections.dart';
-import 'package:nemo_flutter/screens/mypage/profile_page.dart';
+import 'package:nemo_flutter/screens/contacts/contacts.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class NearbyConnection extends StatefulWidget {
   @override
@@ -59,17 +60,26 @@ class _MyBodyState extends State<NearbyConnection> {
                         onConnectionResult: (id, status) {
                           if (status == Status.CONNECTED) {
                             endpointMap.forEach((key, value) async {
-                              dynamic userInfo =
-                                  await storage.read(key: 'login');
-                              Map userMap = jsonDecode(userInfo);
-                              String a = userMap['user_id'];
+                              // dynamic userInfo =
+                              //     await storage.read(key: 'login');
+                              // Map userMap = jsonDecode(userInfo);
+                              // String a = userMap['user_id'];
+                              var storage =
+                                  await SharedPreferences.getInstance();
+                              String a = storage.getInt('id').toString();
 
                               Nearby().sendBytesPayload(
                                   key, Uint8List.fromList(a.codeUnits));
+                              Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) => ContactsPage()));
                             });
                           } else {
                             showSnackbar('Connection to $id failed');
                           }
+                          showSnackbar(
+                              'Connected: ${endpointMap[id]!.endpointName}, id $id');
                         },
                         onDisconnected: (id) {
                           showSnackbar(
@@ -79,7 +89,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           });
                         },
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
+                      showSnackbar('ADVERTISING: $a');
                     } catch (exception) {
                       showSnackbar(exception);
                     }
@@ -112,19 +122,19 @@ class _MyBodyState extends State<NearbyConnection> {
                               onConnectionInit(id, info);
                             },
                             onConnectionResult: (id, status) {
-                              if (status == Status.CONNECTED) {
-                                endpointMap.forEach((key, value) async {
-                                  dynamic userInfo =
-                                      await storage.read(key: 'login');
-                                  Map userMap = jsonDecode(userInfo);
-                                  String a = userMap['user_id'];
-
-                                  Nearby().sendBytesPayload(
-                                      key, Uint8List.fromList(a.codeUnits));
-                                });
-                              } else {
-                                showSnackbar('Connection to $id failed');
-                              }
+                              // if (status == Status.CONNECTED) {
+                              //   endpointMap.forEach((key, value) async {
+                              //     dynamic userInfo =
+                              //         await storage.read(key: 'login');
+                              //     Map userMap = jsonDecode(userInfo);
+                              //     String a = userMap['user_id'];
+                              //
+                              //     Nearby().sendBytesPayload(
+                              //         key, Uint8List.fromList(a.codeUnits));
+                              //   });
+                              // } else {
+                              //   showSnackbar('Connection to $id failed');
+                              // }
                             },
                             onDisconnected: (id) {
                               setState(() {
@@ -217,9 +227,8 @@ class _MyBodyState extends State<NearbyConnection> {
         final response = await request.send();
         if (response.statusCode == 200) {
           Navigator.push(
-              context,
-              MaterialPageRoute(
-                  builder: (context) => ProfilePage(friendId: id_2)));
+              context, MaterialPageRoute(builder: (context) => ContactsPage()));
+          // builder: (context) => ProfilePage(friendId: id_2)));
           // Navigator.pushNamed(context, '/');
           // }
         }
