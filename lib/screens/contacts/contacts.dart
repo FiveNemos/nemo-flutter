@@ -1,9 +1,11 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert'; // json decode 등등 관리
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
-import '../../tests/contacts/preferences.dart';
+import '../../models/contacts/user.dart';
+// import '../../tests/contacts/preferences.dart';
 
 class ContactsPage extends StatefulWidget {
   const ContactsPage({Key? key}) : super(key: key);
@@ -15,27 +17,65 @@ class ContactsPage extends StatefulWidget {
 class _ContactsPageState extends State<ContactsPage> {
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
+  var nowId;
+  List friends = [];
+  Map friendsData = {};
+  getAllCards(id) async {
+    try {
+      var dio = Dio();
+      Response response =
+          await dio.get('http://34.64.217.3:3000/api/card/all/$id');
+
+      if (response.statusCode == 200) {
+        final json = response.data;
+        json.forEach((e) {
+          var friendId = e['user_id'];
+          setState(() {
+            friendsData[friendId] = User(
+              imagePath: e['img_url'],
+              nickname: e['nickname'],
+              introduction: e['intro'],
+              tag: [
+                '#${e['tag_1']}',
+                '#${e['tag_2']}',
+                '#${e['tag_3']}',
+              ],
+            );
+            friends.add(friendId);
+          });
+        });
+        print('접속 성공!');
+        return true;
+      } else {
+        print('error');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
 
   deleteFriend(target) {
     setState(() {
-      Friends.remove(target);
+      friends.remove(target);
+      friendsData.remove(target);
     });
-  }
-
-  logout() async {
-    await storage.delete(key: 'login');
-    Navigator.pushNamed(context, '/login');
+    // 친구 삭제하는 POST 요청 추가필요
   }
 
   checkUser() async {
-    userInfo = await storage.read(key: 'login');
-    Map userMap = jsonDecode(userInfo);
-    print('userMap');
-    print(userMap.runtimeType);
-    print('accountName 값');
-    print(userMap['accountName']);
-    print('user_id 값');
-    print(userMap['user_id']);
+    dynamic userInfo = await storage.read(key: 'login');
+    setState(() {
+      nowId = jsonDecode(userInfo)['user_id'];
+    });
+    await getAllCards(nowId);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUser();
   }
 
   @override
@@ -49,7 +89,7 @@ class _ContactsPageState extends State<ContactsPage> {
             icon: Icon(Icons.logout),
             tooltip: 'logout',
             onPressed: () {
-              logout();
+              Navigator.pushNamed(context, '/login');
             },
           ),
           IconButton(
@@ -63,13 +103,13 @@ class _ContactsPageState extends State<ContactsPage> {
       ),
       body: ListView.separated(
           padding: EdgeInsets.fromLTRB(22, 8, 22, 10),
-          itemCount: Friends.length,
+          itemCount: friends.length,
           itemBuilder: (c, i) {
             return InkWell(
               onTap: () => Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (c) => ProfilePage(friendId: 999))),
+                      builder: (c) => ProfilePage(friendId: friends[i]))),
               child: Container(
                 decoration: BoxDecoration(
                   color: Colors.white,
@@ -103,7 +143,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                 context: context,
                                 builder: (context) {
                                   return DialogUI(
-                                      target: Friends[i],
+                                      target: friends[i],
                                       deleteFriend: deleteFriend);
                                 });
                           },
@@ -125,7 +165,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                 Border(right: BorderSide(color: Colors.black)),
                           ),
                           child: Image.network(
-                            UserPreferences_db[Friends[i]].imagePath,
+                            'http://34.64.217.3:3000/static/${friendsData[friends[i]].imagePath}',
                             width: 155,
                             height: 180,
                             // alignment: Alignment(-1, -0.7),
@@ -142,7 +182,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                   CrossAxisAlignment.start, // 사진 옆 박스 row 시작점
                               children: [
                                 Text(
-                                  UserPreferences_db[Friends[i]].nickname,
+                                  friendsData[friends[i]].nickname,
                                   style: TextStyle(
                                     fontSize: 18,
                                     fontWeight: FontWeight.bold,
@@ -152,7 +192,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                   padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
                                 ),
                                 Text(
-                                  UserPreferences_db[Friends[i]].introduction,
+                                  friendsData[friends[i]].introduction,
                                   style: TextStyle(
                                     fontSize: 15,
                                     fontWeight: FontWeight.w600,
@@ -174,7 +214,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        UserPreferences_db[Friends[i]].tag[0],
+                                        friendsData[friends[i]].tag[0],
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 13,
@@ -193,7 +233,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                         ),
                                       ),
                                       child: Text(
-                                        UserPreferences_db[Friends[i]].tag[1],
+                                        friendsData[friends[i]].tag[1],
                                         style: TextStyle(
                                           color: Colors.black,
                                           fontSize: 13,
@@ -209,7 +249,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                         borderRadius: BorderRadius.circular(10),
                                       ),
                                       child: Text(
-                                        UserPreferences_db[Friends[i]].tag[2],
+                                        friendsData[friends[i]].tag[2],
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 13,

@@ -113,11 +113,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   dynamic userImage =
       'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
 
-  logout() async {
-    await storage.delete(key: 'login');
-    Navigator.pushNamed(context, '/login');
-  }
-
   saveName(String value) {
     setState(() {
       nickname = value;
@@ -177,7 +172,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 icon: Icon(Icons.logout),
                 tooltip: 'logout',
                 onPressed: () {
-                  logout();
+                  Navigator.pushNamed(context, '/login');
                 },
               ),
             ]),
