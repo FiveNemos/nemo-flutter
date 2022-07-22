@@ -14,7 +14,6 @@ import 'screens/contacts/contacts.dart';
 import 'screens/message/message.dart';
 import 'screens/mypage/mypage.dart';
 import 'screens/sharing/sharing.dart';
-import 'screens/setting/setting.dart';
 
 // name card page
 import 'screens/mypage/cardgenerator.dart';
@@ -42,7 +41,6 @@ class MyApp extends StatelessWidget {
         '/message': (context) => MessagePage(),
         '/mypage': (context) => MypagePage(),
         '/sharing': (context) => SharingPage(),
-        '/setting': (context) => SettingPage(),
         '/namecard': (context) => NameCardGenerator(),
       }, // end routes
     );
