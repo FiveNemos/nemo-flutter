@@ -293,10 +293,12 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                   TextField(
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
+                    // keyboardType: TextInputType.multiline,
+                    minLines: 1,
+                    maxLines: 3,
+                    maxLength: 50,
                     decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 40),
+                      constraints: BoxConstraints(maxHeight: 120),
                       labelText: 'details',
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
