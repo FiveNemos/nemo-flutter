@@ -31,7 +31,6 @@ class _InitPageState extends State<InitPage> {
   }
 
   emergency() async {
-    await storage.delete(key: 'login');
     Navigator.pushNamed(context, '/login');
   }
 
@@ -48,7 +47,6 @@ class _InitPageState extends State<InitPage> {
   }
 
   findCard(id) async {
-    print("findCard start");
     try {
       var dio = Dio();
       Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
@@ -66,23 +64,38 @@ class _InitPageState extends State<InitPage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      checkUserState();
-    });
+    // WidgetsBinding.instance.addPostFrameCallback((_) {
+    //   checkUserState();
+    // });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
-        onLongPress: () {
-          emergency();
-        },
-        child: Center(
-          child: CircularProgressIndicator(
-            color: Colors.black,
+      body: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          GestureDetector(
+            onTap: () {
+              checkUserState();
+            },
+            onDoubleTap: () {
+              emergency();
+            },
+            child: Image.asset(
+              'assets/common/logo.png',
+              alignment: Alignment.center,
+              height: 400,
+            ),
           ),
-        ),
+          Text(
+            'NEMO 를 눌러주세요! ',
+            style: TextStyle(
+                fontWeight: FontWeight.w700,
+                fontSize: 18,
+                color: Color(0xff8338EC)),
+          ),
+        ],
       ),
     );
   }
