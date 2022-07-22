@@ -6,6 +6,8 @@ import '../message/chat_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
+const BASE_URL = 'http://34.64.217.3:3000/static/';
+
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.friendId}) : super(key: key);
   var friendId;
@@ -40,24 +42,22 @@ class _ProfilePageState extends State<ProfilePage> {
         final json = response.data;
         setState(() {
           user = UserProfile(
-            imagePath: json['img_url'],
+            imagePath: json['image'],
             nickname: json['nickname'],
             introduction: json['intro'],
             title: json['intro'], // title로 변경 필요
             about: json['intro'], // about로 변경 필요
-            image1:
-                'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1780&q=80',
-            image2:
-                'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80',
-            image3: 'https://wallpaperaccess.com/full/1935243.jpg',
+            image1: BASE_URL + json['tag_img_1'],
+            image2: BASE_URL + json['tag_img_2'],
+            image3: BASE_URL + json['tag_img_3'],
             tag1: json['tag_1'],
             tag2: json['tag_2'],
             tag3: json['tag_3'],
             image: [
-              'https://images.unsplash.com/photo-1546519638-68e109498ffc?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1780&q=80',
-              'https://images.unsplash.com/photo-1506880018603-83d5b814b5a6?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1548&q=80',
-              'https://wallpaperaccess.com/full/1935243.jpg',
-            ], // tag_image로 변경이 필요
+              BASE_URL + json['tag_img_1'],
+              BASE_URL + json['tag_img_2'],
+              BASE_URL + json['tag_img_3'],
+            ],
             tag: [
               json['tag_1'],
               json['tag_2'],
@@ -67,8 +67,8 @@ class _ProfilePageState extends State<ProfilePage> {
         });
         print('접속 성공!');
         print('json : $json');
-        print(json['img_url']);
-        print(json['img_url'].runtimeType);
+        print(json['image']);
+        print(json['image'].runtimeType);
         // /* 여기부턴 실험중 */
         // final json2 = response2.data;
         // var result = json2['tag_1'];
