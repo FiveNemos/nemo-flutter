@@ -28,7 +28,10 @@ class _ContactsPageState extends State<ContactsPage> {
 
       if (response.statusCode == 200) {
         final json = response.data;
-        json.forEach((e) {
+        setState(() {
+          friends = List.from(json['friends'].reversed);
+        });
+        json['cards'].forEach((e) {
           var friendId = e['user_id'];
           setState(() {
             friendsData[friendId] = User(
@@ -41,7 +44,6 @@ class _ContactsPageState extends State<ContactsPage> {
                 '#${e['tag_3']}',
               ],
             );
-            friends.add(friendId);
           });
         });
         print('접속 성공!');
