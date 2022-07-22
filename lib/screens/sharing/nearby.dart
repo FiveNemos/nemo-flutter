@@ -79,7 +79,7 @@ class _MyBodyState extends State<NearbyConnection> {
                           });
                         },
                       );
-                      showSnackbar("ADVERTISING: " + a.toString());
+                      showSnackbar('ADVERTISING: $a');
                     } catch (exception) {
                       showSnackbar(exception);
                     }

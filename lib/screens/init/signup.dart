@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'dart:io';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -32,7 +31,7 @@ class _SignupPageState extends State<SignupPage> {
 
   changeAccountName() {
     return TextField(
-      decoration: signupDecoration("아이디"),
+      decoration: signupDecoration('아이디'),
       onChanged: (text) {
         setState(() {
           accountName = text;
@@ -44,7 +43,7 @@ class _SignupPageState extends State<SignupPage> {
   changePassword() {
     return TextField(
       obscureText: true,
-      decoration: signupDecoration("비밀번호"),
+      decoration: signupDecoration('비밀번호'),
       onChanged: (text) {
         setState(() {
           password = text;
@@ -56,7 +55,7 @@ class _SignupPageState extends State<SignupPage> {
   changePasswordAgain() {
     return TextField(
       obscureText: true,
-      decoration: signupDecoration("비밀번호 재확인"),
+      decoration: signupDecoration('비밀번호 재확인'),
       onChanged: (text) {
         setState(() {
           passwordAgain = text;
@@ -67,7 +66,7 @@ class _SignupPageState extends State<SignupPage> {
 
   changePhoneNumber() {
     return TextField(
-      decoration: signupDecoration("휴대전화"),
+      decoration: signupDecoration('휴대전화'),
       onChanged: (text) {
         setState(() {
           phoneNumber = text;
@@ -122,7 +121,7 @@ class _SignupPageState extends State<SignupPage> {
           .post('http://34.64.217.3:3000/api/user/signup', data: param);
       print('response status: ${response.statusCode}');
       if (response.statusCode == 201) {
-        print("go success");
+        print('go success');
         final json = response.data;
         print(json['id']);
         setState(() {

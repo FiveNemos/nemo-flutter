@@ -42,7 +42,7 @@ class _InitPageState extends State<InitPage> {
   }
 
   findCard(id) async {
-    print("findCard start");
+    print('findCard start');
     try {
       var dio = Dio();
       Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
