@@ -12,6 +12,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../contacts/contacts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
 // --
 
 class SharingPage extends StatelessWidget {
@@ -131,6 +133,8 @@ class _DraggableCardState extends State<DraggableCard>
         print(details.velocity.pixelsPerSecond.dy);
         if (details.velocity.pixelsPerSecond.dy < 0) {
           print('send');
+          showSnackbar('명함 보내는 중...');
+
           {
             try {
               bool a = await Nearby().startAdvertising(
@@ -140,9 +144,12 @@ class _DraggableCardState extends State<DraggableCard>
                 onConnectionResult: (id, status) {
                   if (status == Status.CONNECTED) {
                     endpointMap.forEach((key, value) async {
-                      dynamic userInfo = await storage.read(key: 'login');
-                      Map userMap = jsonDecode(userInfo);
-                      String a = userMap['user_id'];
+                      // dynamic userInfo =
+                      //     await storage.read(key: 'login');
+                      // Map userMap = jsonDecode(userInfo);
+                      // String a = userMap['user_id'];
+                      var storage = await SharedPreferences.getInstance();
+                      String a = storage.getInt('id').toString();
 
                       Nearby().sendBytesPayload(
                           key, Uint8List.fromList(a.codeUnits));
@@ -152,26 +159,28 @@ class _DraggableCardState extends State<DraggableCard>
                               builder: (context) => ContactsPage()));
                     });
                   } else {
-                    showSnackbar('Connection to $id failed');
+                    // showSnackbar('Connection to $id failed');
                   }
+                  // showSnackbar(
+                  //     'Connected: ${endpointMap[id]!.endpointName}, id $id');
                 },
                 onDisconnected: (id) {
-                  showSnackbar(
-                      'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
+                  // showSnackbar(
+                  //     'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
                   setState(() {
                     endpointMap.remove(id);
                   });
                 },
               );
-              showSnackbar('ADVERTISING: $a');
+              // showSnackbar('ADVERTISING: $a');
             } catch (exception) {
-              showSnackbar(exception);
+              // showSnackbar(exception);
             }
           }
         } else {
           // _runAnimation(Offset(0, 0), size);
           print('recieve');
-          showSnackbar('아래로 당김 - 수신');
+          showSnackbar('명함 받는중...');
 
           {
             try {
@@ -179,8 +188,6 @@ class _DraggableCardState extends State<DraggableCard>
                 userName,
                 strategy,
                 onEndpointFound: (id, name, serviceId) {
-                  showSnackbar('신호 전달 - Discovery');
-
                   // show sheet automatically to request connection
                   // Navigator.pop(context);
                   Nearby().requestConnection(
@@ -190,19 +197,16 @@ class _DraggableCardState extends State<DraggableCard>
                       onConnectionInit(id, info);
                     },
                     onConnectionResult: (id, status) {
-                      if (status == Status.CONNECTED) {
-                        showSnackbar('연결 성공 - Discovery');
-
-                        // endpointMap.forEach((key, value) async {
-                        //   dynamic userInfo = await storage.read(key: 'login');
-                        //   Map userMap = jsonDecode(userInfo);
-                        //   String a = userMap['user_id'];
-                        //
-                        //   Nearby().sendBytesPayload(
-                        //       key, Uint8List.fromList(a.codeUnits));
-                        // }
-                        // );
-                      }
+                      // if (status == Status.CONNECTED) {
+                      //   endpointMap.forEach((key, value) async {
+                      //     dynamic userInfo =
+                      //         await storage.read(key: 'login');
+                      //     Map userMap = jsonDecode(userInfo);
+                      //     String a = userMap['user_id'];
+                      //
+                      //     Nearby().sendBytesPayload(
+                      //         key, Uint8List.fromList(a.codeUnits));
+                      //   });
                       // } else {
                       //   showSnackbar('Connection to $id failed');
                       // }
@@ -211,17 +215,19 @@ class _DraggableCardState extends State<DraggableCard>
                       setState(() {
                         endpointMap.remove(id);
                       });
-                      showSnackbar('연결 사라짐 - Discovery');
+                      // showSnackbar(
+                      //     'Disconnected from: ${endpointMap[id]!.endpointName}, id $id');
                     },
                   );
                 },
                 onEndpointLost: (id) {
-                  showSnackbar('비상비상비상비상비상');
+                  // showSnackbar(
+                  //     'Lost discovered Endpoint: ${endpointMap[id]!.endpointName}, id $id');
                 },
               );
-              showSnackbar('DISCOVERING: $a');
+              // showSnackbar('DISCOVERING: $a');
             } catch (e) {
-              showSnackbar(e);
+              // showSnackbar(e);
             }
           }
         }
@@ -264,10 +270,6 @@ class _DraggableCardState extends State<DraggableCard>
           Navigator.push(
               context, MaterialPageRoute(builder: (context) => ContactsPage()));
         }
-        // } else {
-        //   Navigator.push(
-        //       context, MaterialPageRoute(builder: (context) => ContactsPage()));
-        // }
       }
     });
   }
