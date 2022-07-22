@@ -96,8 +96,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   var nickname = '닉네임';
   var tags = {'1': '#', '2': '#', '3': '#'};
   var introduction = '한줄소개';
-  dynamic userImage =
-      'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
+  dynamic userImage;
   dynamic tagImage1, tagImage2, tagImage3;
 
   logout() async {
@@ -202,21 +201,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     userImage: userImage,
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  ElevatedButton(
-                    child: Text('+ 프로필 사진'),
-                    // icon: Icon(Icons.add_box_rounded),
-                    onPressed: () async {
-                      var picker = ImagePicker();
-                      var image =
-                          await picker.pickImage(source: ImageSource.gallery);
-                      if (image != null) {
-                        setState(() {
-                          // userImage = Image.file(File(image.path), fit: BoxFit.fill);
-                          userImage = File(image.path);
-                        });
-                      }
-                    },
-                  ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                   NameSpace(nickname: nickname, saveName: saveName),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
@@ -561,9 +545,21 @@ class _NameState extends State<NameCard> {
                 height: 85,
                 margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                 decoration: BoxDecoration(color: Colors.red),
-                child: widget.userImage.runtimeType == String
-                    ? Image.network(widget.userImage, fit: BoxFit.fill)
-                    : Image.file(widget.userImage, fit: BoxFit.fill),
+                child: GestureDetector(
+                  onTap: () async {
+                    var picker = ImagePicker();
+                    var image =
+                        await picker.pickImage(source: ImageSource.gallery);
+                    if (image != null) {
+                      setState(() {
+                        widget.userImage = File(image.path);
+                      });
+                    }
+                  },
+                  child: widget.userImage == null
+                      ? Image.asset("assets/grey_profile.png", fit: BoxFit.fill)
+                      : Image.file(widget.userImage, fit: BoxFit.fill),
+                ),
               ),
             ],
           ),
