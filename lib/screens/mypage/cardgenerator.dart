@@ -189,7 +189,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 icon: Icon(Icons.logout),
                 tooltip: 'logout',
                 onPressed: () {
-                  logout();
+                  Navigator.pushNamed(context, '/login');
                 },
               ),
             ]),

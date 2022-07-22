@@ -20,7 +20,6 @@ class _LoginPageState extends State<LoginPage> {
   var errorDetail;
 
   static final storage = FlutterSecureStorage();
-
   dynamic userInfo = '';
   //flutter_secure_storage 사용을 위한 초기화 작업
   @override
@@ -37,12 +36,9 @@ class _LoginPageState extends State<LoginPage> {
     //read 함수를 통하여 key값에 맞는 정보를 불러오게 됩니다. 이때 불러오는 결과의 타입은 String 타입임을 기억해야 합니다.
     //(데이터가 없을때는 null을 반환을 합니다.)
     userInfo = await storage.read(key: 'login');
-
-    //user의 정보가 있다면 바로 contacts 페이지로 넘어가게 합니다.
+    //혹시나 user의 정보가 남아있다면 삭제하도록 합니다.
     if (userInfo != null) {
-      Navigator.pushNamed(context, '/contacts');
-    } else {
-      print('로그인이 필요합니다');
+      await storage.delete(key: 'login');
     }
   }
 
