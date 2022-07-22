@@ -175,7 +175,7 @@ class _ContactsPageState extends State<ContactsPage> {
                         Expanded(
                           flex: 1,
                           child: Container(
-                            padding: EdgeInsets.fromLTRB(8, 14, 5, 0),
+                            padding: EdgeInsets.fromLTRB(8, 14, 0, 0),
                             child: Column(
                               // mainAxisAlignment: MainAxisAlignment.end, // 태그만 오른쪽 배치하고 싶다면
                               crossAxisAlignment:
@@ -184,7 +184,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                 Text(
                                   friendsData[friends[i]].nickname,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -193,8 +193,10 @@ class _ContactsPageState extends State<ContactsPage> {
                                 ),
                                 Text(
                                   friendsData[friends[i]].introduction,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.grey.shade600,
                                   ),
