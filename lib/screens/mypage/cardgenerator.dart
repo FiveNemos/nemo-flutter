@@ -104,6 +104,12 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     Navigator.pushNamed(context, '/login');
   }
 
+  saveUserImage(File file) {
+    setState(() {
+      userImage = file;
+    });
+  }
+
   saveTagImage(int num, File picture) {
     setState(() {
       if (num == 1) {
@@ -199,6 +205,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     tags: tags,
                     introduction: introduction,
                     userImage: userImage,
+                    saveUserImage: saveUserImage,
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
@@ -509,10 +516,12 @@ class NameCard extends StatefulWidget {
     this.tags,
     this.introduction,
     this.userImage,
+    this.saveUserImage,
   }) : super(key: key);
 
   var nickname, tags, introduction;
   dynamic userImage;
+  var saveUserImage;
 
   @override
   State<NameCard> createState() => _NameState();
@@ -551,13 +560,14 @@ class _NameState extends State<NameCard> {
                     var image =
                         await picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
-                      setState(() {
-                        widget.userImage = File(image.path);
-                      });
+                      widget.saveUserImage(File(image.path));
+                      // setState(() {
+                      //   widget.userImage = File(image.path);
+                      // });
                     }
                   },
                   child: widget.userImage == null
-                      ? Image.asset("assets/grey_profile.png", fit: BoxFit.fill)
+                      ? Image.asset('assets/grey_profile.png', fit: BoxFit.fill)
                       : Image.file(widget.userImage, fit: BoxFit.fill),
                 ),
               ),
