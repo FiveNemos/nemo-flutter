@@ -4,8 +4,6 @@ import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
 
 import '../sharing/sharing.dart';
 
@@ -98,40 +96,10 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   var introduction = '한줄소개';
   dynamic userImage =
       'https://www.docker.com/wp-content/uploads/2022/03/vertical-logo-monochromatic.png';
-  dynamic tagImage1, tagImage2, tagImage3;
 
   logout() async {
     await storage.delete(key: 'login');
     Navigator.pushNamed(context, '/login');
-  }
-
-  saveTagImage(int num, File picture) {
-    setState(() {
-      if (num == 1) {
-        tagImage1 = picture;
-      } else if (num == 2) {
-        tagImage2 = picture;
-      } else {
-        tagImage3 = picture;
-      }
-    });
-  }
-
-  getTagImage() {
-    setState(() {
-      tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
-    });
-  }
-
-  Future<File> getImageFileFromAssets(String path) async {
-    final byteData = await rootBundle.load('assets/$path');
-    final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-    return file;
   }
 
   saveName(String value) {
@@ -153,13 +121,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   }
 
   @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getTagImage();
-  }
-
-  @override
   Widget build(BuildContext context) {
     final arguments = (ModalRoute.of(context)?.settings.arguments ??
         <String, dynamic>{}) as Map;
@@ -178,6 +139,22 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 onPressed: () {
                   postNameCard(context, arguments['nowId'], nickname, tags,
                       introduction, userImage);
+                  // showDialog(
+                  //     context: context,
+                  //     builder: (context){
+                  //       return AlertDialog(
+                  //           title: Text('저장완료'),
+                  //           content: Text('가입이 완료되었습니다.'),
+                  //           actions: [
+                  //             TextButton(
+                  //               // textColor: Colors.black,
+                  //               onPressed: (){
+                  //                 Navigator.pushNamed(context, '/');
+                  //               },
+                  //               child: Text('확인'),
+                  //             )
+                  //           ]
+                  //         );});
                 },
               ),
               IconButton(
@@ -243,88 +220,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                       )
                     ],
                   ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Wrap(
-                    spacing: 8, // main axis of the wrap
-                    runSpacing: 20, // cross axis of the wrap
-                    children: [
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 1,
-                          tagImage1: tagImage1,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 2,
-                          tagImage2: tagImage2,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 3,
-                          tagImage3: tagImage3,
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  TextField(
-                    decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 40),
-                      labelText: 'title',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                    ),
-                    // controller: controller,
-                    onChanged: (text) {
-                      // widget.saveName(text);
-                    },
-                  ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  TextField(
-                    maxLines: null,
-                    keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 40),
-                      labelText: 'details',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                    ),
-                    // controller: controller,
-                    onChanged: (text) {
-                      // widget.saveName(text);
-                    },
-                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 20)),
                 ],
               ),
             ),
@@ -332,69 +228,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
         ),
       ),
     );
-  }
-}
-
-class imageSpace extends StatefulWidget {
-  imageSpace(
-      {Key? key,
-      this.saveTagImage,
-      this.num,
-      this.tagImage1,
-      this.tagImage2,
-      this.tagImage3})
-      : super(key: key);
-  var saveTagImage;
-  var num;
-  var tagImage1, tagImage2, tagImage3;
-
-  @override
-  State<imageSpace> createState() => _imageSpaceState();
-}
-
-class _imageSpaceState extends State<imageSpace> {
-  @override
-  Widget build(BuildContext context) {
-    if (widget.num == 1) {
-      return InkWell(
-        child: (widget.tagImage1.runtimeType == Image)
-            ? widget.tagImage1
-            : Image.file(widget.tagImage1),
-        onTap: () async {
-          var picker = ImagePicker();
-          var picture = await picker.pickImage(source: ImageSource.gallery);
-          if (picture != null) {
-            widget.saveTagImage(widget.num, File(picture.path));
-          }
-        },
-      );
-    } else if (widget.num == 2) {
-      return InkWell(
-        child: (widget.tagImage2.runtimeType == Image)
-            ? widget.tagImage2
-            : Image.file(widget.tagImage2),
-        onTap: () async {
-          var picker = ImagePicker();
-          var picture = await picker.pickImage(source: ImageSource.gallery);
-          if (picture != null) {
-            widget.saveTagImage(widget.num, File(picture.path));
-          }
-        },
-      );
-    } else {
-      return InkWell(
-        child: (widget.tagImage3.runtimeType == Image)
-            ? widget.tagImage3
-            : Image.file(widget.tagImage3),
-        onTap: () async {
-          var picker = ImagePicker();
-          var picture = await picker.pickImage(source: ImageSource.gallery);
-          if (picture != null) {
-            widget.saveTagImage(widget.num, File(picture.path));
-          }
-        },
-      );
-    }
   }
 }
 

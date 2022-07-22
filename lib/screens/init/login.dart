@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 import 'dart:convert'; // json decode 등등 관련 패키지
@@ -211,7 +209,7 @@ class _LoginPageState extends State<LoginPage> {
                             print('로그인 성공');
                             print('loginID : $loginID');
                             if (await findCard(loginID) == true) {
-                              print("card 찾음");
+                              print('card 찾음');
                               Navigator.pushNamed(context, '/contacts');
                             } else {
                               print('card 못찾음');
