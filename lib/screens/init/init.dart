@@ -7,6 +7,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:flutter_slidable/flutter_slidable.dart';
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 // import '../../tests/contacts/preferences.dart';
+import 'package:blinking_text/blinking_text.dart';
 
 class InitPage extends StatefulWidget {
   const InitPage({Key? key}) : super(key: key);
@@ -73,30 +74,34 @@ class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          GestureDetector(
-            onTap: () {
-              checkUserState();
-            },
-            onDoubleTap: () {
-              emergency();
-            },
-            child: Image.asset(
+      body: GestureDetector(
+        onTap: () {
+          checkUserState();
+        },
+        onDoubleTap: () {
+          emergency();
+        },
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Image.asset(
               'assets/common/logo.png',
               alignment: Alignment.center,
               height: 400,
             ),
-          ),
-          Text(
-            'NEMO 를 눌러주세요! ',
-            style: TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 18,
-                color: Color(0xff8338EC)),
-          ),
-        ],
+            BlinkText(
+              'NEMO 를 눌러주세요! ',
+              // beginColor: Colors.black,
+              // endColor: Color(0xff8338EC),
+              duration: Duration(milliseconds: 800),
+              times: 4,
+              style: TextStyle(
+                  fontWeight: FontWeight.w700,
+                  fontSize: 19,
+                  color: Color(0xff8338EC)),
+            ),
+          ],
+        ),
       ),
     );
   }
