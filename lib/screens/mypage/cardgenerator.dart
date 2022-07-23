@@ -9,10 +9,61 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../sharing/sharing.dart';
 
-Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
-    Map tags, String introduction, dynamic userImage) async {
+// Future<dynamic> postNameCard(
+//     dynamic context,
+//     nowID,
+//     nickname,
+//     Map tags,
+//     introduction,
+//     File userImage,
+//     String detail_title,
+//     String detail_content,
+//     File tagImage1,
+//     File tagImage2,
+//     File tagImage3) async {
+//   try {
+//     var dio = Dio();
+//     dio.options.baseUrl = 'http://34.64.217.3:3000';
+//     dio.options.headers = {
+//       'Content-Type': 'multipart/form-data; boundary=----myboundary'
+//     };
+//     var formData = FormData.fromMap({
+//       'user_id': 'nowID'.toString(),
+//       'nickname': nickname,
+//       'tag_1': tags['1'],
+//       'tag_2': tags['2'],
+//       'tag_3': tags['3'],
+//       'intro': introduction,
+//       'detail_title': detail_title,
+//       'detail_content': detail_content,
+//       'image': await MultipartFile.fromFile(userImage.path),
+//       'tag_image_1': await MultipartFile.fromFile(tagImage1.path),
+//       'tag_image_2': await MultipartFile.fromFile(tagImage2.path),
+//       // 'tag_image_3': await MultipartFile.fromFile(tagImage3.path),
+//     });
+//     final response = await dio.post(
+//       '/api/card/create',
+//       data: formData,
+//     );
+//   } on DioError catch (e) {
+//     return false;
+//   }
+// }
+
+Future<dynamic> postNameCard(
+    dynamic context,
+    nowID,
+    nickname,
+    Map tags,
+    introduction,
+    File userImage,
+    String detailTitle,
+    String detailContent,
+    File tagImage1,
+    File tagImage2,
+    File tagImage3) async {
   print('nowID : $nowID');
-  if (userImage.runtimeType == String) {
+  if (userImage == null) {
     showDialog(
         context: context,
         builder: (context) {
@@ -30,18 +81,27 @@ Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
               ]);
         });
   } else {
+    print('http post 요청 들어옴');
     var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
         .add(await http.MultipartFile.fromPath('image', userImage.path));
+    // request.files
+    //     .add(await http.MultipartFile.fromPath('tag_image_1', tagImage1.path));
+    // request.files
+    //     .add(await http.MultipartFile.fromPath('tag_image_2', tagImage2.path));
+    // request.files
+    //     .add(await http.MultipartFile.fromPath('tag_image_3', tagImage3.path));
     request.fields['user_id'] = nowID.toString();
     request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
     request.fields['intro'] = introduction;
+    request.fields['detail_title'] = detailTitle;
+    request.fields['detail_content'] = detailContent;
 
     final response = await request.send();
 
@@ -98,6 +158,19 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   var introduction = '한줄소개';
   dynamic userImage;
   dynamic tagImage1, tagImage2, tagImage3;
+  var detail_title, detail_content;
+
+  // saveTitle(String value){
+  //   setState(() {
+  //     detail_title = value;
+  //   });
+  // }
+  //
+  // saveContent(String value){
+  //   setState(() {
+  //     detail_content = value;
+  //   });
+  // }
 
   logout() async {
     await storage.delete(key: 'login');
@@ -108,18 +181,22 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     setState(() {
       userImage = file;
     });
+    print(file.runtimeType);
+    print(file.path.runtimeType);
   }
 
   saveTagImage(int num, File picture) {
-    setState(() {
-      if (num == 1) {
-        tagImage1 = picture;
-      } else if (num == 2) {
-        tagImage2 = picture;
-      } else {
-        tagImage3 = picture;
-      }
-    });
+    // setState(() {
+    //   if (num == 1) {
+    //     tagImage1 = picture;
+    //   } else if (num == 2) {
+    //     tagImage2 = picture;
+    //   } else {
+    //     tagImage3 = picture;
+    //   }
+    // });
+    print(picture.runtimeType);
+    print(picture.path.runtimeType);
   }
 
   getTagImage() {
@@ -181,8 +258,18 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
                 child: Text('저장'),
                 onPressed: () {
-                  postNameCard(context, arguments['nowId'], nickname, tags,
-                      introduction, userImage);
+                  postNameCard(
+                      context,
+                      arguments['nowId'],
+                      nickname,
+                      tags,
+                      introduction,
+                      userImage,
+                      tagImage1,
+                      tagImage2,
+                      tagImage3,
+                      detail_title,
+                      detail_content);
                 },
               ),
               IconButton(
@@ -288,7 +375,10 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      // widget.saveName(text);
+                      setState(() {
+                        detail_title = text;
+                      });
+                      // saveTitle(text);
                     },
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
@@ -315,7 +405,9 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      // widget.saveName(text);
+                      setState(() {
+                        detail_content = text;
+                      });
                     },
                   ),
                 ],
