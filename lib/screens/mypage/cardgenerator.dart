@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -88,12 +90,12 @@ Future<dynamic> postNameCard(
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
         .add(await http.MultipartFile.fromPath('image', userImage.path));
-    // request.files
-    //     .add(await http.MultipartFile.fromPath('tag_image_1', tagImage1.path));
-    // request.files
-    //     .add(await http.MultipartFile.fromPath('tag_image_2', tagImage2.path));
-    // request.files
-    //     .add(await http.MultipartFile.fromPath('tag_image_3', tagImage3.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
     request.fields['user_id'] = nowID.toString();
     request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
@@ -103,7 +105,10 @@ Future<dynamic> postNameCard(
     request.fields['detail_title'] = detailTitle;
     request.fields['detail_content'] = detailContent;
 
+    print("send");
+
     final response = await request.send();
+    print("response");
 
     if (response.statusCode == 201) {
       return showDialog(
@@ -151,31 +156,20 @@ class NameCardGenerator extends StatefulWidget {
 }
 
 class _NameCardGeneratorState extends State<NameCardGenerator> {
+  /* login */
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
+  var nowId;
+  /* cardgenerator */
   var nickname = '닉네임';
   var tags = {'1': '#', '2': '#', '3': '#'};
   var introduction = '한줄소개';
   dynamic userImage;
-  dynamic tagImage1, tagImage2, tagImage3;
-  var detail_title, detail_content;
-
-  // saveTitle(String value){
-  //   setState(() {
-  //     detail_title = value;
-  //   });
-  // }
-  //
-  // saveContent(String value){
-  //   setState(() {
-  //     detail_content = value;
-  //   });
-  // }
-
-  logout() async {
-    await storage.delete(key: 'login');
-    Navigator.pushNamed(context, '/login');
-  }
+  dynamic tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
+  dynamic tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
+  dynamic tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
+  var detailTitle;
+  var detailContent;
 
   saveUserImage(File file) {
     setState(() {
@@ -186,25 +180,17 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   }
 
   saveTagImage(int num, File picture) {
-    // setState(() {
-    //   if (num == 1) {
-    //     tagImage1 = picture;
-    //   } else if (num == 2) {
-    //     tagImage2 = picture;
-    //   } else {
-    //     tagImage3 = picture;
-    //   }
-    // });
+    setState(() {
+      if (num == 1) {
+        tagImage1 = picture;
+      } else if (num == 2) {
+        tagImage2 = picture;
+      } else {
+        tagImage3 = picture;
+      }
+    });
     print(picture.runtimeType);
     print(picture.path.runtimeType);
-  }
-
-  getTagImage() {
-    setState(() {
-      tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
-    });
   }
 
   Future<File> getImageFileFromAssets(String path) async {
@@ -234,17 +220,34 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     });
   }
 
+  saveDetailTitle(String value) {
+    setState(() {
+      detailTitle = value;
+    });
+  }
+
+  saveDetailContent(String value) {
+    setState(() {
+      detailContent = value;
+    });
+  }
+
+  checkUser() async {
+    dynamic userInfo = await storage.read(key: 'login');
+    setState(() {
+      nowId = int.parse(jsonDecode(userInfo)['user_id']);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getTagImage();
+    checkUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    final arguments = (ModalRoute.of(context)?.settings.arguments ??
-        <String, dynamic>{}) as Map;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -260,7 +263,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 onPressed: () {
                   postNameCard(
                       context,
-                      arguments['nowId'],
+                      nowId,
                       nickname,
                       tags,
                       introduction,
@@ -268,8 +271,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                       tagImage1,
                       tagImage2,
                       tagImage3,
-                      detail_title,
-                      detail_content);
+                      detailTitle,
+                      detailContent);
                 },
               ),
               IconButton(
@@ -375,10 +378,10 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      setState(() {
-                        detail_title = text;
-                      });
-                      // saveTitle(text);
+                      // setState(() {
+                      //   detail_title = text;
+                      // });
+                      saveDetailTitle(text);
                     },
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
@@ -405,9 +408,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      setState(() {
-                        detail_content = text;
-                      });
+                      saveDetailContent(text);
                     },
                   ),
                 ],
