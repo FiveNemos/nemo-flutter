@@ -33,9 +33,10 @@ class _ContactsPageState extends State<ContactsPage> {
         });
         json['cards'].forEach((e) {
           var friendId = e['user_id'];
+          print(e);
           setState(() {
             friendsData[friendId] = User(
-              imagePath: e['img_url'],
+              imagePath: e['image'],
               nickname: e['nickname'],
               introduction: e['intro'],
               tag: [
