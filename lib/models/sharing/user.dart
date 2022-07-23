@@ -32,7 +32,6 @@ class User {
         'tag_2': tag_2,
         'tag_3': tag_3,
         'nickname': nickname,
-        'nickname': nickname,
         'intro': intro,
         'image': image,
       };
