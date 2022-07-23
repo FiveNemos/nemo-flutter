@@ -1,18 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
-// import '../sharing/nearby.dart';
-// --
 import 'dart:math';
 import 'dart:typed_data';
-
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:permission_handler/permission_handler.dart';
+// import '../sharing/nearby.dart';
 
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
 import 'package:http/http.dart' as http;
-import '../contacts/contacts.dart';
+import 'package:dio/dio.dart';
+import 'dart:convert';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../contacts/contacts.dart';
+import '../../models/sharing/user.dart';
 
 // --
 
@@ -236,7 +237,7 @@ class _DraggableCardState extends State<DraggableCard>
       },
       child: Align(
         alignment: _dragAlignment,
-        child: Card(
+        child: Container(
           child: widget.child,
         ),
       ),
@@ -353,8 +354,18 @@ class _TookPageState extends State<TookPage> {
           Container(
             // height: 500,
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10)),
+              color: Colors.white,
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 1.0,
+                  offset: Offset(2, 4), // changes position of shadow
+                ),
+              ],
+            ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch, // add this
               children: <Widget>[
@@ -383,32 +394,60 @@ class _TookPageState extends State<TookPage> {
                             '고니고니',
                             style: TextStyle(
                               color: Colors.black,
-                              fontSize: 21,
+                              fontSize: 20,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
                           Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Text(
-                            '#태그1',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                          Container(
+                            padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+                            decoration: BoxDecoration(
+                              color: Color(0xff8338EC),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '#태그1',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Text(
-                            '#태그2',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                          Container(
+                            padding: EdgeInsets.fromLTRB(7, 1, 7, 1),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(12),
+                              border: Border.all(
+                                width: 1.5,
+                                color: Color(0xff8338EC),
+                              ),
+                            ),
+                            child: Text(
+                              '#태그2',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                           Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Text(
-                            '#태그3',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
+                          Container(
+                            padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+                            decoration: BoxDecoration(
+                              color: Color(0xff8338EC),
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            child: Text(
+                              '#태그3',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -416,8 +455,9 @@ class _TookPageState extends State<TookPage> {
                       Text(
                         '캣홀릭 오타쿠 캣홀릭 오타쿠 캣홀릭 오타쿠',
                         style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
+                          color: Colors.grey.shade600,
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                     ],
