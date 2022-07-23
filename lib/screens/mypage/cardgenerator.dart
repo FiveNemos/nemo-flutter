@@ -11,8 +11,18 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../sharing/sharing.dart';
 
-Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
-    Map tags, String introduction, dynamic userImage) async {
+Future<dynamic> postNameCard(
+    context,
+    nowID,
+    nickname,
+    tags,
+    introduction,
+    userImage,
+    detailTitle,
+    detailContent,
+    tagImage1,
+    tagImage2,
+    tagImage3) async {
   if (userImage.runtimeType == String) {
     showDialog(
         context: context,
@@ -37,14 +47,22 @@ Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
         .add(await http.MultipartFile.fromPath('image', userImage.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
+
     request.fields['user_id'] = nowID.toString();
     request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
     request.fields['intro'] = introduction;
-    print("here");
-
+    request.fields['detail_title'] = detailTitle;
+    request.fields['detail_content'] = detailContent;
+    print("send");
     final response = await request.send();
     print("response");
 
@@ -106,6 +124,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   dynamic tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
   dynamic tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
   dynamic tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
+  var detailTitle;
+  var detailContent;
 
   saveUserImage(File file) {
     setState(() {
@@ -152,6 +172,18 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     });
   }
 
+  saveDetailTitle(String value) {
+    setState(() {
+      detailTitle = value;
+    });
+  }
+
+  saveDetailContent(String value) {
+    setState(() {
+      detailContent = value;
+    });
+  }
+
   checkUser() async {
     dynamic userInfo = await storage.read(key: 'login');
     setState(() {
@@ -185,8 +217,20 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                   print(tagImage1);
                   print(tagImage2);
                   print(tagImage3);
+                  print(detailTitle);
+                  print(detailContent);
                   postNameCard(
-                      context, nowId, nickname, tags, introduction, userImage);
+                      context,
+                      nowId,
+                      nickname,
+                      tags,
+                      introduction,
+                      userImage,
+                      detailTitle,
+                      detailContent,
+                      tagImage1,
+                      tagImage2,
+                      tagImage3);
                 },
               ),
               IconButton(
@@ -292,7 +336,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      // widget.saveName(text);
+                      saveDetailTitle(text);
                     },
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
@@ -319,7 +363,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      // widget.saveName(text);
+                      saveDetailContent(text);
                     },
                   ),
                 ],
