@@ -28,12 +28,14 @@ class _PunchPageState extends State<PunchPage> {
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
+          dispose();
         } else if (event.x < -5 || event.x > 5) {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
+          dispose();
         } else {}
       });
     });
@@ -48,23 +50,13 @@ class _PunchPageState extends State<PunchPage> {
     //     .toList();
 
     return Scaffold(
-      body: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Container(
-            margin: EdgeInsets.only(
-                top: (MediaQuery.of(context).size.height) / 2 - 60),
-            child: Text(
-              'test',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                fontSize: 100,
-                // initstate color
-              ),
-            ),
-          ),
-        ],
+      body: Center(
+        child: Image.asset(
+          "assets/bump_image.webp",
+          width: 300,
+          height: 300,
+          fit: BoxFit.fill,
+        ),
       ),
     );
   }

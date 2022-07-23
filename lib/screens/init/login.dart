@@ -246,7 +246,7 @@ class _LoginPageState extends State<LoginPage> {
                       children: [
                         InkWell(
                           onTap: () {
-                            print('네이버 로그인');
+                            Navigator.pushNamed(context, '/punch');
                           },
                           child: Container(
                             decoration: BoxDecoration(
