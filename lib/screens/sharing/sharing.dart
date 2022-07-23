@@ -383,131 +383,139 @@ class _TookPageState extends State<TookPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.red,
-      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-      child: ListView(
-        // scrollDirection: Axis.vertical,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        children: [
-          Container(
-            // height: 500,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.black),
-              borderRadius: BorderRadius.circular(10),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.5),
-                  spreadRadius: 1,
-                  blurRadius: 1.0,
-                  offset: Offset(2, 4), // changes position of shadow
-                ),
-              ],
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch, // add this
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0),
+    if (myDataFromJson != null) {
+      return Container(
+        // color: Colors.red,
+        padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
+        child: ListView(
+          // scrollDirection: Axis.vertical,
+          physics: NeverScrollableScrollPhysics(),
+          shrinkWrap: true,
+          children: [
+            Container(
+              // height: 500,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.black),
+                borderRadius: BorderRadius.circular(10),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 1,
+                    blurRadius: 1.0,
+                    offset: Offset(2, 4), // changes position of shadow
                   ),
-                  child: Image.network(
-                    'http://34.64.217.3:3000/static/${myDataFromJson.image}',
-                    width: 300,
-                    height: 240,
-                    fit: BoxFit.fitWidth,
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch, // add this
+                children: <Widget>[
+                  ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.circular(10.0),
+                    ),
+                    child: Image.network(
+                      'http://34.64.217.3:3000/static/${myDataFromJson.image}',
+                      width: 300,
+                      height: 240,
+                      fit: BoxFit.fitWidth,
+                    ),
                   ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                  decoration: BoxDecoration(
-                      border: Border(top: BorderSide(color: Colors.black))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '${myDataFromJson.nickname}',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
-                            decoration: BoxDecoration(
-                              color: Color(0xff8338EC),
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            child: Text(
-                              '#${myDataFromJson.tag_1}',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(7, 1, 7, 1),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(12),
-                              border: Border.all(
-                                width: 1.5,
-                                color: Color(0xff8338EC),
-                              ),
-                            ),
-                            child: Text(
-                              '#${myDataFromJson.tag_2}',
+                  Container(
+                    padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
+                    decoration: BoxDecoration(
+                        border: Border(top: BorderSide(color: Colors.black))),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Text(
+                              '${myDataFromJson.nickname}',
                               style: TextStyle(
                                 color: Colors.black,
-                                fontSize: 12,
+                                fontSize: 20,
                                 fontWeight: FontWeight.bold,
                               ),
                             ),
-                          ),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Container(
-                            padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
-                            decoration: BoxDecoration(
-                              color: Color(0xff8338EC),
-                              borderRadius: BorderRadius.circular(10),
+                            Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+                              decoration: BoxDecoration(
+                                color: Color(0xff8338EC),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '#${myDataFromJson.tag_1}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                             ),
-                            child: Text(
-                              '#${myDataFromJson.tag_3}',
-                              style: TextStyle(
+                            Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(7, 1, 7, 1),
+                              decoration: BoxDecoration(
                                 color: Colors.white,
-                                fontSize: 12,
-                                fontWeight: FontWeight.bold,
+                                borderRadius: BorderRadius.circular(12),
+                                border: Border.all(
+                                  width: 1.5,
+                                  color: Color(0xff8338EC),
+                                ),
+                              ),
+                              child: Text(
+                                '#${myDataFromJson.tag_2}',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        '${myDataFromJson.intro}',
-                        style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontSize: 14,
-                          fontWeight: FontWeight.w600,
+                            Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                            Container(
+                              padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+                              decoration: BoxDecoration(
+                                color: Color(0xff8338EC),
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              child: Text(
+                                '#${myDataFromJson.tag_3}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                        Text(
+                          '${myDataFromJson.intro}',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 14,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      );
+    }
   }
 }
