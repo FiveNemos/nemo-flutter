@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sensors_plus/sensors_plus.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../sharing/took_profile_sharing.dart';
 
@@ -13,12 +14,12 @@ class PunchPage extends StatefulWidget {
 }
 
 class _PunchPageState extends State<PunchPage> {
-  Color _backgroundColor = Color.fromARGB(255, 235, 238, 255);
+  Color _backgroundColor = Color.fromARGB(255, 255, 255, 255);
   List<double>? _userAccelerometerValues;
 
   @override
   void initState() {
-    super.initState();
+    // super.initState();
     userAccelerometerEvents.listen((UserAccelerometerEvent event) {
       setState(() {
         // Manipulate the UI here, something like:
@@ -28,14 +29,14 @@ class _PunchPageState extends State<PunchPage> {
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
-          dispose();
+          super.dispose();
         } else if (event.x < -5 || event.x > 5) {
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
-          dispose();
+          super.dispose();
         } else {}
       });
     });
@@ -50,13 +51,62 @@ class _PunchPageState extends State<PunchPage> {
     //     .toList();
 
     return Scaffold(
-      body: Center(
-        child: Image.asset(
-          "assets/bump_image.webp",
-          width: 300,
-          height: 300,
-          fit: BoxFit.fill,
-        ),
+      body: ListView(
+        children: [
+          Padding(
+              padding: const EdgeInsets.all(15),
+              child: Column(
+                children: [
+                  SizedBox(
+                    height: 100,
+                  ),
+                  SizedBox(
+                    width: 350.0,
+                    height: 100.0,
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.red,
+                      highlightColor: Colors.yellow,
+                      child: Text(
+                        'TooK !',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 70.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  Image.asset(
+                    "assets/bump_hand.gif",
+                    width: 700,
+                    // height: 500,
+                    fit: BoxFit.fill,
+                  ),
+                  SizedBox(
+                    height: 50,
+                  ),
+                  SizedBox(
+                    width: 350.0,
+                    height: 100.0,
+                    child: Shimmer.fromColors(
+                      baseColor: Color.fromARGB(255, 23, 104, 255),
+                      highlightColor: Colors.yellow,
+                      child: Text(
+                        'to Share !',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 30.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ))
+        ],
       ),
     );
   }
