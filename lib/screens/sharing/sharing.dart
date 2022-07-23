@@ -15,8 +15,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../contacts/contacts.dart';
 import '../../models/sharing/user.dart';
 
-// --
-
 class SharingPage extends StatelessWidget {
   const SharingPage({super.key});
 
@@ -341,6 +339,48 @@ class TookPage extends StatefulWidget {
 }
 
 class _TookPageState extends State<TookPage> {
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
+  var nowId;
+  List friends = [];
+  var myDataFromJson;
+  Map myData = {};
+  getAllCards(id) async {
+    try {
+      var dio = Dio();
+      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+
+      if (response.statusCode == 200) {
+        myData = response.data;
+        setState(() {
+          myDataFromJson = User.fromJson(myData); // Instance User
+        });
+        print('접속 성공!');
+        return true;
+      } else {
+        print('error');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  checkUser() async {
+    dynamic userInfo = await storage.read(key: 'login');
+    setState(() {
+      nowId = jsonDecode(userInfo)['user_id'];
+    });
+    await getAllCards(nowId);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUser();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -375,7 +415,7 @@ class _TookPageState extends State<TookPage> {
                     topRight: Radius.circular(10.0),
                   ),
                   child: Image.network(
-                    'http://34.64.217.3:3000/static/gonigoni.gif',
+                    'http://34.64.217.3:3000/static/${myDataFromJson.image}',
                     width: 300,
                     height: 240,
                     fit: BoxFit.fitWidth,
@@ -391,7 +431,7 @@ class _TookPageState extends State<TookPage> {
                       Row(
                         children: [
                           Text(
-                            '고니고니',
+                            '${myDataFromJson.nickname}',
                             style: TextStyle(
                               color: Colors.black,
                               fontSize: 20,
@@ -406,7 +446,7 @@ class _TookPageState extends State<TookPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              '#태그1',
+                              '#${myDataFromJson.tag_1}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -426,7 +466,7 @@ class _TookPageState extends State<TookPage> {
                               ),
                             ),
                             child: Text(
-                              '#태그2',
+                              '#${myDataFromJson.tag_2}',
                               style: TextStyle(
                                 color: Colors.black,
                                 fontSize: 12,
@@ -442,7 +482,7 @@ class _TookPageState extends State<TookPage> {
                               borderRadius: BorderRadius.circular(10),
                             ),
                             child: Text(
-                              '#태그3',
+                              '#${myDataFromJson.tag_3}',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 12,
@@ -453,7 +493,7 @@ class _TookPageState extends State<TookPage> {
                         ],
                       ),
                       Text(
-                        '캣홀릭 오타쿠 캣홀릭 오타쿠 캣홀릭 오타쿠',
+                        '${myDataFromJson.intro}',
                         style: TextStyle(
                           color: Colors.grey.shade600,
                           fontSize: 14,
