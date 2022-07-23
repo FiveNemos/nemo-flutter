@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -11,7 +13,6 @@ import '../sharing/sharing.dart';
 
 Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
     Map tags, String introduction, dynamic userImage) async {
-  print('nowID : $nowID');
   if (userImage.runtimeType == String) {
     showDialog(
         context: context,
@@ -42,8 +43,10 @@ Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
     request.fields['intro'] = introduction;
+    print("here");
 
     final response = await request.send();
+    print("response");
 
     if (response.statusCode == 201) {
       return showDialog(
@@ -91,18 +94,18 @@ class NameCardGenerator extends StatefulWidget {
 }
 
 class _NameCardGeneratorState extends State<NameCardGenerator> {
+  /* login */
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
+  var nowId;
+  /* cardgenerator */
   var nickname = '닉네임';
   var tags = {'1': '#', '2': '#', '3': '#'};
   var introduction = '한줄소개';
   dynamic userImage;
-  dynamic tagImage1, tagImage2, tagImage3;
-
-  logout() async {
-    await storage.delete(key: 'login');
-    Navigator.pushNamed(context, '/login');
-  }
+  dynamic tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
+  dynamic tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
+  dynamic tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
 
   saveUserImage(File file) {
     setState(() {
@@ -119,14 +122,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
       } else {
         tagImage3 = picture;
       }
-    });
-  }
-
-  getTagImage() {
-    setState(() {
-      tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
     });
   }
 
@@ -157,17 +152,22 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     });
   }
 
+  checkUser() async {
+    dynamic userInfo = await storage.read(key: 'login');
+    setState(() {
+      nowId = int.parse(jsonDecode(userInfo)['user_id']);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    getTagImage();
+    checkUser();
   }
 
   @override
   Widget build(BuildContext context) {
-    final arguments = (ModalRoute.of(context)?.settings.arguments ??
-        <String, dynamic>{}) as Map;
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -181,8 +181,12 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
                 child: Text('저장'),
                 onPressed: () {
-                  postNameCard(context, arguments['nowId'], nickname, tags,
-                      introduction, userImage);
+                  print(userImage);
+                  print(tagImage1);
+                  print(tagImage2);
+                  print(tagImage3);
+                  postNameCard(
+                      context, nowId, nickname, tags, introduction, userImage);
                 },
               ),
               IconButton(
