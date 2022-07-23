@@ -17,7 +17,6 @@ import 'screens/sharing/sharing.dart';
 
 // name card page
 import 'screens/mypage/cardgenerator.dart';
-
 // --------------------------------------------------
 
 void main() {
