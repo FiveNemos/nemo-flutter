@@ -45,8 +45,8 @@ class _ProfilePageState extends State<ProfilePage> {
             imagePath: json['image'],
             nickname: json['nickname'],
             introduction: json['intro'],
-            title: json['intro'], // title로 변경 필요
-            about: json['intro'], // about로 변경 필요
+            title: json['detail_title'], // title로 변경 필요
+            about: json['detail_content'], // about로 변경 필요
             image1: BASE_URL + json['tag_img_1'],
             image2: BASE_URL + json['tag_img_2'],
             image3: BASE_URL + json['tag_img_3'],
