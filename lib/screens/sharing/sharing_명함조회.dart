@@ -7,7 +7,7 @@ import 'dart:typed_data';
 
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:permission_handler/permission_handler.dart';
-// import 'package:nemo_flutter/screens/mypage/profile_page.dart';
+import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
@@ -17,9 +17,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:dio/dio.dart';
 import '../../models/contacts/user.dart';
-import '../sharing/took_profile_sharing.dart';
 
-import '../sharing/punch.dart';
 // --
 
 class SharingPage extends StatelessWidget {
@@ -322,7 +320,7 @@ class _DraggableCardState extends State<DraggableCard>
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PunchPage(friendId: id_2)));
+                  builder: (context) => ProfilePage(friendId: id_2)));
         }
       }
     });
@@ -380,6 +378,7 @@ class _DraggableCardState extends State<DraggableCard>
 }
 
 // -----
+
 class TookPage extends StatefulWidget {
   const TookPage({Key? key}) : super(key: key);
 
@@ -388,94 +387,207 @@ class TookPage extends StatefulWidget {
 }
 
 class _TookPageState extends State<TookPage> {
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
+  var nowId;
+  // List friends = [];
+  Map userData = {};
+  getMyCards(id) async {
+    try {
+      var dio = Dio();
+      Response response =
+          await dio.get('http://34.64.217.3:3000/api/card/all/$id');
+
+      if (response.statusCode == 200) {
+        print(id);
+
+        final json = response.data;
+        json.forEach((e) {
+          var friendId = e['user_id'];
+          setState(() {
+            userData[friendId] = User(
+              imagePath: e['img_url'],
+              nickname: e['nickname'],
+              introduction: e['intro'],
+              tag: [
+                '#${e['tag_1']}',
+                '#${e['tag_2']}',
+                '#${e['tag_3']}',
+              ],
+            );
+            // friends.add(friendId);
+          });
+        });
+        print('접속 성공!');
+        return true;
+      } else {
+        print('error');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  checkUser() async {
+    dynamic userInfo = await storage.read(key: 'login');
+    setState(() {
+      nowId = jsonDecode(userInfo)['user_id'];
+    });
+    await getMyCards(nowId);
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUser();
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Container(
-      // color: Colors.red,
-      padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
-      child: ListView(
-        // scrollDirection: Axis.vertical,
-        physics: NeverScrollableScrollPhysics(),
-        shrinkWrap: true,
-        children: [
-          Container(
-            // height: 500,
+    return Scaffold(
+        body: ListView.builder(
+      padding: EdgeInsets.fromLTRB(22, 8, 22, 10),
+      itemCount: 1,
+      itemBuilder: (c, i) {
+        return InkWell(
+          // onTap: () => Navigator.push(
+          //     context,
+          //     MaterialPageRoute(
+          //         builder: (c) => ProfilePage(friendId: friends[i]))),
+          child: Container(
             decoration: BoxDecoration(
-                border: Border.all(color: Colors.black),
-                borderRadius: BorderRadius.circular(10)),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch, // add this
-              children: <Widget>[
-                ClipRRect(
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10.0),
-                    topRight: Radius.circular(10.0),
-                  ),
-                  child: Image.network(
-                    'http://34.64.217.3:3000/static/gonigoni.gif',
-                    width: 300,
-                    height: 240,
-                    fit: BoxFit.fitWidth,
-                  ),
-                ),
-                Container(
-                  padding: EdgeInsets.fromLTRB(15, 5, 15, 5),
-                  decoration: BoxDecoration(
-                      border: Border(top: BorderSide(color: Colors.black))),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Text(
-                            '고니고니',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 21,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Text(
-                            '#태그1',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Text(
-                            '#태그2',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                            ),
-                          ),
-                          Padding(padding: EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                          Text(
-                            '#태그3',
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
-                      Text(
-                        '캣홀릭 오타쿠 캣홀릭 오타쿠 캣홀릭 오타쿠',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 15,
-                        ),
-                      ),
-                    ],
-                  ),
+              color: Colors.white,
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.5),
+                  spreadRadius: 1,
+                  blurRadius: 1.0,
+                  offset: Offset(2, 4), // changes position of shadow
                 ),
               ],
             ),
+            // margin: EdgeInsets.all(5),
+            height: 180,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment
+                    .start, // 정글러버, Pintos 정복자의 컬럼위치(위, 중간, 아래)
+                children: [
+                  Container(
+                    decoration: BoxDecoration(
+                      border: Border(right: BorderSide(color: Colors.black)),
+                    ),
+                    child: Image.network(
+                      'http://34.64.217.3:3000/static/1657692059857-space.jpg',
+                      width: 155,
+                      height: 180,
+                      // alignment: Alignment(-1, -0.7),
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                  Expanded(
+                    flex: 1,
+                    child: Container(
+                      padding: EdgeInsets.fromLTRB(8, 14, 5, 0),
+                      child: Column(
+                        // mainAxisAlignment: MainAxisAlignment.end, // 태그만 오른쪽 배치하고 싶다면
+                        crossAxisAlignment:
+                            CrossAxisAlignment.start, // 사진 옆 박스 row 시작점
+                        children: [
+                          Text(
+                            nowId.nickname,
+                            style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
+                          ),
+                          Text(
+                            nowId.introduction,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
+                          Padding(
+                            padding: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                          ),
+                          Wrap(
+                            direction: Axis.vertical,
+                            spacing: 5, // gap between adjacent chips
+                            runSpacing: 4.0,
+                            children: [
+                              Container(
+                                padding: EdgeInsets.fromLTRB(8, 2, 8, 2),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff8338EC),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  nowId.tag[0],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                    width: 1.5,
+                                    color: Color(0xff8338EC),
+                                  ),
+                                ),
+                                child: Text(
+                                  nowId.tag[1],
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                              Container(
+                                // color: Colors.white,
+                                padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
+                                decoration: BoxDecoration(
+                                  color: Color(0xff8338EC),
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                                child: Text(
+                                  nowId.tag[2],
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
-        ],
-      ),
-    );
+        );
+      },
+    ));
   }
 }
