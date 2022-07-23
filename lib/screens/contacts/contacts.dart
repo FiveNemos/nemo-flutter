@@ -28,11 +28,15 @@ class _ContactsPageState extends State<ContactsPage> {
 
       if (response.statusCode == 200) {
         final json = response.data;
-        json.forEach((e) {
+        setState(() {
+          friends = List.from(json['friends'].reversed);
+        });
+        json['cards'].forEach((e) {
           var friendId = e['user_id'];
+          print(e);
           setState(() {
             friendsData[friendId] = User(
-              imagePath: e['img_url'],
+              imagePath: e['image'],
               nickname: e['nickname'],
               introduction: e['intro'],
               tag: [
@@ -41,7 +45,6 @@ class _ContactsPageState extends State<ContactsPage> {
                 '#${e['tag_3']}',
               ],
             );
-            friends.add(friendId);
           });
         });
         print('접속 성공!');
@@ -175,7 +178,7 @@ class _ContactsPageState extends State<ContactsPage> {
                         Expanded(
                           flex: 1,
                           child: Container(
-                            padding: EdgeInsets.fromLTRB(8, 14, 5, 0),
+                            padding: EdgeInsets.fromLTRB(8, 14, 0, 0),
                             child: Column(
                               // mainAxisAlignment: MainAxisAlignment.end, // 태그만 오른쪽 배치하고 싶다면
                               crossAxisAlignment:
@@ -184,7 +187,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                 Text(
                                   friendsData[friends[i]].nickname,
                                   style: TextStyle(
-                                    fontSize: 18,
+                                    fontSize: 16,
                                     fontWeight: FontWeight.bold,
                                   ),
                                 ),
@@ -193,8 +196,10 @@ class _ContactsPageState extends State<ContactsPage> {
                                 ),
                                 Text(
                                   friendsData[friends[i]].introduction,
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 1,
                                   style: TextStyle(
-                                    fontSize: 15,
+                                    fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     color: Colors.grey.shade600,
                                   ),

@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+
+import '../../models/init/login.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({Key? key}) : super(key: key);
@@ -20,15 +23,13 @@ class _SignupPageState extends State<SignupPage> {
   var uniqueID;
   var loginID;
 
-  // static final storage = FlutterSecureStorage();
-  // dynamic userInfo = '';
-  // saveIdSecure() async{
-  //   var val = jsonEncode(Login('$accountName', '$password', '$jsonBody'));
-  //   userInfo = await storage.write(
-  //     key: 'login',
-  //     value: j
-  //   )
-  // }
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
+  saveIdSecure(id) async {
+    var val = jsonEncode(Login('$accountName', '$password', '$id'));
+    await storage.write(key: 'login', value: val);
+  }
+
   saveData(id) async {
     // 임시이며, SecureStorage로 이관예정
     var storage = await SharedPreferences.getInstance();
@@ -147,6 +148,7 @@ class _SignupPageState extends State<SignupPage> {
           uniqueID = json['id'];
         });
         saveData(json['id']);
+        saveIdSecure(json['id']);
         print('접속 성공!');
         print('success : $json');
         return true;
@@ -202,8 +204,7 @@ class _SignupPageState extends State<SignupPage> {
                     print('Trying to POST signup. . . ');
                     if (await postUser(accountName, password, phoneNumber) ==
                         true) {
-                      Navigator.pushNamed(context, '/namecard',
-                          arguments: {'nowId': uniqueID});
+                      Navigator.pushNamed(context, '/namecard');
                     } else {
                       errorDialog(errorDetail);
                     }
