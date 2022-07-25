@@ -5,6 +5,8 @@ import '../../widgets/mypage/profile_widget.dart';
 import '../message/chat_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 
 const BASE_URL = 'http://34.64.217.3:3000/static/';
 
@@ -17,17 +19,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  var myId;
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
+  var loginID;
   var user;
-  saveData() async {
-    var storage = await SharedPreferences.getInstance();
-    setState(() {
-      myId = storage.getInt('id');
-    });
+  checkUser() async {
+    dynamic userInfo = await storage.read(key: 'login');
+    loginID = int.parse(jsonDecode(userInfo)['user_id']);
     if (widget.friendId != null) {
       getCard(widget.friendId);
     } else {
-      getCard(myId);
+      getCard(loginID);
     }
   }
 
@@ -98,7 +100,7 @@ class _ProfilePageState extends State<ProfilePage> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    saveData();
+    checkUser();
   }
 
   @override
@@ -156,11 +158,16 @@ class _ProfilePageState extends State<ProfilePage> {
               ),
               IconButton(
                   onPressed: () {
+                    // http 요청해서, chatroomID 찾기 by loginID, friendID
+                    // var chatroomID = getHTTP(loginID, friendID)
                     Navigator.push(context,
                         MaterialPageRoute(builder: (context) {
-                      return ChatDetailPage(
-                        name: user.nickname,
-                        imageUrl: user.imagePath,
+                      return ChatScreen(
+                        chatroomID: 3, // chatroomID // 수정필요
+                        loginID: loginID,
+                        friendID: widget.friendId,
+                        friendName: user.nickname,
+                        friendImage: user.imagePath,
                       );
                     }));
                   },
