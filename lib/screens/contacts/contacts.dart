@@ -107,24 +107,28 @@ class _ContactsPageState extends State<ContactsPage> {
       },
       child: Scaffold(
         appBar: AppBar(
-          title: Text('Contacts'),
+          title: Text(
+            'Nemo',
+            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+          ),
+          centerTitle: true,
           automaticallyImplyLeading: false,
-          actions: [
-            IconButton(
-              icon: Icon(Icons.logout),
-              tooltip: 'logout',
-              onPressed: () {
-                Navigator.pushNamed(context, '/login');
-              },
-            ),
-            IconButton(
-              icon: Icon(Icons.star),
-              tooltip: 'star',
-              onPressed: () {
-                checkUser();
-              },
-            ),
-          ],
+          // actions: [
+          //   //   IconButton(
+          //   //     icon: Icon(Icons.logout),
+          //   //     tooltip: 'logout',
+          //   //     onPressed: () {
+          //   //       Navigator.pushNamed(context, '/login');
+          //   //     },
+          //   //   ),
+          //   IconButton(
+          //     icon: Icon(Icons.star),
+          //     tooltip: 'star',
+          //     onPressed: () {
+          //       checkUser();
+          //     },
+          //   ),
+          // ],
         ),
         body: Column(
           children: [
