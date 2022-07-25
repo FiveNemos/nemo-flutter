@@ -11,59 +11,19 @@ import 'package:flutter/services.dart' show rootBundle;
 
 import '../sharing/sharing.dart';
 
-// Future<dynamic> postNameCard(
-//     dynamic context,
-//     nowID,
-//     nickname,
-//     Map tags,
-//     introduction,
-//     File userImage,
-//     String detail_title,
-//     String detail_content,
-//     File tagImage1,
-//     File tagImage2,
-//     File tagImage3) async {
-//   try {
-//     var dio = Dio();
-//     dio.options.baseUrl = 'http://34.64.217.3:3000';
-//     dio.options.headers = {
-//       'Content-Type': 'multipart/form-data; boundary=----myboundary'
-//     };
-//     var formData = FormData.fromMap({
-//       'user_id': 'nowID'.toString(),
-//       'nickname': nickname,
-//       'tag_1': tags['1'],
-//       'tag_2': tags['2'],
-//       'tag_3': tags['3'],
-//       'intro': introduction,
-//       'detail_title': detail_title,
-//       'detail_content': detail_content,
-//       'image': await MultipartFile.fromFile(userImage.path),
-//       'tag_image_1': await MultipartFile.fromFile(tagImage1.path),
-//       'tag_image_2': await MultipartFile.fromFile(tagImage2.path),
-//       // 'tag_image_3': await MultipartFile.fromFile(tagImage3.path),
-//     });
-//     final response = await dio.post(
-//       '/api/card/create',
-//       data: formData,
-//     );
-//   } on DioError catch (e) {
-//     return false;
-//   }
-// }
-
 Future<dynamic> postNameCard(
-    dynamic context,
-    nowID,
-    nickname,
-    Map tags,
-    introduction,
-    File userImage,
-    String detailTitle,
-    String detailContent,
-    File tagImage1,
-    File tagImage2,
-    File tagImage3) async {
+  dynamic context,
+  nowID,
+  String nickname,
+  Map tags,
+  introduction,
+  File userImage,
+  File tagImage1,
+  File tagImage2,
+  File tagImage3,
+  String detailTitle,
+  String detailContent,
+) async {
   print('nowID : $nowID');
   if (userImage == null) {
     showDialog(
@@ -105,10 +65,10 @@ Future<dynamic> postNameCard(
     request.fields['detail_title'] = detailTitle;
     request.fields['detail_content'] = detailContent;
 
-    print("send");
+    print('send');
 
     final response = await request.send();
-    print("response");
+    print('response');
 
     if (response.statusCode == 201) {
       return showDialog(
@@ -175,8 +135,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     setState(() {
       userImage = file;
     });
-    print(file.runtimeType);
-    print(file.path.runtimeType);
   }
 
   saveTagImage(int num, File picture) {
@@ -185,12 +143,11 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
         tagImage1 = picture;
       } else if (num == 2) {
         tagImage2 = picture;
+        print(tagImage2.runtimeType);
       } else {
         tagImage3 = picture;
       }
     });
-    print(picture.runtimeType);
-    print(picture.path.runtimeType);
   }
 
   Future<File> getImageFileFromAssets(String path) async {
@@ -198,7 +155,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     final file = File('${(await getTemporaryDirectory()).path}/$path');
     await file.writeAsBytes(byteData.buffer
         .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
     return file;
   }
 
@@ -378,9 +334,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                     // controller: controller,
                     onChanged: (text) {
-                      // setState(() {
-                      //   detail_title = text;
-                      // });
                       saveDetailTitle(text);
                     },
                   ),
@@ -656,9 +609,6 @@ class _NameState extends State<NameCard> {
                         await picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
                       widget.saveUserImage(File(image.path));
-                      // setState(() {
-                      //   widget.userImage = File(image.path);
-                      // });
                     }
                   },
                   child: widget.userImage == null
