@@ -65,15 +65,16 @@ Future<dynamic> updateNameCard(
       request.files
           .add(await http.MultipartFile.fromPath('image', userImage.path));
     }
-    if (CHANGED['tag_img_1'] == 1) {
+    if (CHANGED['tagImage1'] == 1) {
       request.files
           .add(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
+      print(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
     }
-    if (CHANGED['tag_img_2'] == 1) {
+    if (CHANGED['tagImage2'] == 1) {
       request.files
           .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
     }
-    if (CHANGED['tag_img_3'] == 1) {
+    if (CHANGED['tagImage3'] == 1) {
       request.files
           .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
     }
@@ -227,17 +228,6 @@ class _CardEditorState extends State<CardEditor> {
         CHANGED[key] = 0;
       });
     });
-    print('모든 걸 세팅했닷');
-    print('nickname: $nickname');
-    print('CHANGED: $CHANGED');
-    print('introduction: $introduction');
-    print('userImage: $userImage');
-    print('tagImage1: $tagImage1');
-    print(tagImage1.path);
-    print('tagImage2: $tagImage2');
-    print('tagImage3: $tagImage3');
-    print('detailTitle: $detailTitle');
-    print('detailContent: $detailContent');
   }
 
   @override
