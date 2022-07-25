@@ -115,6 +115,14 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
     if (user != null) {
       return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'Nemo',
+            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+          ),
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+        ),
         body: ListView.separated(
           // shrinkWrap: true,
           physics: BouncingScrollPhysics(),
@@ -155,25 +163,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 user.nickname,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
-              IconButton(
-                  onPressed: () {
-                    // http 요청해서, chatroomID 찾기 by loginID, friendID
-                    // var chatroomID = getHTTP(loginID, friendID)
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) {
-                      return ChatScreen(
-                        chatroomID: 3, // chatroomID // 수정필요
-                        loginID: loginID,
-                        friendID: widget.friendId,
-                        friendName: user.nickname,
-                        friendImage: user.imagePath,
-                      );
-                    }));
-                  },
-                  icon: Icon(
-                    Icons.send,
-                    color: Colors.purple,
-                  )),
+              Transform.rotate(
+                angle: 6,
+                child: IconButton(
+                    onPressed: () {
+                      // http 요청해서, chatroomID 찾기 by loginID, friendID
+                      // var chatroomID = getHTTP(loginID, friendID)
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return ChatScreen(
+                          chatroomID: 3, // chatroomID // 수정필요
+                          loginID: loginID,
+                          friendID: widget.friendId,
+                          friendName: user.nickname,
+                          friendImage: user.imagePath,
+                        );
+                      }));
+                    },
+                    icon: Icon(
+                      Icons.send,
+                      color: Colors.purple,
+                    )),
+              ),
             ],
           ),
           const SizedBox(height: 4),
