@@ -115,7 +115,6 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
     if (user != null) {
       return Scaffold(
-        appBar: AppBar(),
         body: ListView.separated(
           // shrinkWrap: true,
           physics: BouncingScrollPhysics(),
