@@ -7,14 +7,14 @@ import 'package:permission_handler/permission_handler.dart';
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 
 import 'package:http/http.dart' as http;
-import 'package:dio/dio.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import '../contacts/contacts.dart';
+import '../mypage/cardeditor.dart';
 import '../../models/sharing/user.dart';
 import '../sharing/punch.dart';
+import 'package:dio/dio.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({super.key});
@@ -27,11 +27,12 @@ class SharingPage extends StatelessWidget {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.pushNamed(context, '/namecard');
-            },
-          ),
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return CardEditor();
+                }));
+              }),
         ],
       ),
       body: const DraggableCard(

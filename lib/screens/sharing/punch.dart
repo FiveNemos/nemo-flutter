@@ -14,7 +14,7 @@ class PunchPage extends StatefulWidget {
 }
 
 class _PunchPageState extends State<PunchPage> {
-  Color _backgroundColor = Color.fromARGB(255, 255, 255, 255);
+  final Color _backgroundColor = Color.fromARGB(255, 255, 255, 255);
   List<double>? _userAccelerometerValues;
 
   @override
@@ -80,7 +80,7 @@ class _PunchPageState extends State<PunchPage> {
                     height: 50,
                   ),
                   Image.asset(
-                    "assets/bump_hand.gif",
+                    'assets/bump_hand.gif',
                     width: 700,
                     // height: 500,
                     fit: BoxFit.fill,

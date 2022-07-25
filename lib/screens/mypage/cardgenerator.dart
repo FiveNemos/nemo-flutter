@@ -12,18 +12,20 @@ import 'package:flutter/services.dart' show rootBundle;
 import '../sharing/sharing.dart';
 
 Future<dynamic> postNameCard(
-    context,
-    nowID,
-    nickname,
-    tags,
-    introduction,
-    userImage,
-    detailTitle,
-    detailContent,
-    tagImage1,
-    tagImage2,
-    tagImage3) async {
-  if (userImage.runtimeType == String) {
+  dynamic context,
+  nowID,
+  String nickname,
+  Map tags,
+  introduction,
+  File userImage,
+  File tagImage1,
+  File tagImage2,
+  File tagImage3,
+  String detailTitle,
+  String detailContent,
+) async {
+  print('nowID : $nowID');
+  if (userImage == null) {
     showDialog(
         context: context,
         builder: (context) {
@@ -41,6 +43,7 @@ Future<dynamic> postNameCard(
               ]);
         });
   } else {
+    print('http post 요청 들어옴');
     var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
@@ -53,7 +56,6 @@ Future<dynamic> postNameCard(
         .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
     request.files
         .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
-
     request.fields['user_id'] = nowID.toString();
     request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
@@ -62,9 +64,11 @@ Future<dynamic> postNameCard(
     request.fields['intro'] = introduction;
     request.fields['detail_title'] = detailTitle;
     request.fields['detail_content'] = detailContent;
-    print("send");
+
+    print('send');
+
     final response = await request.send();
-    print("response");
+    print('response');
 
     if (response.statusCode == 201) {
       return showDialog(
@@ -139,6 +143,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
         tagImage1 = picture;
       } else if (num == 2) {
         tagImage2 = picture;
+        print(tagImage2.runtimeType);
       } else {
         tagImage3 = picture;
       }
@@ -150,7 +155,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     final file = File('${(await getTemporaryDirectory()).path}/$path');
     await file.writeAsBytes(byteData.buffer
         .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
     return file;
   }
 
@@ -213,12 +217,6 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                 style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
                 child: Text('저장'),
                 onPressed: () {
-                  print(userImage);
-                  print(tagImage1);
-                  print(tagImage2);
-                  print(tagImage3);
-                  print(detailTitle);
-                  print(detailContent);
                   postNameCard(
                       context,
                       nowId,
@@ -226,11 +224,11 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                       tags,
                       introduction,
                       userImage,
-                      detailTitle,
-                      detailContent,
                       tagImage1,
                       tagImage2,
-                      tagImage3);
+                      tagImage3,
+                      detailTitle,
+                      detailContent);
                 },
               ),
               IconButton(
@@ -256,13 +254,13 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     saveUserImage: saveUserImage,
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 25)),
-                  Container(
+                  SizedBox(
                     width: 200,
                     height: 34,
                     child: NameSpace(nickname: nickname, saveName: saveName),
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Container(
+                  SizedBox(
                     height: 34,
                     child: IntroSpace(
                         introduction: introduction, saveIntro: saveIntro),
@@ -371,7 +369,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     ),
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Container(
+                  SizedBox(
                     height: 35,
                     child: TextField(
                       decoration: InputDecoration(
@@ -670,9 +668,6 @@ class _NameState extends State<NameCard> {
                         await picker.pickImage(source: ImageSource.gallery);
                     if (image != null) {
                       widget.saveUserImage(File(image.path));
-                      // setState(() {
-                      //   widget.userImage = File(image.path);
-                      // });
                     }
                   },
                   child: ClipRRect(
