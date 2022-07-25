@@ -85,7 +85,11 @@ class _ContactsPageState extends State<ContactsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Contacts'),
+        title: Text(
+          'Nemo',
+          style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+        ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(

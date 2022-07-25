@@ -23,7 +23,11 @@ class SharingPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('TOOK 페이지'),
+        title: Text(
+          'Nemo',
+          style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+        ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
