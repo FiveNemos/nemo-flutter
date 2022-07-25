@@ -9,7 +9,11 @@ class MessagePage extends StatelessWidget {
     // Scaffold for route message page
     return Scaffold(
       appBar: AppBar(
-        title: Text('메시지 페이지'),
+        title: Text(
+          'Nemo',
+          style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+        ),
+        centerTitle: true,
         automaticallyImplyLeading: false,
       ),
       body: ChatPage(),
