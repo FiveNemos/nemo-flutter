@@ -122,7 +122,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   var nowId;
   /* cardgenerator */
   var nickname = '닉네임';
-  var tags = {'1': '#', '2': '#', '3': '#'};
+  var tags = {'1': '#태그', '2': '#태그', '3': '#태그'};
   var introduction = '한줄소개';
   dynamic userImage;
   dynamic tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
@@ -253,99 +253,157 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     userImage: userImage,
                     saveUserImage: saveUserImage,
                   ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  NameSpace(nickname: nickname, saveName: saveName),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  IntroSpace(introduction: introduction, saveIntro: saveIntro),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Wrap(
-                    spacing: 8, // main axis of the wrap
-                    runSpacing: 20, // cross axis of the wrap
-                    children: [
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: TagSpace(saveTags: saveTags, num: 1),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: TagSpace(saveTags: saveTags, num: 2),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: TagSpace(saveTags: saveTags, num: 3),
-                      )
-                    ],
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 25)),
+                  SizedBox(
+                    width: 200,
+                    height: 34,
+                    child: NameSpace(nickname: nickname, saveName: saveName),
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Wrap(
-                    spacing: 8, // main axis of the wrap
-                    runSpacing: 20, // cross axis of the wrap
-                    children: [
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 1,
-                          tagImage1: tagImage1,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 2,
-                          tagImage2: tagImage2,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 3,
-                          tagImage3: tagImage3,
-                        ),
-                      )
-                    ],
+                  SizedBox(
+                    height: 34,
+                    child: IntroSpace(
+                        introduction: introduction, saveIntro: saveIntro),
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  TextField(
-                    decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 40),
-                      labelText: 'title',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      SizedBox(
+                        width: 90,
+                        // height: 50,
+                        child: Column(
+                          children: [
+                            imageSpace(
+                              saveTagImage: saveTagImage,
+                              num: 1,
+                              tagImage1: tagImage1,
+                            ),
+                            Text(
+                              '사진1',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 15, 0)),
+                      SizedBox(
+                        width: 90,
+                        // height: 50,
+                        child: Column(
+                          children: [
+                            imageSpace(
+                              saveTagImage: saveTagImage,
+                              num: 2,
+                              tagImage2: tagImage2,
+                            ),
+                            Text(
+                              '사진2',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 15, 0)),
+                      SizedBox(
+                        width: 90,
+                        // height: 50,
+                        child: Column(
+                          children: [
+                            imageSpace(
+                              saveTagImage: saveTagImage,
+                              num: 3,
+                              tagImage3: tagImage3,
+                            ),
+                            Text(
+                              '사진3',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 12,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  // SizedBox(
+                  //   width: 100,
+                  //   height: 100,
+                  //   child: ListView.separated(
+                  //     scrollDirection: Axis.horizontal,
+                  //     itemCount: 3,
+                  //     itemBuilder: (c, i) {
+                  //       return Column(
+                  //         children: [
+                  //           Text('2'),
+                  //           Text('${i + 1}'),
+                  //         ],
+                  //       );
+                  //     },
+                  //     separatorBuilder: (c, i) => SizedBox(width: 10),
+                  //   ),
+                  // ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                  SizedBox(
+                    height: 34,
+                    child: ListView.separated(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: 3,
+                      itemBuilder: (c, i) {
+                        return SizedBox(
+                          width: 100,
+                          child: TagSpace(saveTags: saveTags, num: i + 1),
+                        );
+                      },
+                      separatorBuilder: (c, i) => SizedBox(width: 5),
                     ),
-                    // controller: controller,
-                    onChanged: (text) {
-                      saveDetailTitle(text);
-                    },
+                  ),
+                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                  SizedBox(
+                    height: 35,
+                    child: TextField(
+                      decoration: InputDecoration(
+                        labelText: 'title',
+                        labelStyle: TextStyle(fontSize: 13),
+                        enabledBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide(
+                            color: Color(0xff8338EC),
+                          ),
+                        ),
+                        focusedBorder: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(Radius.circular(10)),
+                          borderSide: BorderSide(
+                            color: Color(0xff8338EC),
+                          ),
+                        ),
+                      ),
+                      // controller: controller,
+                      onChanged: (text) {
+                        saveDetailTitle(text);
+                      },
+                    ),
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                   TextField(
                     // keyboardType: TextInputType.multiline,
                     minLines: 1,
-                    maxLines: 3,
+                    maxLines: 2,
                     maxLength: 50,
                     decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 120),
+                      constraints: BoxConstraints(maxHeight: 80),
                       labelText: 'details',
+                      labelStyle: TextStyle(fontSize: 12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
                         borderSide: BorderSide(
@@ -398,7 +456,9 @@ class _imageSpaceState extends State<imageSpace> {
       return InkWell(
         child: (widget.tagImage1.runtimeType == Image)
             ? widget.tagImage1
-            : Image.file(widget.tagImage1),
+            : Image.file(
+                widget.tagImage1,
+              ),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -458,6 +518,7 @@ class _NameSpaceState extends State<NameSpace> {
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
         labelText: '닉네임',
+        labelStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(
@@ -498,12 +559,9 @@ class _TagSpaceState extends State<TagSpace> {
         widget.saveTags(widget.num, text);
       },
       decoration: InputDecoration(
-        constraints: BoxConstraints(maxHeight: 40),
         hintText: '',
         labelText: '태그',
-        labelStyle: TextStyle(
-            // color: Colors.red,
-            ),
+        labelStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(
@@ -538,6 +596,7 @@ class _IntroSpaceState extends State<IntroSpace> {
         decoration: InputDecoration(
           constraints: BoxConstraints(maxHeight: 40),
           labelText: '한줄소개',
+          labelStyle: TextStyle(fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             borderSide: BorderSide(
@@ -580,10 +639,11 @@ class _NameState extends State<NameCard> {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.fromLTRB(10, 20, 10, 20),
+      padding: EdgeInsets.fromLTRB(0, 0, 10, 0),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderRadius: BorderRadius.all(Radius.circular(11)),
+        border: Border.all(color: Colors.black),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.3),
@@ -598,10 +658,9 @@ class _NameState extends State<NameCard> {
           Column(
             children: [
               Container(
-                width: 100,
-                height: 85,
+                width: 140,
+                height: 140,
                 margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                decoration: BoxDecoration(color: Colors.red),
                 child: GestureDetector(
                   onTap: () async {
                     var picker = ImagePicker();
@@ -611,9 +670,16 @@ class _NameState extends State<NameCard> {
                       widget.saveUserImage(File(image.path));
                     }
                   },
-                  child: widget.userImage == null
-                      ? Image.asset('assets/grey_profile.png', fit: BoxFit.fill)
-                      : Image.file(widget.userImage, fit: BoxFit.fill),
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      bottomLeft: Radius.circular(10.0),
+                    ),
+                    child: widget.userImage == null
+                        ? Image.asset('assets/grey_profile1.jpg',
+                            fit: BoxFit.fill)
+                        : Image.file(widget.userImage, fit: BoxFit.fill),
+                  ),
                 ),
               ),
             ],
@@ -625,32 +691,73 @@ class _NameState extends State<NameCard> {
               Text(
                 widget.nickname,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 14,
                   fontWeight: FontWeight.w400,
                 ),
               ),
-              Text(widget.introduction,
-                  style: TextStyle(
-                    fontSize: 13,
-                  )),
+              Padding(padding: EdgeInsets.fromLTRB(0, 2, 0, 0)),
+              Text(
+                widget.introduction,
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+              Padding(padding: EdgeInsets.fromLTRB(0, 5, 0, 0)),
               Wrap(
-                direction: Axis.horizontal, // 정렬 방향
+                direction: Axis.vertical, // 정렬 방향
                 alignment: WrapAlignment.start, // 정렬 방식
-                spacing: 10, // main axis of the wrap
+                spacing: 5, // main axis of the wrap
                 runSpacing: 20, // cross axis of the wrap
                 children: <Widget>[
-                  ElevatedButton(
-                      onPressed: () {},
-                      style: ButtonStyle(),
-                      child: Text(widget.tags['1'])),
-                  OutlinedButton(
-                    child: Text(widget.tags['2']),
-                    onPressed: () {},
+                  Container(
+                    padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
+                    decoration: BoxDecoration(
+                      color: Color(0xff8338EC),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      widget.tags['1'],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  ElevatedButton(
-                    onPressed: () {},
-                    style: ButtonStyle(),
-                    child: Text(widget.tags['3']),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(
+                        width: 1.5,
+                        color: Color(0xff8338EC),
+                      ),
+                    ),
+                    child: Text(
+                      widget.tags['2'],
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Container(
+                    padding: EdgeInsets.fromLTRB(8, 3, 8, 3),
+                    decoration: BoxDecoration(
+                      color: Color(0xff8338EC),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Text(
+                      widget.tags['3'],
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
                 ],
               ),
