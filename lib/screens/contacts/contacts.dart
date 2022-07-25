@@ -92,13 +92,13 @@ class _ContactsPageState extends State<ContactsPage> {
         centerTitle: true,
         automaticallyImplyLeading: false,
         actions: [
-          IconButton(
-            icon: Icon(Icons.logout),
-            tooltip: 'logout',
-            onPressed: () {
-              Navigator.pushNamed(context, '/login');
-            },
-          ),
+          //   IconButton(
+          //     icon: Icon(Icons.logout),
+          //     tooltip: 'logout',
+          //     onPressed: () {
+          //       Navigator.pushNamed(context, '/login');
+          //     },
+          //   ),
           IconButton(
             icon: Icon(Icons.star),
             tooltip: 'star',
