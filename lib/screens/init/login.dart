@@ -272,6 +272,7 @@ class _LoginPageState extends State<LoginPage> {
                         InkWell(
                           onTap: () {
                             print('구글 로그인');
+                            // Navigator.pushNamed(context, '/map');
                           },
                           child: Container(
                             decoration: BoxDecoration(
