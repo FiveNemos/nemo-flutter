@@ -1,18 +1,32 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
-
+import 'package:dio/dio.dart';
+import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
 
-Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
-    Map tags, String introduction, dynamic userImage) async {
+const BASE_URL = 'http://34.64.217.3:3000/static/';
+
+Future<dynamic> postNameCard(
+  dynamic context,
+  nowID,
+  String nickname,
+  Map tags,
+  introduction,
+  File userImage,
+  File tagImage1,
+  File tagImage2,
+  File tagImage3,
+  String detailTitle,
+  String detailContent,
+) async {
   print('nowID : $nowID');
-  if (userImage.runtimeType == String) {
+  if (userImage == null) {
     showDialog(
         context: context,
         builder: (context) {
@@ -30,20 +44,32 @@ Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
               ]);
         });
   } else {
+    print('http post 요청 들어옴');
     var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
     request.files
         .add(await http.MultipartFile.fromPath('image', userImage.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
+    request.files
+        .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
     request.fields['user_id'] = nowID.toString();
     request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
     request.fields['tag_2'] = tags['2'];
     request.fields['tag_3'] = tags['3'];
     request.fields['intro'] = introduction;
+    request.fields['detail_title'] = detailTitle;
+    request.fields['detail_content'] = detailContent;
+
+    print('send');
 
     final response = await request.send();
+    print('response');
 
     if (response.statusCode == 201) {
       return showDialog(
@@ -83,25 +109,123 @@ Future<dynamic> postNameCard(dynamic context, int nowID, String nickname,
   }
 }
 
-class NameCardGenerator extends StatefulWidget {
-  const NameCardGenerator({Key? key}) : super(key: key);
+class CardEditor extends StatefulWidget {
+  const CardEditor({Key? key}) : super(key: key);
 
   @override
-  State<NameCardGenerator> createState() => _NameCardGeneratorState();
+  State<CardEditor> createState() => _CardEditorState();
 }
 
-class _NameCardGeneratorState extends State<NameCardGenerator> {
+class _CardEditorState extends State<CardEditor> {
+  var user;
   static final storage = FlutterSecureStorage();
-  dynamic userInfo = '';
-  var nickname = '닉네임';
-  var tags = {'1': '#', '2': '#', '3': '#'};
-  var introduction = '한줄소개';
+  var userInfo = '';
+  var nowId;
+  /* cardgenerator */
+  var nickname;
+  var tags;
+  var introduction;
   dynamic userImage;
-  dynamic tagImage1, tagImage2, tagImage3;
+  dynamic tagImage1;
+  dynamic tagImage2;
+  dynamic tagImage3;
+  var detailTitle;
+  var detailContent;
 
-  logout() async {
-    await storage.delete(key: 'login');
-    Navigator.pushNamed(context, '/login');
+  checkUser() async {
+    dynamic userInfo = await storage.read(key: 'login');
+    setState(() {
+      nowId = int.parse(jsonDecode(userInfo)['user_id']);
+    });
+    print('now: $nowId');
+    await getCard(nowId);
+    await setEverything(user);
+    // print(nowId);
+  }
+
+  getCard(id) async {
+    print('http://34.64.217.3:3000/api/card/$id');
+    try {
+      var dio = Dio();
+      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
+      print('response.data.runtimeType = ${response.runtimeType}');
+      if (response.statusCode == 200) {
+        final json = response.data;
+        setState(() {
+          user = UserProfile(
+            imagePath: json['image'],
+            nickname: json['nickname'],
+            introduction: json['intro'],
+            title: json['detail_title'], // title로 변경 필요
+            about: json['detail_content'], // about로 변경 필요
+            image1: BASE_URL + json['tag_img_1'],
+            image2: BASE_URL + json['tag_img_2'],
+            image3: BASE_URL + json['tag_img_3'],
+            tag1: json['tag_1'],
+            tag2: json['tag_2'],
+            tag3: json['tag_3'],
+            image: [
+              BASE_URL + json['tag_img_1'],
+              BASE_URL + json['tag_img_2'],
+              BASE_URL + json['tag_img_3'],
+            ],
+            tag: [
+              json['tag_1'],
+              json['tag_2'],
+              json['tag_3'],
+            ],
+          );
+        });
+        print('userProfile get 성공!');
+        print('json : $json');
+        print('image1: ${user.image1}');
+        print(json['image']);
+        print(user.image1.runtimeType);
+        return true;
+      } else {
+        print('error');
+        return false;
+      }
+    } catch (e) {
+      return false;
+    }
+  }
+
+  setEverything(UserProfile user) {
+    setState(() {
+      nickname = user.nickname;
+      tags = {'1': user.tag1, '2': user.tag2, '3': user.tag3};
+      introduction = user.introduction;
+      userImage = File(user.imagePath);
+      // print(user.imagePath);
+      tagImage1 = File(user.image1);
+      tagImage2 = File(user.image2);
+      tagImage3 = File(user.image3);
+      detailTitle = user.title;
+      detailContent = user.about;
+    });
+    print('모든 걸 세팅했닷');
+    print('nickname: $nickname');
+    print(tags);
+    print('introduction: $introduction');
+    print('userImage runtimeType: ${userImage.runtimeType}');
+    print('tagImage1 runtimeType: ${tagImage1.runtimeType}');
+    print(tagImage1.path);
+    print('tagImage2 runtimeType: ${tagImage2.runtimeType}');
+    print('tagImage3 runtimeType: ${tagImage3.runtimeType}');
+    print('detailTitle: $detailTitle');
+    print('detailContent: $detailContent');
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    checkUser();
+    // print('now: $nowId');
+    // getCard(nowId);
+    // setEverything(user);
   }
 
   saveUserImage(File file) {
@@ -116,27 +240,11 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
         tagImage1 = picture;
       } else if (num == 2) {
         tagImage2 = picture;
+        print(tagImage2.runtimeType);
       } else {
         tagImage3 = picture;
       }
     });
-  }
-
-  getTagImage() {
-    setState(() {
-      tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
-      tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
-    });
-  }
-
-  Future<File> getImageFileFromAssets(String path) async {
-    final byteData = await rootBundle.load('assets/$path');
-    final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-
-    return file;
   }
 
   saveName(String value) {
@@ -157,174 +265,213 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     });
   }
 
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    getTagImage();
+  saveDetailTitle(String value) {
+    setState(() {
+      detailTitle = value;
+    });
+  }
+
+  saveDetailContent(String value) {
+    setState(() {
+      detailContent = value;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    final arguments = (ModalRoute.of(context)?.settings.arguments ??
-        <String, dynamic>{}) as Map;
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: Text('명함 생성'),
-            actions: [
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
-                child: Text('저장'),
-                onPressed: () {
-                  postNameCard(context, arguments['nowId'], nickname, tags,
-                      introduction, userImage);
-                },
-              ),
-              IconButton(
-                icon: Icon(Icons.logout),
-                tooltip: 'logout',
-                onPressed: () {
-                  Navigator.pushNamed(context, '/login');
-                },
-              ),
-            ]),
-        body: ListView(
-          children: [
-            Container(
-              padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  NameCard(
-                    nickname: nickname,
-                    tags: tags,
-                    introduction: introduction,
-                    userImage: userImage,
-                    saveUserImage: saveUserImage,
-                  ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  NameSpace(nickname: nickname, saveName: saveName),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  IntroSpace(introduction: introduction, saveIntro: saveIntro),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Wrap(
-                    spacing: 8, // main axis of the wrap
-                    runSpacing: 20, // cross axis of the wrap
-                    children: [
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: TagSpace(saveTags: saveTags, num: 1),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: TagSpace(saveTags: saveTags, num: 2),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: TagSpace(saveTags: saveTags, num: 3),
-                      )
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  Wrap(
-                    spacing: 8, // main axis of the wrap
-                    runSpacing: 20, // cross axis of the wrap
-                    children: [
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 1,
-                          tagImage1: tagImage1,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 2,
-                          tagImage2: tagImage2,
-                        ),
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 50,
-                        child: imageSpace(
-                          saveTagImage: saveTagImage,
-                          num: 3,
-                          tagImage3: tagImage3,
-                        ),
-                      )
-                    ],
-                  ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  TextField(
-                    decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 40),
-                      labelText: 'title',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                    ),
-                    // controller: controller,
-                    onChanged: (text) {
-                      // widget.saveName(text);
+    if (user != null) {
+      return Container(
+        child: GestureDetector(
+          onTap: () {
+            FocusScope.of(context).unfocus();
+          },
+          child: Scaffold(
+            appBar: AppBar(
+                automaticallyImplyLeading: false,
+                title: Text('명함 수정'),
+                actions: [
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
+                    child: Text('저장'),
+                    onPressed: () {
+                      postNameCard(
+                          context,
+                          nowId,
+                          nickname,
+                          tags,
+                          introduction,
+                          userImage,
+                          tagImage1,
+                          tagImage2,
+                          tagImage3,
+                          detailTitle,
+                          detailContent);
                     },
                   ),
-                  Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                  TextField(
-                    // keyboardType: TextInputType.multiline,
-                    minLines: 1,
-                    maxLines: 3,
-                    maxLength: 50,
-                    decoration: InputDecoration(
-                      constraints: BoxConstraints(maxHeight: 120),
-                      labelText: 'details',
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                      focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10)),
-                        borderSide: BorderSide(
-                          color: Color(0xff8338EC),
-                        ),
-                      ),
-                    ),
-                    // controller: controller,
-                    onChanged: (text) {
-                      // widget.saveName(text);
+                  IconButton(
+                    icon: Icon(Icons.logout),
+                    tooltip: 'logout',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
                     },
                   ),
-                ],
-              ),
+                ]),
+            body: ListView(
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      NameCard(
+                        nickname: nickname,
+                        tags: tags,
+                        introduction: introduction,
+                        userImage: userImage,
+                        saveUserImage: saveUserImage,
+                        user: user,
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      NameSpace(
+                          nickname: nickname, saveName: saveName, user: user),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      IntroSpace(
+                          introduction: introduction,
+                          saveIntro: saveIntro,
+                          user: user),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      Wrap(
+                        spacing: 8, // main axis of the wrap
+                        runSpacing: 20, // cross axis of the wrap
+                        children: [
+                          SizedBox(
+                            width: 70,
+                            height: 50,
+                            child: TagSpace(
+                                saveTags: saveTags, num: 1, user: user),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            height: 50,
+                            child: TagSpace(
+                                saveTags: saveTags, num: 2, user: user),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            height: 50,
+                            child: TagSpace(
+                                saveTags: saveTags, num: 3, user: user),
+                          )
+                        ],
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      Wrap(
+                        spacing: 8, // main axis of the wrap
+                        runSpacing: 20, // cross axis of the wrap
+                        children: [
+                          SizedBox(
+                            width: 70,
+                            height: 50,
+                            child: imageSpace(
+                                saveTagImage: saveTagImage,
+                                num: 1,
+                                tagImage1: tagImage1,
+                                tagImage2: tagImage2,
+                                tagImage3: tagImage3,
+                                user: user),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            height: 50,
+                            child: imageSpace(
+                                saveTagImage: saveTagImage,
+                                num: 2,
+                                tagImage1: tagImage1,
+                                tagImage2: tagImage2,
+                                tagImage3: tagImage3,
+                                user: user),
+                          ),
+                          SizedBox(
+                            width: 70,
+                            height: 50,
+                            child: imageSpace(
+                                saveTagImage: saveTagImage,
+                                num: 3,
+                                tagImage1: tagImage1,
+                                tagImage2: tagImage2,
+                                tagImage3: tagImage3,
+                                user: user),
+                          )
+                        ],
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      TextField(
+                        decoration: InputDecoration(
+                          constraints: BoxConstraints(maxHeight: 40),
+                          // labelText: 'title',
+                          hintText: detailTitle,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide: BorderSide(
+                              color: Color(0xff8338EC),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide: BorderSide(
+                              color: Color(0xff8338EC),
+                            ),
+                          ),
+                        ),
+                        // controller: controller,
+                        onChanged: (text) {
+                          saveDetailTitle(text);
+                        },
+                      ),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
+                      TextField(
+                        // keyboardType: TextInputType.multiline,
+                        minLines: 1,
+                        maxLines: 3,
+                        maxLength: 50,
+                        decoration: InputDecoration(
+                          constraints: BoxConstraints(maxHeight: 120),
+                          // labelText: 'details',
+                          hintText: detailContent,
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide: BorderSide(
+                              color: Color(0xff8338EC),
+                            ),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(Radius.circular(10)),
+                            borderSide: BorderSide(
+                              color: Color(0xff8338EC),
+                            ),
+                          ),
+                        ),
+                        // controller: controller,
+                        onChanged: (text) {
+                          saveDetailContent(text);
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    );
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      );
+    }
   }
 }
 
@@ -335,11 +482,13 @@ class imageSpace extends StatefulWidget {
       this.num,
       this.tagImage1,
       this.tagImage2,
-      this.tagImage3})
+      this.tagImage3,
+      this.user})
       : super(key: key);
   var saveTagImage;
   var num;
   var tagImage1, tagImage2, tagImage3;
+  var user;
 
   @override
   State<imageSpace> createState() => _imageSpaceState();
@@ -353,6 +502,8 @@ class _imageSpaceState extends State<imageSpace> {
         child: (widget.tagImage1.runtimeType == Image)
             ? widget.tagImage1
             : Image.file(widget.tagImage1),
+        // : Image.file(File(
+        //     'http://34.64.217.3:3000/static/${widget.user.imagePath}')),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -392,12 +543,10 @@ class _imageSpaceState extends State<imageSpace> {
 }
 
 class NameSpace extends StatefulWidget {
-  NameSpace({
-    Key? key,
-    this.nickname,
-    this.saveName,
-  }) : super(key: key);
+  NameSpace({Key? key, this.nickname, this.saveName, this.user})
+      : super(key: key);
   var nickname, saveName;
+  var user;
 
   @override
   State<NameSpace> createState() => _NameSpaceState();
@@ -411,7 +560,8 @@ class _NameSpaceState extends State<NameSpace> {
     return TextField(
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
-        labelText: '닉네임',
+        // labelText: '닉네임',
+        hintText: widget.nickname,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
           borderSide: BorderSide(
@@ -434,9 +584,10 @@ class _NameSpaceState extends State<NameSpace> {
 }
 
 class TagSpace extends StatefulWidget {
-  TagSpace({Key? key, this.saveTags, this.num}) : super(key: key);
+  TagSpace({Key? key, this.saveTags, this.num, this.user}) : super(key: key);
   var saveTags;
   var num;
+  var user;
 
   @override
   State<TagSpace> createState() => _TagSpaceState();
@@ -453,8 +604,8 @@ class _TagSpaceState extends State<TagSpace> {
       },
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
-        hintText: '',
-        labelText: '태그',
+        // labelText: '태그',
+        hintText: '${widget.user.tag[widget.num - 1]}',
         labelStyle: TextStyle(
             // color: Colors.red,
             ),
@@ -476,8 +627,10 @@ class _TagSpaceState extends State<TagSpace> {
 }
 
 class IntroSpace extends StatefulWidget {
-  IntroSpace({Key? key, this.introduction, this.saveIntro}) : super(key: key);
+  IntroSpace({Key? key, this.introduction, this.saveIntro, this.user})
+      : super(key: key);
   var introduction, saveIntro;
+  var user;
 
   @override
   State<IntroSpace> createState() => _IntroSpaceState();
@@ -491,7 +644,9 @@ class _IntroSpaceState extends State<IntroSpace> {
     return TextField(
         decoration: InputDecoration(
           constraints: BoxConstraints(maxHeight: 40),
-          labelText: '한줄소개',
+          // labelText: '한줄소개',
+          // hintText: '${widget.user.introduction}',
+          hintText: widget.introduction,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
             borderSide: BorderSide(
@@ -512,18 +667,20 @@ class _IntroSpaceState extends State<IntroSpace> {
 }
 
 class NameCard extends StatefulWidget {
-  NameCard({
-    Key? key,
-    this.nickname,
-    this.tags,
-    this.introduction,
-    this.userImage,
-    this.saveUserImage,
-  }) : super(key: key);
+  NameCard(
+      {Key? key,
+      this.nickname,
+      this.tags,
+      this.introduction,
+      this.userImage,
+      this.saveUserImage,
+      this.user})
+      : super(key: key);
 
   var nickname, tags, introduction;
   dynamic userImage;
   var saveUserImage;
+  var user;
 
   @override
   State<NameCard> createState() => _NameState();
@@ -552,27 +709,35 @@ class _NameState extends State<NameCard> {
           Column(
             children: [
               Container(
-                width: 100,
-                height: 85,
-                margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                decoration: BoxDecoration(color: Colors.red),
-                child: GestureDetector(
-                  onTap: () async {
-                    var picker = ImagePicker();
-                    var image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      widget.saveUserImage(File(image.path));
-                      // setState(() {
-                      //   widget.userImage = File(image.path);
-                      // });
-                    }
-                  },
-                  child: widget.userImage == null
-                      ? Image.asset('assets/grey_profile.png', fit: BoxFit.fill)
-                      : Image.file(widget.userImage, fit: BoxFit.fill),
-                ),
-              ),
+                  width: 100,
+                  height: 85,
+                  margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
+                  decoration: BoxDecoration(color: Colors.red),
+                  child: InkWell(
+                    onTap: () async {
+                      var picker = ImagePicker();
+                      var image =
+                          await picker.pickImage(source: ImageSource.gallery);
+                      if (image != null) {
+                        widget.saveUserImage(File(image.path));
+                      }
+                    },
+                    child: widget.userImage == null
+                        ? Image.asset('assets/grey_profile.png',
+                            fit: BoxFit.fill)
+                        : Image.file(widget.userImage, fit: BoxFit.fill),
+                    // LayoutBuilder(builder: (context, constraints) {
+                    //   if (widget.userImage.runtimeType == null) {
+                    //     return Image.asset('assets/grey_profile.png',
+                    //         fit: BoxFit.fill);
+                    //   } else if (widget.userImage.runtimeType == String) {
+                    //     return Image.network(widget.userImage,
+                    //         fit: BoxFit.fill);
+                    //   } else {
+                    //     return Image.file(widget.userImage, fit: BoxFit.fill);
+                    //   }
+                    // }),
+                  )),
             ],
           ),
           Column(
