@@ -270,14 +270,17 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SizedBox(
-                        width: 90,
-                        // height: 50,
+                        width: 100,
                         child: Column(
                           children: [
-                            imageSpace(
-                              saveTagImage: saveTagImage,
-                              num: 1,
-                              tagImage1: tagImage1,
+                            Container(
+                              width: 100,
+                              height: 80,
+                              child: imageSpace(
+                                saveTagImage: saveTagImage,
+                                num: 1,
+                                tagImage1: tagImage1,
+                              ),
                             ),
                             Text(
                               '사진1',
@@ -290,16 +293,19 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                           ],
                         ),
                       ),
-                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 15, 0)),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
                       SizedBox(
-                        width: 90,
-                        // height: 50,
+                        width: 100,
                         child: Column(
                           children: [
-                            imageSpace(
-                              saveTagImage: saveTagImage,
-                              num: 2,
-                              tagImage2: tagImage2,
+                            Container(
+                              width: 100,
+                              height: 80,
+                              child: imageSpace(
+                                saveTagImage: saveTagImage,
+                                num: 2,
+                                tagImage2: tagImage2,
+                              ),
                             ),
                             Text(
                               '사진2',
@@ -312,16 +318,19 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                           ],
                         ),
                       ),
-                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 15, 0)),
+                      Padding(padding: EdgeInsets.fromLTRB(0, 0, 10, 0)),
                       SizedBox(
-                        width: 90,
-                        // height: 50,
+                        width: 100,
                         child: Column(
                           children: [
-                            imageSpace(
-                              saveTagImage: saveTagImage,
-                              num: 3,
-                              tagImage3: tagImage3,
+                            Container(
+                              width: 100,
+                              height: 80,
+                              child: imageSpace(
+                                saveTagImage: saveTagImage,
+                                num: 3,
+                                tagImage3: tagImage3,
+                              ),
                             ),
                             Text(
                               '사진3',
@@ -365,7 +374,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                           child: TagSpace(saveTags: saveTags, num: i + 1),
                         );
                       },
-                      separatorBuilder: (c, i) => SizedBox(width: 5),
+                      separatorBuilder: (c, i) => SizedBox(width: 10),
                     ),
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
@@ -456,9 +465,7 @@ class _imageSpaceState extends State<imageSpace> {
       return InkWell(
         child: (widget.tagImage1.runtimeType == Image)
             ? widget.tagImage1
-            : Image.file(
-                widget.tagImage1,
-              ),
+            : Image.file(widget.tagImage1, fit: BoxFit.cover),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -471,7 +478,7 @@ class _imageSpaceState extends State<imageSpace> {
       return InkWell(
         child: (widget.tagImage2.runtimeType == Image)
             ? widget.tagImage2
-            : Image.file(widget.tagImage2),
+            : Image.file(widget.tagImage2, fit: BoxFit.cover),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -484,7 +491,7 @@ class _imageSpaceState extends State<imageSpace> {
       return InkWell(
         child: (widget.tagImage3.runtimeType == Image)
             ? widget.tagImage3
-            : Image.file(widget.tagImage3),
+            : Image.file(widget.tagImage3, fit: BoxFit.cover),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -692,7 +699,7 @@ class _NameState extends State<NameCard> {
                 widget.nickname,
                 style: TextStyle(
                   fontSize: 14,
-                  fontWeight: FontWeight.w400,
+                  fontWeight: FontWeight.w700,
                 ),
               ),
               Padding(padding: EdgeInsets.fromLTRB(0, 2, 0, 0)),
