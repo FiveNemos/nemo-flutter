@@ -12,7 +12,19 @@ import '../sharing/sharing.dart';
 
 const BASE_URL = 'http://34.64.217.3:3000/static/';
 
-Future<dynamic> postNameCard(
+Map<String, int> CHANGED = {
+  'nickname': 0,
+  'tags': 0,
+  'introduction': 0,
+  'userImage': 0,
+  'tagImage1': 0,
+  'tagImage2': 0,
+  'tagImage3': 0,
+  'detailTitle': 0,
+  'detailContent': 0
+};
+
+Future<dynamic> updateNameCard(
   dynamic context,
   nowID,
   String nickname,
@@ -45,18 +57,27 @@ Future<dynamic> postNameCard(
         });
   } else {
     print('http post 요청 들어옴');
-    var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
+    var uri = Uri.parse('http://34.64.217.3:3000/api/card/update');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
-    request.files
-        .add(await http.MultipartFile.fromPath('image', userImage.path));
-    request.files
-        .add(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
-    request.files
-        .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
-    request.files
-        .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
+    if (CHANGED['userImage'] == 1) {
+      request.files
+          .add(await http.MultipartFile.fromPath('image', userImage.path));
+    }
+    if (CHANGED['tag_img_1'] == 1) {
+      request.files
+          .add(await http.MultipartFile.fromPath('tag_img_1', tagImage1.path));
+    }
+    if (CHANGED['tag_img_2'] == 1) {
+      request.files
+          .add(await http.MultipartFile.fromPath('tag_img_2', tagImage2.path));
+    }
+    if (CHANGED['tag_img_3'] == 1) {
+      request.files
+          .add(await http.MultipartFile.fromPath('tag_img_3', tagImage3.path));
+    }
+
     request.fields['user_id'] = nowID.toString();
     request.fields['nickname'] = nickname;
     request.fields['tag_1'] = tags['1'];
@@ -71,13 +92,13 @@ Future<dynamic> postNameCard(
     final response = await request.send();
     print('response');
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return showDialog(
           context: context,
           builder: (context) {
             return AlertDialog(
-                title: Text('저장완료'),
-                content: Text('저장이 완료되었습니다.'),
+                title: Text('수정완료'),
+                content: Text('수정이 완료되었습니다.'),
                 actions: [
                   TextButton(
                     // textColor: Colors.black,
@@ -204,16 +225,19 @@ class _CardEditorState extends State<CardEditor> {
       tagImage3 = File(user.image3);
       detailTitle = user.title;
       detailContent = user.about;
+      CHANGED.forEach((key, value) {
+        CHANGED[key] = 0;
+      });
     });
     print('모든 걸 세팅했닷');
     print('nickname: $nickname');
-    print(tags);
+    print('CHANGED: $CHANGED');
     print('introduction: $introduction');
-    print('userImage runtimeType: ${userImage.runtimeType}');
-    print('tagImage1 runtimeType: ${tagImage1.runtimeType}');
+    print('userImage: $userImage');
+    print('tagImage1: $tagImage1');
     print(tagImage1.path);
-    print('tagImage2 runtimeType: ${tagImage2.runtimeType}');
-    print('tagImage3 runtimeType: ${tagImage3.runtimeType}');
+    print('tagImage2: $tagImage2');
+    print('tagImage3: $tagImage3');
     print('detailTitle: $detailTitle');
     print('detailContent: $detailContent');
   }
@@ -231,6 +255,7 @@ class _CardEditorState extends State<CardEditor> {
   saveUserImage(File file) {
     setState(() {
       userImage = file;
+      CHANGED['userImage'] = 1;
     });
   }
 
@@ -238,42 +263,51 @@ class _CardEditorState extends State<CardEditor> {
     setState(() {
       if (num == 1) {
         tagImage1 = picture;
+        CHANGED['tagImage1'] = 1;
       } else if (num == 2) {
         tagImage2 = picture;
         print(tagImage2.runtimeType);
+        CHANGED['tagImage2'] = 1;
       } else {
         tagImage3 = picture;
+        CHANGED['tagImage3'] = 1;
       }
     });
+    print('CHANGED changed: $CHANGED');
   }
 
   saveName(String value) {
     setState(() {
       nickname = value;
+      CHANGED['nickname'] = 1;
     });
   }
 
   saveTags(int num, String value) {
     setState(() {
       tags['$num'] = value;
+      CHANGED['tags'] = 1;
     });
   }
 
   saveIntro(String value) {
     setState(() {
       introduction = value;
+      CHANGED['introduction'] = 1;
     });
   }
 
   saveDetailTitle(String value) {
     setState(() {
       detailTitle = value;
+      CHANGED['detailTitle'] = 1;
     });
   }
 
   saveDetailContent(String value) {
     setState(() {
       detailContent = value;
+      CHANGED['detailContent'] = 1;
     });
   }
 
@@ -294,7 +328,7 @@ class _CardEditorState extends State<CardEditor> {
                     style: ElevatedButton.styleFrom(fixedSize: Size(40, 40)),
                     child: Text('저장'),
                     onPressed: () {
-                      postNameCard(
+                      updateNameCard(
                           context,
                           nowId,
                           nickname,
@@ -499,9 +533,10 @@ class _imageSpaceState extends State<imageSpace> {
   Widget build(BuildContext context) {
     if (widget.num == 1) {
       return InkWell(
-        child: (widget.tagImage1.runtimeType == Image)
-            ? widget.tagImage1
-            : Image.file(widget.tagImage1),
+        child: (CHANGED['tagImage${widget.num}'] == 1)
+            ? Image.file(widget.tagImage1)
+            : Image.network(widget.user.image[widget.num - 1]),
+        // : Image.network(widget.tagImage1.path), //이것도 됨
         // : Image.file(File(
         //     'http://34.64.217.3:3000/static/${widget.user.imagePath}')),
         onTap: () async {
@@ -514,9 +549,9 @@ class _imageSpaceState extends State<imageSpace> {
       );
     } else if (widget.num == 2) {
       return InkWell(
-        child: (widget.tagImage2.runtimeType == Image)
-            ? widget.tagImage2
-            : Image.file(widget.tagImage2),
+        child: (CHANGED['tagImage${widget.num}'] == 1)
+            ? Image.file(widget.tagImage2)
+            : Image.network(widget.user.image[widget.num - 1]),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -527,9 +562,9 @@ class _imageSpaceState extends State<imageSpace> {
       );
     } else {
       return InkWell(
-        child: (widget.tagImage3.runtimeType == Image)
-            ? widget.tagImage3
-            : Image.file(widget.tagImage3),
+        child: (CHANGED['tagImage${widget.num}'] == 1)
+            ? Image.file(widget.tagImage3)
+            : Image.network(widget.user.image[widget.num - 1]),
         onTap: () async {
           var picker = ImagePicker();
           var picture = await picker.pickImage(source: ImageSource.gallery);
@@ -712,7 +747,7 @@ class _NameState extends State<NameCard> {
                   width: 100,
                   height: 85,
                   margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
-                  decoration: BoxDecoration(color: Colors.red),
+                  decoration: BoxDecoration(color: Color(0xffE6E6FA)),
                   child: InkWell(
                     onTap: () async {
                       var picker = ImagePicker();
@@ -722,21 +757,10 @@ class _NameState extends State<NameCard> {
                         widget.saveUserImage(File(image.path));
                       }
                     },
-                    child: widget.userImage == null
-                        ? Image.asset('assets/grey_profile.png',
-                            fit: BoxFit.fill)
-                        : Image.file(widget.userImage, fit: BoxFit.fill),
-                    // LayoutBuilder(builder: (context, constraints) {
-                    //   if (widget.userImage.runtimeType == null) {
-                    //     return Image.asset('assets/grey_profile.png',
-                    //         fit: BoxFit.fill);
-                    //   } else if (widget.userImage.runtimeType == String) {
-                    //     return Image.network(widget.userImage,
-                    //         fit: BoxFit.fill);
-                    //   } else {
-                    //     return Image.file(widget.userImage, fit: BoxFit.fill);
-                    //   }
-                    // }),
+                    child: (CHANGED['userImage'] == 1)
+                        ? Image.file(widget.userImage)
+                        : Image.network(BASE_URL + widget.userImage.path,
+                            fit: BoxFit.fill),
                   )),
             ],
           ),
