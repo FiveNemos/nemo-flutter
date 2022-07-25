@@ -1,217 +1,452 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
-import '../../models/message/chat_message_model.dart';
+import '../../models/message/chatmodel.dart';
 import '../../tests/message/chat_user_test_data.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'dart:convert';
 
-class ChatDetailPage extends StatefulWidget {
-  String name;
-  String imageUrl;
+class ChatScreen extends StatefulWidget {
+  var chatroomID;
+  int loginID;
+  int friendID;
+  String friendName;
+  String friendImage;
+
+  ChatScreen({
+    Key? key,
+    required this.chatroomID,
+    required this.loginID,
+    required this.friendID,
+    required this.friendName,
+    required this.friendImage,
+  }) : super(key: key);
+
   @override
-  _ChatDetailPageState createState() => _ChatDetailPageState();
-  ChatDetailPage({required this.name, required this.imageUrl});
+  _ChatScreenState createState() => _ChatScreenState();
 }
 
-class _ChatDetailPageState extends State<ChatDetailPage> {
-  var inputData = TextEditingController();
-  addMessage(name, text) {
+class _ChatScreenState extends State<ChatScreen> {
+  static final storage = FlutterSecureStorage();
+  dynamic userInfo = '';
+  final TextEditingController _messageController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
+  final List<ChatModel> _samplemsg = [
+    ChatModel(
+        chatroomID: 1,
+        senderID: 10,
+        sentAt: '2022-07-25 11:14',
+        message: '주비 테스트 계정입니다 1번방'),
+    ChatModel(
+        chatroomID: 2,
+        senderID: 10,
+        sentAt: '2022-07-25 11:14',
+        message: '주비 테스트 계정입니다 2번방'),
+    // 여기에 DB에서 긁어와서 setState(_message.add)하게 바꾸기
+  ];
+  final List<ChatModel> _messages =
+      []; // 여기에 DB에서 긁어와서 setState(_message.add)하게 바꾸기
+
+  addMessage(msg) {
     setState(() {
-      messages_db[name]
-          .add(ChatMessage(messageContent: text, messageType: 'sender'));
+      _messages.add(msg);
     });
   }
-  // ScrollController _scrollController = new ScrollController();
+  // 여기를 이제 GET으로 가져와 미리 세팅하도록 수정하기
 
-  late ScrollController _controller;
+  final bool _showSpinner = false;
+  final bool _showVisibleWidget = false;
+  final bool _showErrorIcon = false;
+  var socketFlag = false;
 
-  void _scrollDown() {
-    _controller.animateTo(_controller.position.maxScrollExtent,
-        duration: Duration(seconds: 1), curve: Curves.ease);
+  void setStateIfMounted(f) {
+    if (mounted) setState(f);
+  }
+
+  dynamic socket;
+
+  // Future<void> enterChatRoom() async {
+  //   initialSocket();
+  //   await Future.delayed(Duration(seconds: 2));
+  //   print("hi");
+  //   socket.emit('join', {'user': loginID, 'chatroom': chatroomID});
+  //   print("bye");
+  //
+  //   // flag.then((val) {
+  //   //   print('들어왔수다');
+  //   // }).catchError((error) {
+  //   //   print('error:$error');
+  //   // });
+  //   //
+  //   // if (flag != null) {
+  //   //   print("이젠 널이 아니에요");
+  //   //   socket.emit('join', {'user': loginID, 'chatroom': chatroomID});
+  //   // }
+  //   // if (id != null) {
+  //   //   print("들어왔어요");
+  //   // } else {
+  //   //   print("널이네요");
+  //   // }
+  // }
+
+  // //되는거
+  // Future<void> enterChatRoom() async {
+  //   initialSocket();
+  //   await Future.delayed(Duration(seconds: 2));
+  //   print(socket.id);
+  //   socket.emit('join', {'user': loginID, 'chatroom': chatroomID});
+  // }
+
+  // initializeSocket() {
+  //   socket = io("http://10.0.2.2:3000/", <String, dynamic>{
+  //     "transports": ["websocket"],
+  //     "autoConnect": false,
+  //   });
+  //   socket.connect(); //connect the Socket.IO Client to the Server
+  //
+  //   //SOCKET EVENTS
+  //   // --> listening for connection
+  //   socket.on('connect', (data) {
+  //     debugPrint(socket.connected);
+  //   });
+  //
+  //   socket.on('join', (data) {
+  //     debugPrint(data);
+  //   });
+  //
+  //   //listen for incoming messages from the Server.
+  //   socket.on('message', (data) {
+  //     debugPrint(data); //
+  //   });
+  //
+  //   //listens when the client is disconnected from the Server
+  //   socket.on('disconnect', (data) {
+  //     debugPrint('disconnect');
+  //   });
+  // }
+
+  initializeSocket() {
+    try {
+      socket = io("http://10.0.2.2:3000/", <String, dynamic>{
+        "transports": ["websocket"],
+        "autoConnect": false,
+      });
+
+      socket.connect();
+      socket.on('connect', (data) {
+        debugPrint('socket connected');
+        // debugPrint(socket.connected);
+        socket.emit(
+            'join', {'user': widget.loginID, 'chatroom': widget.chatroomID});
+        setState(() {
+          socketFlag = true;
+        });
+        debugPrint('연결완료');
+      });
+
+      socket.on('join', (data) {
+        debugPrint('socket join');
+        debugPrint(data);
+      });
+
+      socket.on('message', (data) {
+        var message = ChatModel.fromJson(data);
+        setStateIfMounted(() {
+          _messages.add(message);
+        });
+      });
+      socket.on('disconnect', (data) {
+        debugPrint('socket disconnected');
+      });
+      // socket.onDisconnect((_) => debugPrint('disconnect'));
+    } catch (e) {
+      print(e);
+    }
   }
 
   @override
   void initState() {
-    // TODO: implement initState
+    _samplemsg.forEach((e) {
+      if (e.chatroomID == widget.chatroomID) {
+        addMessage(e);
+      }
+    });
+
     super.initState();
-    _controller = ScrollController();
+    // enterChatRoom();
+    initializeSocket();
   }
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        FocusScope.of(context).unfocus();
-      },
-      child: Scaffold(
-        // resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          elevation: 0,
-          automaticallyImplyLeading: false,
-          backgroundColor: Colors.white,
-          flexibleSpace: SafeArea(
-            child: Container(
-              padding: EdgeInsets.only(right: 16),
-              child: Row(
-                children: <Widget>[
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    icon: Icon(
-                      Icons.arrow_back,
-                      color: Colors.black,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 2,
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/contacts');
-                    },
-                    child: CircleAvatar(
-                      backgroundImage: NetworkImage(widget.imageUrl),
-                      maxRadius: 20,
-                    ),
-                  ),
-                  SizedBox(
-                    width: 12,
-                  ),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          widget.name,
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.w600),
-                        ),
-                        SizedBox(
-                          height: 6,
-                        ),
-                        Text(
-                          'Online',
-                          style: TextStyle(
-                              color: Colors.grey.shade600, fontSize: 13),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Icon(
-                    Icons.settings,
-                    color: Colors.black54,
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ),
-        body: SingleChildScrollView(
-          reverse: true,
-          child: Column(
-            children: <Widget>[
-              ListView.builder(
-                controller: _controller,
-                itemCount: messages_db[widget.name].length,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(top: 10, bottom: 10),
-                // physics: NeverScrollableScrollPhysics(), // 이거 있으면 대화창 스크롤이 안됨
-                itemBuilder: (context, index) {
-                  return Container(
-                    padding: EdgeInsets.only(
-                        left: 14, right: 14, top: 10, bottom: 10),
-                    child: Align(
-                      alignment: (messages_db[widget.name][index].messageType ==
-                              'receiver'
-                          ? Alignment.topLeft
-                          : Alignment.topRight),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(20),
-                          color: (messages_db[widget.name][index].messageType ==
-                                  'receiver'
-                              ? Colors.grey.shade200
-                              : Colors.blue[200]),
-                        ),
-                        padding: EdgeInsets.all(16),
-                        child: Text(
-                          messages_db[widget.name][index].messageContent,
-                          style: TextStyle(fontSize: 15),
+    Size size = MediaQuery.of(context).size;
+    if (socketFlag == false) {
+      return Center(
+          child: CircularProgressIndicator(
+        color: Colors.black,
+      ));
+    } else {
+      return GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: Scaffold(
+            appBar: AppBar(
+              elevation: 1,
+              automaticallyImplyLeading: false,
+              // backgroundColor: const Color(0xFF271160),
+              backgroundColor: Colors.white,
+              flexibleSpace: SafeArea(
+                child: Container(
+                  padding: EdgeInsets.only(right: 16),
+                  child: Row(
+                    children: <Widget>[
+                      IconButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        icon: Icon(
+                          Icons.arrow_back,
+                          color: Colors.black,
                         ),
                       ),
-                    ),
-                  );
-                },
+                      SizedBox(
+                        width: 2,
+                      ),
+                      GestureDetector(
+                        onTap: () {
+                          // Navigator.pushNamed(context, '/contacts');
+                        },
+                        child: CircleAvatar(
+                          // 이미지자리
+                          backgroundImage: NetworkImage(widget.friendImage),
+                          maxRadius: 20,
+                        ),
+                      ),
+                      SizedBox(
+                        width: 12,
+                      ),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Text(
+                              widget.friendName,
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.w600),
+                            ),
+                            SizedBox(
+                              height: 6,
+                            ),
+                            Text(
+                              'Online',
+                              style: TextStyle(
+                                  color: Colors.grey.shade600, fontSize: 13),
+                            ),
+                          ],
+                        ),
+                      ),
+                      Icon(
+                        Icons.settings,
+                        color: Colors.black54,
+                      ),
+                    ],
+                  ),
+                ),
               ),
-            ],
-          ),
-        ),
-        bottomNavigationBar: Padding(
-          padding:
-              EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-          child: Container(
-            height: 45,
-            width: MediaQuery.of(context).size.width,
-            color: Colors.white,
-            child: Row(
-              children: [
-                SizedBox(
-                  width: 10,
-                ),
-                GestureDetector(
-                  onTap: () {},
-                  child: Container(
-                    height: 30,
-                    width: 30,
-                    decoration: BoxDecoration(
-                      color: Colors.lightBlue,
-                      borderRadius: BorderRadius.circular(30),
+            ),
+            // appBar: AppBar(
+            //     centerTitle: true,
+            //     title: const Text('Chat Screen'),
+            //     backgroundColor: const Color(0xFF271160)),
+            body: SafeArea(
+              child: SingleChildScrollView(
+                reverse: true,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    ListView.builder(
+                      controller: _scrollController,
+                      physics: const BouncingScrollPhysics(),
+                      // reverse: _messages.isEmpty ? false : true,
+                      itemCount: 1,
+                      shrinkWrap: true,
+                      itemBuilder: (BuildContext context, int index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(
+                              top: 10, left: 10, right: 10, bottom: 3),
+                          child: Column(
+                            mainAxisAlignment: _messages.isEmpty
+                                ? MainAxisAlignment.center
+                                : MainAxisAlignment.start,
+                            children: <Widget>[
+                              Column(
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: _messages.map((message) {
+                                    print("gogo$message");
+                                    return ChatBubble(
+                                      date: message.sentAt,
+                                      message: message.message,
+                                      // isMe: message.socketId ==
+                                      //     socket
+                                      //         .id, // message.userId == 로그인중인아이용
+                                      isMe: message.senderID == widget.loginID,
+                                    );
+                                  }).toList()),
+                            ],
+                          ),
+                        );
+                      },
                     ),
-                    child: Icon(
-                      Icons.add,
-                      color: Colors.white,
-                      size: 20,
+                  ],
+                ),
+              ),
+            ),
+            bottomNavigationBar: Container(
+              color: Colors.white,
+              child: Padding(
+                padding: EdgeInsets.only(
+                    bottom: MediaQuery.of(context).viewInsets.bottom,
+                    left: 20,
+                    right: 10,
+                    top: 5),
+                child: Container(
+                  height: 50,
+                  width: MediaQuery.of(context).size.width,
+                  color: Colors.white,
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          onTap: () {},
+                          decoration: const InputDecoration.collapsed(
+                              hintText: 'Write message...',
+                              hintStyle: TextStyle(color: Colors.grey),
+                              border: InputBorder.none),
+                          controller: _messageController,
+                          scrollPadding: EdgeInsets.only(bottom: 40),
+                        ),
+                      ), // Send Button
+                      SizedBox(
+                        height: 43,
+                        width: 42,
+                        child: FloatingActionButton(
+                          backgroundColor: const Color(0xFF271160),
+                          onPressed: () async {
+                            if (_messageController.text.trim().isNotEmpty) {
+                              String message = _messageController.text.trim();
+
+                              ChatModel nowSend = ChatModel(
+                                  // socketId: socket.id!,
+                                  chatroomID: widget.chatroomID,
+                                  message: message,
+                                  senderID: widget.loginID,
+                                  sentAt: DateTime.now()
+                                      .toLocal()
+                                      .toString()
+                                      .substring(0, 16));
+
+                              socket.emit("message", {
+                                'chatroom': widget.chatroomID,
+                                'chatmodel': nowSend.toJson()
+                              });
+                              addMessage(nowSend);
+
+                              // POST 요청을 보내 DB에 넣는 작업도 여기서 처리하게 수정하기
+
+                              // 이후에 메세지 클리어하기
+                              _messageController.clear();
+                            }
+                          },
+                          mini: true,
+                          child: Transform.rotate(
+                              angle: 6,
+                              child: const Icon(Icons.send, size: 20)),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )),
+      );
+    }
+  }
+}
+
+class ChatBubble extends StatelessWidget {
+  final bool isMe;
+  final String message;
+  final String date;
+
+  ChatBubble({
+    Key? key,
+    required this.message,
+    this.isMe = true,
+    required this.date,
+  });
+  @override
+  Widget build(BuildContext context) {
+    Size size = MediaQuery.of(context).size;
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      child: Column(
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        crossAxisAlignment:
+            isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+        children: <Widget>[
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+            margin: const EdgeInsets.symmetric(vertical: 5.0),
+            constraints: BoxConstraints(maxWidth: size.width * .5),
+            decoration: BoxDecoration(
+              color: isMe ? const Color(0xFFE3D8FF) : Colors.grey.shade200,
+              borderRadius: isMe
+                  ? const BorderRadius.only(
+                      topRight: Radius.circular(11),
+                      topLeft: Radius.circular(11),
+                      bottomRight: Radius.circular(0),
+                      bottomLeft: Radius.circular(11),
+                    )
+                  : const BorderRadius.only(
+                      topRight: Radius.circular(11),
+                      topLeft: Radius.circular(11),
+                      bottomRight: Radius.circular(11),
+                      bottomLeft: Radius.circular(0),
                     ),
-                  ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  message,
+                  textAlign: TextAlign.start,
+                  softWrap: true,
+                  style:
+                      // const TextStyle(color: Color(0xFF2E1963), fontSize: 14),
+                      const TextStyle(color: Color(0xFF000000), fontSize: 14),
                 ),
-                SizedBox(
-                  width: 15,
-                ),
-                Expanded(
-                  child: TextField(
-                    onTap: () {},
-                    decoration: InputDecoration(
-                        hintText: 'Write message...',
-                        hintStyle: TextStyle(color: Colors.black54),
-                        border: InputBorder.none),
-                    controller: inputData,
-                    scrollPadding: EdgeInsets.only(bottom: 40),
-                  ),
-                ),
-                SizedBox(
-                  width: 15,
-                ),
-                // Send Button
-                FloatingActionButton(
-                  onPressed: () {
-                    if (inputData.text.isNotEmpty) {
-                      addMessage(widget.name, inputData.text);
-                      inputData.clear();
-                      _scrollDown();
-                    }
-                    // messages_db[widget.name].add(ChatMessage(messageContent: inputData.text, messageType: "sender"));
-                  },
-                  backgroundColor: Colors.blue,
-                  elevation: 0,
-                  child: Icon(
-                    Icons.send,
-                    color: Colors.white,
-                    size: 18,
-                  ),
-                ),
+                // 날짜 나옴
+                // Align(
+                //   alignment: Alignment.centerRight,
+                //   child: Padding(
+                //     padding: const EdgeInsets.only(top: 7),
+                //     child: Text(
+                //       date ?? '',
+                //       textAlign: TextAlign.end,
+                //       style: const TextStyle(
+                //           color: Color(0xFF594097), fontSize: 9),
+                //     ),
+                //   ),
+                // )
               ],
             ),
           ),
-        ),
+        ],
       ),
     );
   }

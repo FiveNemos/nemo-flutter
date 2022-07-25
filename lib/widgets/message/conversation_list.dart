@@ -2,16 +2,22 @@ import 'package:flutter/material.dart';
 import '../../screens/message/chat_detail_page.dart';
 
 class ConversationList extends StatefulWidget {
-  String name;
-  String messageText;
-  String imageUrl;
-  String time;
+  var chatroomID;
+  int loginID;
+  int friendID;
+  String friendName;
+  String intro;
+  String friendImage;
+  String lastMsgTime;
   bool isMessageRead;
   ConversationList(
-      {required this.name,
-      required this.messageText,
-      required this.imageUrl,
-      required this.time,
+      {required this.chatroomID,
+      required this.loginID,
+      required this.friendID,
+      required this.friendName,
+      required this.intro,
+      required this.friendImage,
+      required this.lastMsgTime,
       required this.isMessageRead});
   @override
   _ConversationListState createState() => _ConversationListState();
@@ -23,10 +29,12 @@ class _ConversationListState extends State<ConversationList> {
     return GestureDetector(
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
-          return ChatDetailPage(
-            name: widget.name,
-            imageUrl: widget.imageUrl,
-          );
+          return ChatScreen(
+              chatroomID: widget.chatroomID,
+              loginID: widget.loginID,
+              friendID: widget.friendID,
+              friendName: widget.friendName,
+              friendImage: widget.friendImage);
         }));
       },
       child: Container(
@@ -37,7 +45,7 @@ class _ConversationListState extends State<ConversationList> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(widget.imageUrl),
+                    backgroundImage: NetworkImage(widget.friendImage),
                     // backgroundImage: AssetImage('${widget.imageUrl}'),
                     maxRadius: 30,
                   ),
@@ -51,14 +59,14 @@ class _ConversationListState extends State<ConversationList> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
                           Text(
-                            widget.name,
+                            widget.friendName,
                             style: TextStyle(fontSize: 16),
                           ),
                           SizedBox(
                             height: 6,
                           ),
                           Text(
-                            widget.messageText,
+                            widget.intro,
                             style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey.shade600,
@@ -74,7 +82,7 @@ class _ConversationListState extends State<ConversationList> {
               ),
             ),
             Text(
-              widget.time,
+              widget.lastMsgTime, // 현재 시간을 계산해서, 'now' '2 hr' '8 Jul' 등으로 바꿔주기
               style: TextStyle(
                   fontSize: 12,
                   fontWeight: widget.isMessageRead
