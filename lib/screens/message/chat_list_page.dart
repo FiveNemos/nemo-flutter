@@ -17,7 +17,7 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatRooms> original_chatUsers = [
     ChatRooms(
         chatroomID: 1,
-        friendID: 10,
+        friendID: 10, // 현재 내 아이디가 아니라면 추가하라.
         friendName: '주비 테스트',
         intro: '주비입니다 테스트용 계정. 채팅 1번방',
         friendImage:

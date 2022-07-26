@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import '../../models/init/login.dart';
@@ -20,7 +20,6 @@ class _SignupPageState extends State<SignupPage> {
   var phoneNumber;
   var accountName2 = TextEditingController();
   var errorDetail;
-  var uniqueID;
   var loginID;
 
   static final storage = FlutterSecureStorage();
@@ -29,14 +28,14 @@ class _SignupPageState extends State<SignupPage> {
     var val = jsonEncode(Login('$accountName', '$password', '$id'));
     await storage.write(key: 'login', value: val);
   }
-
-  saveData(id) async {
-    // 임시이며, SecureStorage로 이관예정
-    var storage = await SharedPreferences.getInstance();
-    storage.setInt('id', id);
-    // var result = storage.getInt('id');
-    // print('saveData result: $result');
-  }
+  //
+  // saveData(id) async {
+  //   // 임시이며, SecureStorage로 이관예정
+  //   var storage = await SharedPreferences.getInstance();
+  //   storage.setInt('id', id);
+  //   // var result = storage.getInt('id');
+  //   // print('saveData result: $result');
+  // }
 
   showNemo() {
     return Center(
@@ -136,24 +135,18 @@ class _SignupPageState extends State<SignupPage> {
         'password': '$password',
         'phone_number': '$phonenumber'
       };
-      print('gopostUser');
       Response response = await dio
           .post('http://34.64.217.3:3000/api/user/signup', data: param);
-      print('response status: ${response.statusCode}');
       if (response.statusCode == 201) {
-        print('go success');
         final json = response.data;
-        print(json['id']);
         setState(() {
-          uniqueID = json['id'];
+          loginID = json['id'];
         });
-        saveData(json['id']);
+        // saveData(json['id']);
         saveIdSecure(json['id']);
-        print('접속 성공!');
         print('success : $json');
         return true;
       } else {
-        print('go fail, statusCode: ${response.statusCode}');
         print('error');
         return false;
       }
