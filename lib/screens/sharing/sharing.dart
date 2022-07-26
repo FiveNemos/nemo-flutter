@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 
 import '../mypage/cardeditor.dart';
 import '../../models/sharing/user.dart';
@@ -149,12 +149,10 @@ class _DraggableCardState extends State<DraggableCard>
                 onConnectionResult: (id, status) {
                   if (status == Status.CONNECTED) {
                     endpointMap.forEach((key, value) async {
-                      // dynamic userInfo =
-                      //     await storage.read(key: 'login');
-                      // Map userMap = jsonDecode(userInfo);
-                      // String a = userMap['user_id'];
-                      var storage = await SharedPreferences.getInstance();
-                      String a = storage.getInt('id').toString();
+                      dynamic userInfo = await storage.read(key: 'login');
+                      String a = jsonDecode(userInfo)['user_id'];
+                      // var storage = await SharedPreferences.getInstance();
+                      // String a = storage.getInt('id').toString();
 
                       Nearby().sendBytesPayload(
                           key, Uint8List.fromList(a.codeUnits));

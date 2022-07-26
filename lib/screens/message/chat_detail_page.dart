@@ -148,6 +148,10 @@ class _ChatScreenState extends State<ChatScreen> {
         debugPrint(data);
       });
 
+      socket.on('leave', (data) {
+        debugPrint('socket leave');
+      });
+
       socket.on('message', (data) {
         var message = ChatModel.fromJson(data);
         setStateIfMounted(() {
@@ -156,6 +160,7 @@ class _ChatScreenState extends State<ChatScreen> {
       });
       socket.on('disconnect', (data) {
         debugPrint('socket disconnected');
+        socket.disconnect();
       });
       // socket.onDisconnect((_) => debugPrint('disconnect'));
     } catch (e) {
@@ -202,6 +207,9 @@ class _ChatScreenState extends State<ChatScreen> {
                     children: <Widget>[
                       IconButton(
                         onPressed: () {
+                          socket.emit('leave', widget.chatroomID);
+                          socket
+                              .emit('disconnect'); // 위에 socket.disconnect()와 연동
                           Navigator.pop(context);
                         },
                         icon: Icon(
@@ -347,7 +355,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .toString()
                                       .substring(0, 16));
 
-                              socket.emit("message", nowSend.toJson());
+                              socket.emit('message', nowSend.toJson());
                               addMessage(nowSend);
 
                               // POST 요청을 보내 DB에 넣는 작업도 여기서 처리하게 수정하기

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../models/mypage/user.dart';
 import '../../widgets/mypage/profile_widget.dart';
 import '../message/chat_detail_page.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
@@ -131,7 +131,7 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,
-          actions: (_isMe == true)
+          actions: _isMe
               ? [
                   IconButton(
                     icon: Icon(Icons.logout),
@@ -183,28 +183,33 @@ class _ProfilePageState extends State<ProfilePage> {
                 user.nickname,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
-              Transform.rotate(
-                angle: 6,
-                child: IconButton(
-                    onPressed: () {
-                      // http 요청해서, chatroomID 찾기 by loginID, friendID
-                      // var chatroomID = getHTTP(loginID, friendID)
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return ChatScreen(
-                          chatroomID: 3, // chatroomID // 수정필요
-                          loginID: loginID,
-                          friendID: widget.friendId,
-                          friendName: user.nickname,
-                          friendImage: user.imagePath,
-                        );
-                      }));
-                    },
-                    icon: Icon(
-                      Icons.send,
-                      color: Colors.purple,
-                    )),
-              ),
+              !_isMe
+                  ? Transform.rotate(
+                      angle: 6,
+                      child: IconButton(
+                          onPressed: () {
+                            // http 요청해서, chatroomID 찾기 by loginID, friendID
+                            // var chatroomID = getHTTP(loginID, friendID)
+                            Navigator.push(context,
+                                MaterialPageRoute(builder: (context) {
+                              return ChatScreen(
+                                chatroomID: 3, // chatroomID // 수정필요
+                                loginID: loginID,
+                                friendID: widget.friendId,
+                                friendName: user.nickname,
+                                friendImage: user.imagePath,
+                              );
+                            }));
+                          },
+                          icon: Icon(
+                            Icons.send,
+                            color: Colors.purple,
+                          )),
+                    )
+                  : SizedBox(
+                      width: 1,
+                      height: 1,
+                    ),
             ],
           ),
           const SizedBox(height: 4),
