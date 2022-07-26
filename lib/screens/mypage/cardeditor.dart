@@ -376,7 +376,7 @@ class _CardEditorState extends State<CardEditor> {
                             width: 100,
                             child: Column(
                               children: [
-                                Container(
+                                SizedBox(
                                   width: 100,
                                   height: 80,
                                   child: imageSpace(
@@ -402,7 +402,7 @@ class _CardEditorState extends State<CardEditor> {
                             width: 100,
                             child: Column(
                               children: [
-                                Container(
+                                SizedBox(
                                   width: 100,
                                   height: 80,
                                   child: imageSpace(
@@ -428,7 +428,7 @@ class _CardEditorState extends State<CardEditor> {
                             width: 100,
                             child: Column(
                               children: [
-                                Container(
+                                SizedBox(
                                   width: 100,
                                   height: 80,
                                   child: imageSpace(

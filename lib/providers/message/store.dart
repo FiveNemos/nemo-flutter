@@ -1,6 +1,4 @@
 // TEMP // FOR PROVIDER // 쓰려면 main.dart에 MultiProvider 적용해야함
-import '../../screens/message/message.dart';
-import '../../models/message/chatmodel.dart';
 //
 // class StoreMessage extends MessagePage {
 //   Map messages_db = {

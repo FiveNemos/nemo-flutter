@@ -107,7 +107,7 @@ class _DraggableCardState extends State<DraggableCard>
   bool haspermission = false;
   late LocationPermission permission;
   late Position position;
-  String lng = "", lat = "";
+  String lng = '', lat = '';
   late StreamSubscription<Position> positionStream;
 // ---
   final String userName = Random().nextInt(100).toString();
