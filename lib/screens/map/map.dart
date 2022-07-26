@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -111,7 +110,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("User current location"),
+        title: const Text('User current location'),
         centerTitle: true,
       ),
       body: GoogleMap(
@@ -184,7 +183,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
       permission = await Geolocator.requestPermission();
 
       if (permission == LocationPermission.denied) {
-        return Future.error("Location permission denied");
+        return Future.error('Location permission denied');
       }
     }
 

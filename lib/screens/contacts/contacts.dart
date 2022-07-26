@@ -21,7 +21,7 @@ class _ContactsPageState extends State<ContactsPage> {
   List friends = [];
   List friendsStash = [];
   Map friendsData = {};
-  var _controller = TextEditingController();
+  final _controller = TextEditingController();
   getAllCards(id) async {
     try {
       var dio = Dio();
@@ -56,7 +56,7 @@ class _ContactsPageState extends State<ContactsPage> {
         return false;
       }
     } catch (e) {
-      print("뭔가 에러가");
+      print('뭔가 에러가');
       return false;
     }
   }
