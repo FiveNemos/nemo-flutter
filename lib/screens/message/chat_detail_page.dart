@@ -136,8 +136,7 @@ class _ChatScreenState extends State<ChatScreen> {
       socket.on('connect', (data) {
         debugPrint('socket connected');
         // debugPrint(socket.connected);
-        socket.emit(
-            'join', {'user': widget.loginID, 'chatroom': widget.chatroomID});
+        socket.emit('join', widget.chatroomID);
         setState(() {
           socketFlag = true;
         });
@@ -348,10 +347,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                       .toString()
                                       .substring(0, 16));
 
-                              socket.emit("message", {
-                                'chatroom': widget.chatroomID,
-                                'chatmodel': nowSend.toJson()
-                              });
+                              socket.emit("message", nowSend.toJson());
                               addMessage(nowSend);
 
                               // POST 요청을 보내 DB에 넣는 작업도 여기서 처리하게 수정하기
