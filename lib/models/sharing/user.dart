@@ -6,8 +6,6 @@ class User {
   final String nickname;
   final String intro;
   final String image;
-  final String lat;
-  final String lng;
 
   const User({
     required this.user_id,
@@ -17,8 +15,6 @@ class User {
     required this.nickname,
     required this.intro,
     required this.image,
-    required this.lat,
-    required this.lng,
   });
 
   User.fromJson(Map<dynamic, dynamic> json)
@@ -28,9 +24,7 @@ class User {
         tag_3 = json['tag_3'],
         nickname = json['nickname'],
         intro = json['intro'],
-        image = json['image'],
-        lat = json['lat'],
-        lng = json['lng'];
+        image = json['image'];
 
   Map<String, dynamic> toJson() => {
         'user_id': user_id,
@@ -40,7 +34,5 @@ class User {
         'nickname': nickname,
         'intro': intro,
         'image': image,
-        'lat': lat,
-        'lng': lng,
       };
 }
