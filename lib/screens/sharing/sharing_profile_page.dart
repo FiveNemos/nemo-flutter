@@ -168,7 +168,7 @@ class _ProfilePageState extends State<ProfilePage> {
                   label: '마이페이지',
                 ),
               ],
-              currentIndex: 1,
+              // currentIndex: ,
               onTap: (int index) {
                 switch (index) {
                   case 0:

@@ -59,6 +59,10 @@ class SharingPage extends StatelessWidget {
             label: '공유',
           ),
           BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
             icon: Icon(Icons.message),
             label: '메시지',
           ),
@@ -77,9 +81,12 @@ class SharingPage extends StatelessWidget {
               // Navigator.pushNamed(context, '/sharing');
               break;
             case 2:
-              Navigator.pushNamed(context, '/message');
+              Navigator.pushNamed(context, '/map');
               break;
             case 3:
+              Navigator.pushNamed(context, '/message');
+              break;
+            case 4:
               Navigator.pushNamed(context, '/mypage');
               break;
           }
