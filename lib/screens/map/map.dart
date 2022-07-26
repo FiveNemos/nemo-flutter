@@ -33,56 +33,21 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
   }
 
   getCord(id) async {
-    // print('http://10.0.2.2:3000/api/friend/lat');
-
     try {
       var dio = Dio();
       Response response = await dio.get('http://10.0.2.2:3000/api/friend/lat');
-      // print('------------------');
-      // Object a = response.data[0]['user_id'];
-      // print(a.runtimeType);
-      // print(a);
-      // print(response.statusCode);
-      // print('------------------');
+
       if (response.statusCode == 200) {
         final json = response.data;
         print(json);
         // setState each 'connections'
-        for (var i = 0; i < json.length; i++) {
-          print('---------------');
-          print(i);
-          print(json[i]['user_id']);
-          print('---------------');
 
-          // if (json[i]['user_id'] == 5) {
-          //   print(json[i]['user_id']);
-          //   print(json[i]);
-          print(userCord);
-          print('---------------');
+        setState(() {
+          userCord = UserCord(
+              user_id: json['user_id'], lat: json['lat'], long: json['long']);
+        });
 
-          setState(() {
-            userCord[i] = UserCord(
-                user_id: json[i]['user_id'],
-                lat: json[i]['lat'],
-                long: json[i]['long']);
-          });
-          print('---------------');
-
-          print(userCord);
-          print('---------------');
-
-          print(userCord[i].user_id);
-          print(userCord[i].lat);
-          print(userCord[i].long);
-          // }
-        }
-
-        // print(double.parse(userCord.lat));
-        // print(double.parse(userCord.long));
-        // print(userCord.user_id);
-        // print('접속성공');
-
-        return true;
+        return userCord;
       } else {
         print('error');
         return false;
@@ -119,52 +84,25 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         markers: markers,
         zoomControlsEnabled: false,
         mapType: MapType.normal,
-        // onMapCreated: (GoogleMapController controller) {
-        //   googleMapController = controller;
-        //   // sleep(const Duration(milliseconds: 3000));
+        onMapCreated: (GoogleMapController controller) {
+          googleMapController = controller;
+          // sleep(const Duration(milliseconds: 3000));
 
-        //   // latt = double.parse(userCord[i].lat);
-        //   // longg = double.parse(userCord[i].long);
-        //   markers.add(
-        //     Marker(
-        //       markerId: MarkerId(userCord.user_id),
-        //       position: LatLng(latt, longg),
-        //       // infoWindow: InfoWindow(
-        //       //   title: '${userCord.user_id}',
-        //       //   snippet: '${userCord.lat}, ${userCord.long}',
-        //       // ),
-        //       icon: BitmapDescriptor.defaultMarker,
-        //     ),
-        //   );
-        // },
+          // latt = double.parse(userCord[i].lat);
+          // longg = double.parse(userCord[i].long);
+          markers.add(
+            Marker(
+              markerId: MarkerId('test'),
+              position: LatLng(36.392865, 127.398889),
+              infoWindow: InfoWindow(
+                title: '11111',
+                snippet: '222',
+              ),
+              icon: BitmapDescriptor.defaultMarker,
+            ),
+          );
+        },
       ),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () async {
-      //     Position position = await _determinePosition();
-
-      //     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-      //         CameraPosition(
-      //             target: LatLng(
-      //                 double.parse(userCord.lat), double.parse(userCord.long)),
-      //             zoom: 14)));
-
-      //     markers.clear();
-
-      //     markers.add(Marker(
-      //         markerId: const MarkerId('NeMo'),
-      //         position: LatLng(
-      //             double.parse(userCord.lat), double.parse(userCord.long))));
-
-      //     // setState(() {});
-
-      //     print('------------------');
-      //     print(double.parse(userCord.lat));
-      //     print(double.parse(userCord.long));
-      //     print('------------------');
-      //   },
-      //   label: const Text("Current Location"),
-      //   icon: const Icon(Icons.location_history),
-      // ),
     );
   }
 

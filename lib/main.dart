@@ -18,7 +18,7 @@ import 'screens/sharing/sharing.dart';
 // name card page
 import 'screens/mypage/cardgenerator.dart';
 
-// import 'screens/map/map.dart';
+import 'screens/map/map.dart';
 // --------------------------------------------------
 
 void main() {
@@ -43,7 +43,7 @@ class MyApp extends StatelessWidget {
         '/mypage': (context) => MypagePage(),
         '/sharing': (context) => SharingPage(),
         '/namecard': (context) => NameCardGenerator(),
-        // '/map': (context) => CurrentLocationScreen(),
+        '/map': (context) => CurrentLocationScreen(),
       }, // end routes
     );
   }
