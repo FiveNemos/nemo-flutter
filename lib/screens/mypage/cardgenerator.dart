@@ -17,21 +17,24 @@ Future<dynamic> postNameCard(
   String nickname,
   Map tags,
   introduction,
-  File userImage,
-  File tagImage1,
-  File tagImage2,
-  File tagImage3,
+  dynamic userImage,
+  dynamic tagImage1,
+  dynamic tagImage2,
+  dynamic tagImage3,
   String detailTitle,
   String detailContent,
 ) async {
   print('nowID : $nowID');
-  if (userImage == null) {
+  if (userImage == null ||
+      tagImage1.runtimeType == Image ||
+      tagImage2.runtimeType == Image ||
+      tagImage3.runtimeType == Image) {
     showDialog(
         context: context,
         builder: (context) {
           return AlertDialog(
               title: Text('Not Yet!!'),
-              content: Text('사진을 바꿔주세요.'),
+              content: Text('빈칸을 채워주세요.'),
               actions: [
                 TextButton(
                   // textColor: Colors.black,
@@ -128,8 +131,8 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   dynamic tagImage1 = Image.asset('assets/mypage/grey_gallery.png');
   dynamic tagImage2 = Image.asset('assets/mypage/grey_gallery.png');
   dynamic tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
-  var detailTitle;
-  var detailContent;
+  var detailTitle = '인삿말을 입력해주세요!';
+  var detailContent = '더 하고픈 말이 있나요?';
 
   saveUserImage(File file) {
     setState(() {
@@ -273,7 +276,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                         width: 100,
                         child: Column(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 100,
                               height: 80,
                               child: imageSpace(
@@ -298,7 +301,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                         width: 100,
                         child: Column(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 100,
                               height: 80,
                               child: imageSpace(
@@ -323,7 +326,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                         width: 100,
                         child: Column(
                           children: [
-                            Container(
+                            SizedBox(
                               width: 100,
                               height: 80,
                               child: imageSpace(
@@ -382,7 +385,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     height: 35,
                     child: TextField(
                       decoration: InputDecoration(
-                        labelText: 'title',
+                        labelText: detailTitle,
                         labelStyle: TextStyle(fontSize: 13),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -411,7 +414,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     maxLength: 50,
                     decoration: InputDecoration(
                       constraints: BoxConstraints(maxHeight: 80),
-                      labelText: 'details',
+                      labelText: detailContent,
                       labelStyle: TextStyle(fontSize: 12),
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -524,7 +527,7 @@ class _NameSpaceState extends State<NameSpace> {
     return TextField(
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
-        labelText: '닉네임',
+        labelText: widget.nickname,
         labelStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -602,7 +605,7 @@ class _IntroSpaceState extends State<IntroSpace> {
     return TextField(
         decoration: InputDecoration(
           constraints: BoxConstraints(maxHeight: 40),
-          labelText: '한줄소개',
+          labelText: widget.introduction,
           labelStyle: TextStyle(fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),

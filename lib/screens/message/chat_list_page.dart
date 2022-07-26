@@ -46,7 +46,7 @@ class _ChatPageState extends State<ChatPage> {
       if (e.friendName.startsWith(text)) {
         // temp.add(e);
         if (e.friendID != loginID) {
-          print("뭐냐고요");
+          print('뭐냐고요');
           print(e.friendID);
           print(loginID);
           temp.add(e);

@@ -1,10 +1,7 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../models/message/chatmodel.dart';
-import '../../tests/message/chat_user_test_data.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
 
 class ChatScreen extends StatefulWidget {
   var chatroomID;
@@ -127,9 +124,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   initializeSocket() {
     try {
-      socket = io("http://34.64.217.3:3000/", <String, dynamic>{
-        "transports": ["websocket"],
-        "autoConnect": false,
+      socket = io('http://34.64.217.3:3000/', <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
       });
 
       socket.connect();
@@ -170,11 +167,11 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    _samplemsg.forEach((e) {
+    for (var e in _samplemsg) {
       if (e.chatroomID == widget.chatroomID) {
         addMessage(e);
       }
-    });
+    }
 
     super.initState();
     // enterChatRoom();
@@ -284,7 +281,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             Column(
                                 crossAxisAlignment: CrossAxisAlignment.stretch,
                                 children: _messages.map((message) {
-                                  print("gogo$message");
+                                  print('gogo$message');
                                   return ChatBubble(
                                     date: message.sentAt,
                                     message: message.message,
