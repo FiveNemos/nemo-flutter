@@ -148,8 +148,8 @@ class _DraggableCardState extends State<DraggableCard>
     StreamSubscription<Position> positionStream =
         Geolocator.getPositionStream(locationSettings: locationSettings)
             .listen((Position position) {
-      print(position.longitude); //Output: 80.24599079
-      print(position.latitude); //Output: 29.6593457
+      print(position.longitude);
+      print(position.latitude);
 
       lng = position.longitude.toString();
       lat = position.latitude.toString();
@@ -413,6 +413,7 @@ class _DraggableCardState extends State<DraggableCard>
         _dragAlignment = _animation.value;
       });
     });
+    getLocation();
   }
 
   @override
