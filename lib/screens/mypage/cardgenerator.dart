@@ -34,7 +34,7 @@ Future<dynamic> postNameCard(
         builder: (context) {
           return AlertDialog(
               title: Text('Not Yet!!'),
-              content: Text('빈칸을 채워주세요.'),
+              content: Text('사진을 바꿔주세요.'),
               actions: [
                 TextButton(
                   // textColor: Colors.black,
