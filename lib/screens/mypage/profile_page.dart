@@ -23,13 +23,22 @@ class _ProfilePageState extends State<ProfilePage> {
   dynamic userInfo = '';
   var loginID;
   var user;
+  bool _isMe = false;
   checkUser() async {
     dynamic userInfo = await storage.read(key: 'login');
-    loginID = int.parse(jsonDecode(userInfo)['user_id']);
+    setState(() {
+      loginID = int.parse(jsonDecode(userInfo)['user_id']);
+    });
     if (widget.friendId != null) {
       getCard(widget.friendId);
+      setState(() {
+        _isMe = false;
+      });
     } else {
       getCard(loginID);
+      setState(() {
+        _isMe = true;
+      });
     }
   }
 
@@ -99,8 +108,8 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     // TODO: implement initState
-    super.initState();
     checkUser();
+    super.initState();
   }
 
   @override
@@ -122,6 +131,17 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
           centerTitle: true,
           automaticallyImplyLeading: true,
+          actions: (_isMe == true)
+              ? [
+                  IconButton(
+                    icon: Icon(Icons.logout),
+                    tooltip: 'logout',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
+                  ),
+                ]
+              : [],
         ),
         body: ListView.separated(
           // shrinkWrap: true,
