@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
 import 'dart:math';
@@ -15,6 +17,9 @@ import '../mypage/cardeditor.dart';
 import '../../models/sharing/user.dart';
 import '../sharing/punch.dart';
 import 'package:dio/dio.dart';
+
+// geolocator
+import 'package:geolocator/geolocator.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({super.key});
@@ -97,6 +102,14 @@ class DraggableCard extends StatefulWidget {
 
 class _DraggableCardState extends State<DraggableCard>
     with SingleTickerProviderStateMixin {
+  // geolocator
+  bool servicestatus = false;
+  bool haspermission = false;
+  late LocationPermission permission;
+  late Position position;
+  String lng = "", lat = "";
+  late StreamSubscription<Position> positionStream;
+// ---
   final String userName = Random().nextInt(100).toString();
   final Strategy strategy = Strategy.P2P_POINT_TO_POINT;
   Map<String, ConnectionInfo> endpointMap = {};
@@ -115,6 +128,40 @@ class _DraggableCardState extends State<DraggableCard>
       Permission.storage,
       //add more permission to request here.
     ].request();
+  }
+
+  getLocation() async {
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    print(position.longitude); //Output: 80.24599079
+    print(position.latitude); //Output: 29.6593457
+
+    lng = position.longitude.toString();
+    lat = position.latitude.toString();
+
+    setState(() {
+      //refresh UI
+    });
+
+    LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high, //accuracy of the location data
+      distanceFilter: 100, //minimum distance (measured in meters) a
+      //device must move horizontally before an update event is generated;
+    );
+
+    StreamSubscription<Position> positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position position) {
+      print(position.longitude);
+      print(position.latitude);
+
+      lng = position.longitude.toString();
+      lat = position.latitude.toString();
+
+      setState(() {
+        //refresh UI on update
+      });
+    });
   }
 
   @override
@@ -299,6 +346,7 @@ class _DraggableCardState extends State<DraggableCard>
   //     }
   //   });
   // }
+
   void onConnectionInit(String id, ConnectionInfo info) {
     setState(() {
       endpointMap[id] = info;
@@ -311,7 +359,7 @@ class _DraggableCardState extends State<DraggableCard>
         String id_2 = String.fromCharCodes(payload.bytes!);
 
         var uri = Uri.parse(
-            'http://34.64.217.3:3000/api/friend?id_1=$id_1&id_2=$id_2');
+            'http://34.64.217.3:3000/api/friend?id_1=$id_1&id_2=$id_2&lat=$lat&lng=$lng');
         var request = http.MultipartRequest('GET', uri);
 
         final response = await request.send();
@@ -367,6 +415,7 @@ class _DraggableCardState extends State<DraggableCard>
         _dragAlignment = _animation.value;
       });
     });
+    getLocation();
   }
 
   @override

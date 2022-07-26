@@ -16,6 +16,7 @@ class PunchPage extends StatefulWidget {
 class _PunchPageState extends State<PunchPage> {
   final Color _backgroundColor = Color.fromARGB(255, 255, 255, 255);
   List<double>? _userAccelerometerValues;
+  var cnt = 0;
 
   @override
   void initState() {
@@ -23,21 +24,27 @@ class _PunchPageState extends State<PunchPage> {
     userAccelerometerEvents.listen((UserAccelerometerEvent event) {
       setState(() {
         // Manipulate the UI here, something like:
-        if (event.y > 4 || event.y < -4) {
+        if ((event.y > 5 || event.y < -5) && cnt == 0) {
+          cnt++;
+
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
-          super.dispose();
-        } else if (event.x < -4 || event.x > 4) {
+        } else if ((event.x < -5 || event.x > 5) && cnt == 0) {
+          cnt++;
+
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
-          super.dispose();
         } else {}
+        super.dispose();
+        for (final subscription in _streamSubscriptions) {
+          subscription.cancel();
+        }
       });
     });
   }
