@@ -9,29 +9,33 @@ class ChatModel {
     // required this.socketId,
     required this.chatroomID,
     required this.senderID,
+    required this.receiverID,
     required this.sentAt,
-    required this.message,
+    required this.messagetext,
   });
 
   // String socketId;
   var chatroomID;
   int senderID; // 수정하기 int
+  int receiverID;
   String sentAt;
-  String message;
+  String messagetext;
 
   factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
         // socketId: json["socketId"],
         chatroomID: json['chatroomID'],
         senderID: json['senderID'],
+        receiverID: json['receiverID'],
         sentAt: json['sentAt'],
-        message: json['message'],
+        messagetext: json['messagetext'],
       );
 
   Map<String, dynamic> toJson() => {
         // "socketId": socketId, // socketId 혹시모르니
         'chatroomID': chatroomID,
         'senderID': senderID, // sender userId
+        'receiverID': receiverID,
         'sentAt': sentAt, // 언제보냈는가
-        'message': message, // 메세지 내용
+        'messagetext': messagetext, // 메세지 내용
       };
 }
