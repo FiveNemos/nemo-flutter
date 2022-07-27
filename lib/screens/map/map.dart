@@ -10,6 +10,11 @@ import 'package:dio/dio.dart';
 import '../../models/map/cord.dart';
 import 'dart:convert';
 
+//
+// import '../sharing/sharing_profile_page.dart';
+// import '../mypage/profile_page.dart';
+import '../sharing/map_profile_page.dart';
+
 class CurrentLocationScreen extends StatefulWidget {
   const CurrentLocationScreen({Key? key}) : super(key: key);
 
@@ -40,7 +45,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
     try {
       var dio = Dio();
       Response response =
-          await dio.get('http://34.64.217.3:3000/api/friend/locs?user_id=$id');
+          await dio.get('http://34.64.217.3:3000/api/friend/map?user_id=$id');
       if (response.statusCode == 200) {
         final json = response.data;
         // print(json.runtimeType);
@@ -60,10 +65,15 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         //   // }
         // }
         print("11111");
+        print(json);
         var temp = [];
         json.forEach((e) {
-          temp.add(
-              UserCord(user_id: e['user_id'], lat: e['lat'], long: e['lng']));
+          temp.add(UserCord(
+              user_id: e['user_id'],
+              lat: e['lat'],
+              long: e['lng'],
+              date: e['connection_date'],
+              nickname: e['nickname']));
         });
         setState(() {
           userCord = temp;
@@ -97,7 +107,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
   GoogleMapController? googleMapController;
 
   static const CameraPosition initialCameraPosition =
-      CameraPosition(target: LatLng(36.392865, 127.398889), zoom: 14);
+      CameraPosition(target: LatLng(36.392865, 127.398889), zoom: 17);
   //
   // Set<Marker> markers = {
   //   Marker(
@@ -127,7 +137,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
           future: _future,
           builder: (context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
-              return CircularProgressIndicator();
+              return Center(child: CircularProgressIndicator());
             }
             print("snapshot");
             Set<Marker> markers = {};
@@ -137,6 +147,17 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
               markers.add(Marker(
                   markerId: MarkerId(e.user_id.toString()),
                   position: LatLng(latt, long),
+                  infoWindow: InfoWindow(
+                    title: e.nickname,
+                    snippet: (e.date).toString(),
+                    onTap: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) =>
+                                  ProfilePage(friendId: e.user_id)));
+                    },
+                  ),
                   icon: BitmapDescriptor.defaultMarker));
             });
             return GoogleMap(
@@ -145,58 +166,8 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
               zoomControlsEnabled: false,
               mapType: MapType.normal,
               onMapCreated: mapCreated,
-              // onMapCreated: () {
-              //
-              //   // sleep(const Duration(milliseconds: 3000));
-              //
-              //   // for (var i = 0; i < userCord.length; i++) {
-              //   //   print("userCord.length : ${userCord.length}");
-              //   //   latt = double.parse(userCord[i].lat);
-              //   //   longg = double.parse(userCord[i].long);
-              //   //   setState(() {
-              //   //     markers.add(
-              //   //       Marker(
-              //   //         markerId: MarkerId(userCord[i].user_id),
-              //   //         position: LatLng(latt, longg),
-              //   //         // infoWindow: InfoWindow(
-              //   //         //   title: '${userCord.user_id}',
-              //   //         //   snippet: '${userCord.lat}, ${userCord.long}',
-              //   //         // ),
-              //   //         icon: BitmapDescriptor.defaultMarker,
-              //   //       ),
-              //   //     );
-              //   //   });
-              //   // }
-              // },
             );
           }),
-      // floatingActionButton: FloatingActionButton.extended(
-      //   onPressed: () async {
-      //     Position position = await _determinePosition();
-      //
-      //     googleMapController.animateCamera(CameraUpdate.newCameraPosition(
-      //         CameraPosition(
-      //             target: LatLng(
-      //                 double.parse(userCord.lat), double.parse(userCord.long)),
-      //             zoom: 14)));
-      //
-      //     markers.clear();
-      //
-      //     markers.add(Marker(
-      //         markerId: const MarkerId('NeMo'),
-      //         position: LatLng(
-      //             double.parse(userCord.lat), double.parse(userCord.long))));
-      //
-      //     // setState(() {});
-      //
-      //     print('------------------');
-      //     print(double.parse(userCord.lat));
-      //     print(double.parse(userCord.long));
-      //     print('------------------');
-      //   },
-      //   label: const Text("Current Location"),
-      //   icon: const Icon(Icons.location_history),
-      // ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
