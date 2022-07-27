@@ -20,12 +20,123 @@ import 'package:dio/dio.dart';
 
 // geolocator
 import 'package:geolocator/geolocator.dart';
+import 'package:shimmer/shimmer.dart';
 
 class SharingPage extends StatelessWidget {
   const SharingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
+    void _showDialog() {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            // title: new Text("TooK 가이드"),
+            content: SingleChildScrollView(
+              // height: MediaQuery.of(context).size.height * 0.7,
+              child: Column(
+                // alignment: Alignment.center,
+                children: <Widget>[
+                  Text('툭 사용법을 알려드릴게요!',
+                      style: TextStyle(
+                          fontFamily: 'Gamja',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Image.asset(
+                    'assets/took_up.jpg',
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text('- 한 명은 위로 올려서 보내요!',
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Dohyun',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Image.asset(
+                    'assets/took_down.jpg',
+                    height: 200,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(
+                    height: 5,
+                  ),
+                  Text('- 다른 한 명은 아래로 내려 받아요!',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Dohyun',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue)),
+                  SizedBox(
+                    height: 20,
+                  ),
+
+                  Text('서로의 명함이 교환되면...',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontFamily: 'Dohyun',
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  // SizedBox(height: 30),
+                  SizedBox(
+                    width: 350.0,
+                    height: 70.0,
+                    child: Shimmer.fromColors(
+                      baseColor: Colors.red,
+                      highlightColor: Colors.yellow,
+                      child: Text(
+                        'TooK !',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 50.0,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Image.asset(
+                    'assets/bump_hand.gif',
+                    height: 180,
+                    fit: BoxFit.cover,
+                  ),
+                  // SizedBox(
+                  //   height: 200,
+                  // ),
+                ],
+              ),
+            ),
+            // add text
+            actions: <Widget>[
+              new ElevatedButton(
+                child: new Text("아~ 완벽히 이해했어요!",
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontFamily: 'Dohyun')),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -34,6 +145,12 @@ class SharingPage extends StatelessWidget {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
+        // leading: IconButton(
+        //   icon: Icon(Icons.info),
+        //   onPressed: () {
+        //     _showDialog();
+        //   },
+        // ),
         actions: [
           IconButton(
               icon: Icon(Icons.edit),
@@ -43,9 +160,41 @@ class SharingPage extends StatelessWidget {
                 }));
               }),
         ],
+        // bottomOpacity: 0.8,
+
+        bottom: PreferredSize(
+          child: Container(
+            alignment: Alignment.center,
+            constraints: BoxConstraints.expand(height: 50),
+            // button
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0)),
+              color: Colors.orange,
+              child: Text(
+                '처음 사용한다면 클릭!',
+                style: TextStyle(
+                  fontSize: 15,
+                  fontFamily: 'Gamja',
+                  color: Colors.white,
+                ),
+              ),
+              onPressed: () {
+                _showDialog();
+              },
+            ),
+          ),
+          preferredSize: Size(50, 50),
+        ),
       ),
-      body: const DraggableCard(
-        child: TookPage(),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/back.png'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: DraggableCard(child: TookPage()),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -488,6 +637,14 @@ class _TookPageState extends State<TookPage> {
   Widget build(BuildContext context) {
     if (myDataFromJson != null) {
       return Container(
+        // // background effect
+        // decoration: BoxDecoration(
+        //   image: DecorationImage(
+        //     image: AssetImage('assets/background.jpeg'),
+        //     fit: BoxFit.cover,
+        //   ),
+        // ),
+
         // color: Colors.red,
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
         child: ListView(
