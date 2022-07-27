@@ -114,6 +114,14 @@ flutter:
         - asset: assets/fonts/CherryBomb-Regular.ttf
         # - asset: fonts/Schyler-Italic.ttf
           # style: italic
+    - family: Gamja
+      fonts:
+      - asset: assets/fonts/GamjaFlower-Regular.ttf
+    - family: Dohyun
+      fonts:
+      - asset: assets/fonts/BMDOHYEON_tff.ttf
+        # - asset: fonts/Schyler-Italic.ttf
+          # style: italic
   #   - family: Schyler
   #     fonts:
   #       - asset: fonts/Schyler-Regular.ttf
