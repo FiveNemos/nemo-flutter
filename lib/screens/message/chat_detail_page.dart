@@ -265,7 +265,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       },
                       child: CircleAvatar(
                         // 이미지자리
-                        backgroundImage: NetworkImage(widget.friendImage),
+                        backgroundImage: NetworkImage(
+                            'http://34.64.217.3:3000/static/${widget.friendImage}'),
                         maxRadius: 20,
                       ),
                     ),
