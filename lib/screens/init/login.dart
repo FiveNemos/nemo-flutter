@@ -5,6 +5,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../models/init/login.dart';
 // shared preference
 // import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginPage extends StatefulWidget {
   LoginPage({Key? key}) : super(key: key);
@@ -40,6 +41,8 @@ class _LoginPageState extends State<LoginPage> {
     if (userInfo != null) {
       await storage.delete(key: 'login');
     }
+    var sharedstorage = await SharedPreferences.getInstance();
+    sharedstorage.clear();
   }
 // shared preference 주석처리 (keep)
   // saveData(id) async {
