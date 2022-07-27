@@ -198,7 +198,7 @@ class _ProfilePageState extends State<ProfilePage> {
               label: '마이페이지',
             ),
           ],
-          currentIndex: 4,
+          currentIndex: 2,
           onTap: (int index) {
             switch (index) {
               case 0:
@@ -214,7 +214,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 Navigator.pushNamed(context, '/message');
                 break;
               case 4:
-                // Navigator.pushNamed(context, '/mypage');
+                Navigator.pushNamed(context, '/mypage');
                 break;
             }
           },

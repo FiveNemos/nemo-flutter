@@ -199,7 +199,7 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.pushNamed(context, '/contacts');
                     break;
                   case 1:
-                    Navigator.pushNamed(context, '/sharing');
+                    // Navigator.pushNamed(context, '/sharing');
                     break;
                   case 2:
                     Navigator.pushNamed(context, '/map');
