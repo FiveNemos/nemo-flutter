@@ -67,63 +67,69 @@ class _PunchPageState extends State<PunchPage> {
     //     ?.map((double v) => v.toStringAsFixed(1))
     //     .toList();
 
-    return Scaffold(
-      body: ListView(
-        children: [
-          Padding(
-              padding: const EdgeInsets.all(15),
-              child: Column(
-                children: [
-                  SizedBox(
-                    height: 100,
-                  ),
-                  SizedBox(
-                    width: 350.0,
-                    height: 100.0,
-                    child: Shimmer.fromColors(
-                      baseColor: Colors.red,
-                      highlightColor: Colors.yellow,
-                      child: Text(
-                        'TooK !',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 70.0,
-                          fontWeight: FontWeight.bold,
+    return WillPopScope(
+      onWillPop: () {
+        setState(() {});
+        return Future.value(false);
+      },
+      child: Scaffold(
+        body: ListView(
+          children: [
+            Padding(
+                padding: const EdgeInsets.all(15),
+                child: Column(
+                  children: [
+                    SizedBox(
+                      height: 100,
+                    ),
+                    SizedBox(
+                      width: 350.0,
+                      height: 100.0,
+                      child: Shimmer.fromColors(
+                        baseColor: Colors.red,
+                        highlightColor: Colors.yellow,
+                        child: Text(
+                          'TooK !',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 70.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  Image.asset(
-                    'assets/bump_hand.gif',
-                    width: 700,
-                    // height: 500,
-                    fit: BoxFit.fill,
-                  ),
-                  SizedBox(
-                    height: 50,
-                  ),
-                  SizedBox(
-                    width: 350.0,
-                    height: 100.0,
-                    child: Shimmer.fromColors(
-                      baseColor: Color.fromARGB(255, 23, 104, 255),
-                      highlightColor: Colors.yellow,
-                      child: Text(
-                        'to Share !',
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontSize: 30.0,
-                          fontWeight: FontWeight.bold,
+                    SizedBox(
+                      height: 50,
+                    ),
+                    Image.asset(
+                      'assets/bump_hand.gif',
+                      width: 700,
+                      // height: 500,
+                      fit: BoxFit.fill,
+                    ),
+                    SizedBox(
+                      height: 50,
+                    ),
+                    SizedBox(
+                      width: 350.0,
+                      height: 100.0,
+                      child: Shimmer.fromColors(
+                        baseColor: Color.fromARGB(255, 23, 104, 255),
+                        highlightColor: Colors.yellow,
+                        child: Text(
+                          'to Share !',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 30.0,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
-              ))
-        ],
+                  ],
+                ))
+          ],
+        ),
       ),
     );
   }
