@@ -244,59 +244,59 @@ class _LoginPageState extends State<LoginPage> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
                     ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        InkWell(
-                          onTap: () {
-                            print('네이버 로그인');
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 5,
-                                    color: Colors.black26,
-                                    spreadRadius: 1)
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 20,
-                              backgroundImage:
-                                  AssetImage('assets/login/logo_naver.png'),
-                            ),
-                          ),
-                        ),
-                        Padding(
-                          padding: EdgeInsets.fromLTRB(0, 0, 60, 0),
-                        ),
-                        InkWell(
-                          onTap: () {
-                            print('구글 로그인');
-                            // Navigator.pushNamed(context, '/map');
-                          },
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                    blurRadius: 5,
-                                    color: Colors.black26,
-                                    spreadRadius: 1)
-                              ],
-                            ),
-                            child: CircleAvatar(
-                              radius: 20,
-                              backgroundImage:
-                                  AssetImage('assets/login/logo_google.png'),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
+                    // Row(
+                    //   mainAxisAlignment: MainAxisAlignment.center,
+                    //   children: [
+                    //     InkWell(
+                    //       onTap: () {
+                    //         print('네이버 로그인');
+                    //       },
+                    //       child: Container(
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.white,
+                    //           shape: BoxShape.circle,
+                    //           boxShadow: [
+                    //             BoxShadow(
+                    //                 blurRadius: 5,
+                    //                 color: Colors.black26,
+                    //                 spreadRadius: 1)
+                    //           ],
+                    //         ),
+                    //         child: CircleAvatar(
+                    //           radius: 20,
+                    //           backgroundImage:
+                    //               AssetImage('assets/login/logo_naver.png'),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //     Padding(
+                    //       padding: EdgeInsets.fromLTRB(0, 0, 60, 0),
+                    //     ),
+                    //     InkWell(
+                    //       onTap: () {
+                    //         print('구글 로그인');
+                    //         // Navigator.pushNamed(context, '/map');
+                    //       },
+                    //       child: Container(
+                    //         decoration: BoxDecoration(
+                    //           color: Colors.white,
+                    //           shape: BoxShape.circle,
+                    //           boxShadow: [
+                    //             BoxShadow(
+                    //                 blurRadius: 5,
+                    //                 color: Colors.black26,
+                    //                 spreadRadius: 1)
+                    //           ],
+                    //         ),
+                    //         child: CircleAvatar(
+                    //           radius: 20,
+                    //           backgroundImage:
+                    //               AssetImage('assets/login/logo_google.png'),
+                    //         ),
+                    //       ),
+                    //     ),
+                    //   ],
+                    // ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(0, 0, 0, 25),
                     ),

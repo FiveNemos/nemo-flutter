@@ -74,7 +74,8 @@ class _InitPageState extends State<InitPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GestureDetector(
+        body: Center(
+      child: GestureDetector(
         onTap: () {
           checkUserState();
         },
@@ -90,11 +91,11 @@ class _InitPageState extends State<InitPage> {
               height: 400,
             ),
             BlinkText(
-              'NEMO 를 눌러주세요! ',
+              'NeMo 를 눌러주세요! ',
               // beginColor: Colors.black,
               // endColor: Color(0xff8338EC),
               duration: Duration(milliseconds: 800),
-              times: 4,
+              times: 20,
               style: TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 19,
@@ -103,6 +104,6 @@ class _InitPageState extends State<InitPage> {
           ],
         ),
       ),
-    );
+    ));
   }
 }
