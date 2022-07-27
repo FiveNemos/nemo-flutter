@@ -20,7 +20,7 @@ class MessagePage extends StatelessWidget {
       // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
-        items: const <BottomNavigationBarItem>[
+        items: [
           BottomNavigationBarItem(
             icon: Icon(Icons.contacts),
             label: '연락처',
@@ -28,6 +28,10 @@ class MessagePage extends StatelessWidget {
           BottomNavigationBarItem(
             icon: Icon(Icons.share),
             label: '공유',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
@@ -38,7 +42,7 @@ class MessagePage extends StatelessWidget {
             label: '마이페이지',
           ),
         ],
-        currentIndex: 2,
+        currentIndex: 3,
         onTap: (int index) {
           switch (index) {
             case 0:
@@ -48,9 +52,12 @@ class MessagePage extends StatelessWidget {
               Navigator.pushNamed(context, '/sharing');
               break;
             case 2:
-              // Navigator.pushNamed(context, '/message');
+              Navigator.pushNamed(context, '/map');
               break;
             case 3:
+              // Navigator.pushNamed(context, '/message');
+              break;
+            case 4:
               Navigator.pushNamed(context, '/mypage');
               break;
           }
