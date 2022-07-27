@@ -47,7 +47,6 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       var dio = Dio();
       Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
-      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
 
       if (response.statusCode == 200) {
         final json = response.data;
@@ -160,6 +159,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   label: '공유',
                 ),
                 BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  label: 'Map',
+                ),
+                BottomNavigationBarItem(
                   icon: Icon(Icons.message),
                   label: '메시지',
                 ),
@@ -178,9 +181,12 @@ class _ProfilePageState extends State<ProfilePage> {
                     Navigator.pushNamed(context, '/sharing');
                     break;
                   case 2:
-                    Navigator.pushNamed(context, '/message');
+                    Navigator.pushNamed(context, '/map');
                     break;
                   case 3:
+                    Navigator.pushNamed(context, '/message');
+                    break;
+                  case 4:
                     Navigator.pushNamed(context, '/mypage');
                     break;
                 }
