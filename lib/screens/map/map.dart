@@ -125,11 +125,11 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Nemo',
+          'NeMo',
           style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
         ),
         centerTitle: true,
-        automaticallyImplyLeading: true,
+        automaticallyImplyLeading: false,
       ),
       body: FutureBuilder(
           future: _future,

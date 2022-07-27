@@ -126,7 +126,7 @@ class _ProfilePageState extends State<ProfilePage> {
       return Scaffold(
         appBar: AppBar(
           title: Text(
-            'Nemo',
+            'NeMo',
             style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
           ),
           centerTitle: true,

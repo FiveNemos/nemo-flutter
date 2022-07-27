@@ -108,7 +108,7 @@ class _ContactsPageState extends State<ContactsPage> {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Nemo',
+            'NeMo',
             style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
           ),
           centerTitle: true,
