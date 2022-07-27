@@ -1,8 +1,10 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:dio/dio.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/init/login.dart';
 
@@ -21,6 +23,7 @@ class _SignupPageState extends State<SignupPage> {
   var accountName2 = TextEditingController();
   var errorDetail;
   var loginID;
+  bool isChecked = false;
 
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
@@ -91,6 +94,42 @@ class _SignupPageState extends State<SignupPage> {
           phoneNumber = text;
         });
       },
+    );
+  }
+
+  checkAgreements() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        RichText(
+          // style: TextStyle(fontSize: 13),
+          text: TextSpan(children: [
+            TextSpan(
+                text: '개인정보 처리방침',
+                style: TextStyle(color: Colors.blue),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () async {
+                    final uri = Uri.parse(
+                        'https://sites.google.com/view/nemo-privacy-agreements/home');
+                    if (!await launchUrl(uri)) {
+                      throw 'Could not launch $uri';
+                    }
+                  }),
+            TextSpan(text: '에 동의합니다', style: TextStyle(color: Colors.black))
+          ]),
+        ),
+        // controlAffinity: ListTileControlAffinity.platform,
+        Checkbox(
+          value: isChecked,
+          onChanged: (bool? value) {
+            setState(() {
+              isChecked = value!;
+            });
+          },
+          activeColor: Colors.blue,
+          checkColor: Colors.white,
+        ),
+      ],
     );
   }
 
@@ -169,6 +208,7 @@ class _SignupPageState extends State<SignupPage> {
       changePassword,
       changePasswordAgain,
       changePhoneNumber,
+      checkAgreements,
     ];
     return GestureDetector(
       onTap: () {
@@ -193,6 +233,8 @@ class _SignupPageState extends State<SignupPage> {
                     errorDialog('비밀번호는 5~16자의 영문 대소문자, 숫자, @!^ 만 사용 가능합니다.');
                   } else if (!phoneNumberExp.hasMatch(phoneNumber)) {
                     errorDialog('유효하지 않은 전화번호입니다.\n -을 제외한 11자리 번호만 입력해주세요!');
+                  } else if (isChecked == false) {
+                    errorDialog('개인정보 처리방침에 동의해주세요.');
                   } else {
                     print('Trying to POST signup. . . ');
                     if (await postUser(accountName, password, phoneNumber) ==
