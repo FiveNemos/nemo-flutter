@@ -34,7 +34,7 @@ class _ContactsPageState extends State<ContactsPage> {
         json['cards'].forEach((e) {
           var friendId = e['user_id'];
           nowfriendsData[friendId] = User(
-            imagePath: e['image'],
+            imagePath: 'http://34.64.217.3:3000/static/${e['image']}',
             nickname: e['nickname'],
             introduction: e['intro'],
             tag: [
@@ -227,7 +227,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                         right: BorderSide(color: Colors.black)),
                                   ),
                                   child: Image.network(
-                                    'http://34.64.217.3:3000/static/${friendsData[friends[i]].imagePath}',
+                                    friendsData[friends[i]].imagePath,
                                     width: 155,
                                     height: 180,
                                     // alignment: Alignment(-1, -0.7),
