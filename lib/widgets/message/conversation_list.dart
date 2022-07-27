@@ -6,7 +6,7 @@ class ConversationList extends StatefulWidget {
   int loginID;
   int friendID;
   String friendName;
-  String intro;
+  String lastMsgText;
   String friendImage;
   String lastMsgTime;
   bool isMessageRead;
@@ -15,7 +15,7 @@ class ConversationList extends StatefulWidget {
       required this.loginID,
       required this.friendID,
       required this.friendName,
-      required this.intro,
+      required this.lastMsgText,
       required this.friendImage,
       required this.lastMsgTime,
       required this.isMessageRead});
@@ -66,7 +66,7 @@ class _ConversationListState extends State<ConversationList> {
                             height: 6,
                           ),
                           Text(
-                            widget.intro,
+                            widget.lastMsgText,
                             style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey.shade600,

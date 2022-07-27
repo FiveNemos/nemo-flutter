@@ -1,8 +1,12 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import '../../models/message/chatrooms.dart';
 import '../../widgets/message/conversation_list.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+
+const BASE_URL = 'http://34.64.217.3:3000/static/';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -14,24 +18,75 @@ class _ChatPageState extends State<ChatPage> {
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
   var loginID;
-  List<ChatRooms> original_chatUsers = [
-    ChatRooms(
-        chatroomID: 1,
-        friendID: 10, // 현재 내 아이디가 아니라면 추가하라.
-        friendName: '주비 테스트',
-        intro: '주비입니다 테스트용 계정. 채팅 1번방',
-        friendImage:
-            'http://34.64.217.3:3000/static/1658624809850-image_picker1133892711702179292.png',
-        lastMsgTime: '1 min'),
-    ChatRooms(
-        chatroomID: 2,
-        friendID: 10,
-        friendName: '주비 테스트',
-        intro: '주비입니다 테스트용 계정. 채팅 2번방',
-        friendImage:
-            'http://34.64.217.3:3000/static/1658624809850-image_picker1133892711702179292.png',
-        lastMsgTime: '1 min'),
-  ]; // 이걸 DB에서 받아오는거로 바꾸면 될듯
+
+  dateToText(DateTime msgtime) {
+    Duration diff = DateTime.now().difference(msgtime);
+    if (diff.inDays > 0) {
+      if (diff.inDays > 7) {
+        DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+        return dateFormat.format(msgtime);
+      } else {
+        return '${diff.inDays}일 전';
+      }
+    } else if (diff.inHours > 0) {
+      return '${diff.inHours}시간 전';
+    } else if (diff.inMinutes > 0) {
+      return '${diff.inMinutes}분 전';
+    } else {
+      return '방금';
+    }
+  }
+
+  getChatRooms(id) async {
+    try {
+      var dio = Dio();
+      Response response = await dio
+          .get('http://34.64.217.3:3000/api/chatroom/list?user_id=$id');
+      if (response.statusCode == 200) {
+        final jsonData = response.data;
+        var roomData = jsonData['chatroom'];
+        var friendData = jsonData['data'];
+        Map friendDataMap = {};
+        friendData[0].forEach((e) {
+          print(e);
+          friendDataMap[e['user_id']] = e;
+        });
+        List<ChatRooms> temp = [];
+
+        roomData.forEach((e) {
+          var roomId = e[0];
+          int friendId = json.decode(e[2]).where((x) => x != id).toList()[0];
+          var nowFriendData = friendDataMap[friendId];
+          DateTime lastmsgtime = DateTime.parse(e[3]);
+          ChatRooms nowRoom = ChatRooms(
+              chatroomID: roomId,
+              friendID: friendId,
+              friendName: nowFriendData['nickname'],
+              intro: nowFriendData['intro'],
+              friendImage: BASE_URL + nowFriendData['image'],
+              lastMsgTime: lastmsgtime,
+              lastMsgText: e[4]);
+          temp.add(nowRoom);
+        });
+        setState(() {
+          // temp를 시간순에 따라서 sort하기
+          temp.sort((a, b) => a.lastMsgTime.compareTo(b.lastMsgTime));
+          original_chatUsers = temp;
+        });
+        print('접속 성공!');
+      } else {
+        print('error');
+        return false;
+      }
+    } on DioError catch (e) {
+      print('뭔가 에러가');
+      final errorjson = jsonDecode(e.response.toString());
+      print(errorjson);
+      return false;
+    }
+  }
+
+  List<ChatRooms> original_chatUsers = []; // 이걸 DB에서 받아오는거로 바꾸면 될듯
 
   List chatUsers = [];
   resetConversation() {
@@ -63,6 +118,7 @@ class _ChatPageState extends State<ChatPage> {
     setState(() {
       loginID = int.parse(jsonDecode(userInfo)['user_id']);
     });
+    await getChatRooms(loginID);
     resetConversation();
     // await getAllCards(nowId);
   }
@@ -188,9 +244,9 @@ class _ChatPageState extends State<ChatPage> {
                       loginID: loginID,
                       friendID: chatUsers[index].friendID,
                       friendName: chatUsers[index].friendName,
-                      intro: chatUsers[index].intro,
-                      friendImage: chatUsers[index].friendImage,
-                      lastMsgTime: chatUsers[index].lastMsgTime,
+                      lastMsgText: chatUsers[index].lastMsgText,
+                      friendImage: BASE_URL + chatUsers[index].friendImage,
+                      lastMsgTime: dateToText(chatUsers[index].lastMsgTime),
                       isMessageRead: true);
                 },
               ),
