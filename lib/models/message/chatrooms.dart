@@ -4,7 +4,8 @@ class ChatRooms {
   String friendName;
   String intro;
   String friendImage;
-  String lastMsgTime;
+  DateTime lastMsgTime;
+  String lastMsgText;
   // bool isMessageRead;
   ChatRooms({
     required this.chatroomID,
@@ -13,5 +14,6 @@ class ChatRooms {
     required this.intro,
     required this.friendImage,
     required this.lastMsgTime,
+    required this.lastMsgText,
   });
 }
