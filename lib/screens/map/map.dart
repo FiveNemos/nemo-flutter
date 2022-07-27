@@ -11,8 +11,8 @@ import 'dart:convert';
 
 //
 // import '../sharing/sharing_profile_page.dart';
-// import '../mypage/profile_page.dart';
-import '../sharing/map_profile_page.dart';
+import '../mypage/profile_page.dart';
+// import '../sharing/map_profile_page.dart';
 
 class CurrentLocationScreen extends StatefulWidget {
   const CurrentLocationScreen({Key? key}) : super(key: key);

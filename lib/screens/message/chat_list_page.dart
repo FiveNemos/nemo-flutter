@@ -245,7 +245,7 @@ class _ChatPageState extends State<ChatPage> {
                       friendID: chatUsers[index].friendID,
                       friendName: chatUsers[index].friendName,
                       lastMsgText: chatUsers[index].lastMsgText,
-                      friendImage: BASE_URL + chatUsers[index].friendImage,
+                      friendImage: chatUsers[index].friendImage,
                       lastMsgTime: dateToText(chatUsers[index].lastMsgTime),
                       isMessageRead: true);
                 },

@@ -4,8 +4,8 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
-import 'package:nemo_flutter/screens/sharing/sharing_profile_page.dart';
-// import '../mypage/profile_page.dart';
+// import 'package:nemo_flutter/screens/sharing/sharing_profile_page.dart';
+import '../mypage/profile_page.dart';
 
 class PunchPage extends StatefulWidget {
   PunchPage({Key? key, this.friendId}) : super(key: key);
