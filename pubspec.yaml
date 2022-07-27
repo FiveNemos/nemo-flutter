@@ -53,6 +53,7 @@ dependencies:
   shimmer: ^2.0.0 
   google_maps_flutter: ^2.1.9
   geolocator: ^9.0.1
+  intl: ^0.17.0
 
 
   
