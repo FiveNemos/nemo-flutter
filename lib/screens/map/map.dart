@@ -47,7 +47,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
       Response response =
           await dio.get('http://34.64.217.3:3000/api/friend/map?user_id=$id');
       if (response.statusCode == 200) {
-        final json = response.data;
+        final json = response.data['result'];
         // print(json.runtimeType);
         // print(userCord);
         // for (int i = 0; i < json.length; i++) {
@@ -64,8 +64,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         //   print(userCord[0].long);
         //   // }
         // }
-        print("11111");
-        print(json);
+
         var temp = [];
         json.forEach((e) {
           temp.add(UserCord(
@@ -149,7 +148,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                   position: LatLng(latt, long),
                   infoWindow: InfoWindow(
                     title: e.nickname,
-                    snippet: (e.date).toString(),
+                    snippet: e.date.split('T')[0],
                     onTap: () {
                       Navigator.push(
                           context,

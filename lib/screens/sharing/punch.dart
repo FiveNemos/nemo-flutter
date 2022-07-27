@@ -42,7 +42,7 @@ class _PunchPageState extends State<PunchPage> {
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
-        } else if ((event.z < -5 || event.z > 5) && cnt == 0) {
+        } else if ((event.z < -4 || event.z > 4) && cnt == 0) {
           cnt++;
 
           Navigator.push(
