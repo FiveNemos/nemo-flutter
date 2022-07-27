@@ -44,8 +44,14 @@ class SharingPage extends StatelessWidget {
               }),
         ],
       ),
-      body: const DraggableCard(
-        child: TookPage(),
+      body: Container(
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/background.jpeg'),
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: DraggableCard(child: TookPage()),
       ),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -488,6 +494,14 @@ class _TookPageState extends State<TookPage> {
   Widget build(BuildContext context) {
     if (myDataFromJson != null) {
       return Container(
+        // // background effect
+        // decoration: BoxDecoration(
+        //   image: DecorationImage(
+        //     image: AssetImage('assets/background.jpeg'),
+        //     fit: BoxFit.cover,
+        //   ),
+        // ),
+
         // color: Colors.red,
         padding: EdgeInsets.fromLTRB(15, 10, 15, 10),
         child: ListView(
