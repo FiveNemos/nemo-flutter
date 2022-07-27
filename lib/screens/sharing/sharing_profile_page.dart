@@ -42,11 +42,32 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  getChatRoom(loginID, friendID) async {
+    try {
+      var dio = Dio();
+      Response response = await dio.get(
+          'http://34.64.217.3:3000/api/chatroom/enter?id_1=$loginID&id_2=$friendID');
+      if (response.statusCode == 200) {
+        final jsonData = response.data;
+        return jsonData;
+      } else {
+        print('error');
+        return 0;
+      }
+    } on DioError catch (e) {
+      print('뭔가 에러가');
+      final errorjson = jsonDecode(e.response.toString());
+      print(errorjson);
+      return 0;
+    }
+  }
+
   getCard(id) async {
     print('http://34.64.217.3:3000/api/card/$id');
     try {
       var dio = Dio();
       Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
 
       if (response.statusCode == 200) {
         final json = response.data;
@@ -225,19 +246,24 @@ class _ProfilePageState extends State<ProfilePage> {
                   ? Transform.rotate(
                       angle: 6,
                       child: IconButton(
-                          onPressed: () {
+                          onPressed: () async {
                             // http 요청해서, chatroomID 찾기 by loginID, friendID
                             // var chatroomID = getHTTP(loginID, friendID)
-                            Navigator.push(context,
-                                MaterialPageRoute(builder: (context) {
-                              return ChatScreen(
-                                chatroomID: 3, // chatroomID // 수정필요
-                                loginID: loginID,
-                                friendID: widget.friendId,
-                                friendName: user.nickname,
-                                friendImage: user.imagePath,
-                              );
-                            }));
+                            var roomID =
+                                await getChatRoom(loginID, widget.friendId);
+                            if (!mounted) return;
+                            if (int.parse(roomID) > 0) {
+                              Navigator.push(context,
+                                  MaterialPageRoute(builder: (context) {
+                                return ChatScreen(
+                                  chatroomID: roomID, // chatroomID // 수정필요
+                                  loginID: loginID,
+                                  friendID: widget.friendId,
+                                  friendName: user.nickname,
+                                  friendImage: user.imagePath,
+                                );
+                              }));
+                            }
                           },
                           icon: Icon(
                             Icons.send,
