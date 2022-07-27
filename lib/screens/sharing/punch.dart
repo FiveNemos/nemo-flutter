@@ -5,6 +5,7 @@ import 'package:shimmer/shimmer.dart';
 
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import 'package:nemo_flutter/screens/sharing/sharing_profile_page.dart';
+// import '../mypage/profile_page.dart';
 
 class PunchPage extends StatefulWidget {
   PunchPage({Key? key, this.friendId}) : super(key: key);
@@ -33,7 +34,15 @@ class _PunchPageState extends State<PunchPage> {
               MaterialPageRoute(
                   builder: (context) =>
                       ProfilePage(friendId: widget.friendId)));
-        } else if ((event.x < -5 || event.x > 5) && cnt == 0) {
+        } else if ((event.x < -4 || event.x > 4) && cnt == 0) {
+          cnt++;
+
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      ProfilePage(friendId: widget.friendId)));
+        } else if ((event.z < -4 || event.z > 4) && cnt == 0) {
           cnt++;
 
           Navigator.push(

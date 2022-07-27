@@ -47,7 +47,6 @@ class _ProfilePageState extends State<ProfilePage> {
     try {
       var dio = Dio();
       Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
-      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
 
       if (response.statusCode == 200) {
         final json = response.data;
@@ -123,83 +122,77 @@ class _ProfilePageState extends State<ProfilePage> {
       buildAbout,
     ];
     if (user != null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'Nemo',
-            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: true,
-          actions: _isMe
-              ? [
-                  IconButton(
-                    icon: Icon(Icons.logout),
-                    tooltip: 'logout',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                  ),
-                ]
-              : [],
-        ),
-        body: ListView.separated(
-          // shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
-          itemCount: buildList.length,
-          itemBuilder: (context, i) {
-            return buildList[i](user);
+      return WillPopScope(
+          onWillPop: () {
+            setState(() {});
+            return Future.value(false);
           },
-          separatorBuilder: (context, i) => SizedBox(height: 15),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.contacts),
-              label: '연락처',
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(
+                'Nemo',
+                style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+              ),
+              centerTitle: true,
+              automaticallyImplyLeading: false,
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.share),
-              label: '공유',
+            body: ListView.separated(
+              // shrinkWrap: true,
+              physics: BouncingScrollPhysics(),
+              scrollDirection: Axis.vertical,
+              padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
+              itemCount: buildList.length,
+              itemBuilder: (context, i) {
+                return buildList[i](user);
+              },
+              separatorBuilder: (context, i) => SizedBox(height: 15),
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: 'Map',
+            bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.contacts),
+                  label: '연락처',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.share),
+                  label: '공유',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  label: 'Map',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.message),
+                  label: '메시지',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: '마이페이지',
+                ),
+              ],
+              currentIndex: 2,
+              onTap: (int index) {
+                switch (index) {
+                  case 0:
+                    Navigator.pushNamed(context, '/contacts');
+                    break;
+                  case 1:
+                    Navigator.pushNamed(context, '/sharing');
+                    break;
+                  case 2:
+                    Navigator.pushNamed(context, '/map');
+                    break;
+                  case 3:
+                    Navigator.pushNamed(context, '/message');
+                    break;
+                  case 4:
+                    Navigator.pushNamed(context, '/mypage');
+                    break;
+                }
+              },
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: '메시지',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '마이페이지',
-            ),
-          ],
-          currentIndex: 4,
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.pushNamed(context, '/contacts');
-                break;
-              case 1:
-                Navigator.pushNamed(context, '/sharing');
-                break;
-              case 2:
-                Navigator.pushNamed(context, '/map');
-                break;
-              case 3:
-                Navigator.pushNamed(context, '/message');
-                break;
-              case 4:
-                // Navigator.pushNamed(context, '/mypage');
-                break;
-            }
-          },
-        ),
-      );
+          ));
     } else {
       return Center(
         child: CircularProgressIndicator(
