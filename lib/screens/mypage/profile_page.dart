@@ -73,7 +73,7 @@ class _ProfilePageState extends State<ProfilePage> {
         final json = response.data;
         setState(() {
           user = UserProfile(
-            imagePath: json['image'],
+            imagePath: BASE_URL + json['image'],
             nickname: json['nickname'],
             introduction: json['intro'],
             title: json['detail_title'], // title로 변경 필요
@@ -235,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
   Widget buildAvatar(UserProfile user) => ProfileWidget(
-        imagePath: 'http://34.64.217.3:3000/static/${user.imagePath}',
+        imagePath: user.imagePath,
         onClicked: () async {},
       );
 
