@@ -1,7 +1,11 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import '../../models/message/chatmodel.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
   var chatroomID;
@@ -28,21 +32,61 @@ class _ChatScreenState extends State<ChatScreen> {
   dynamic userInfo = '';
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+
+  getChatMessages(chatroomid) async {
+    try {
+      var dio = Dio();
+      Response response = await dio.get(
+          'http://34.64.217.3:3000/api/chatroom/message?room_id=$chatroomid');
+      if (response.statusCode == 200) {
+        final jsonData = response.data;
+        List<ChatModel> temp = [];
+        jsonData.forEach((e) {
+          var nowtime = DateTime.parse(e['sendat']);
+          print(nowtime.runtimeType);
+          var realnow = DateTime.now();
+          print(realnow.runtimeType);
+          Duration diff = realnow.difference(nowtime);
+          print(diff.inMinutes);
+          print(diff.inHours);
+          print(diff.inDays);
+          ChatModel thisMsg = ChatModel(
+              chatroomID: widget.chatroomID,
+              senderID: e['sender'],
+              receiverID: 0,
+              sentAt: e['sendat'],
+              messagetext: e['messagetext']);
+          temp.add(thisMsg);
+        });
+        setState(() {
+          _messages = temp;
+        });
+        print('접속 성공!');
+      } else {
+        print('error');
+        return false;
+      }
+    } on DioError catch (e) {
+      final errorjson = jsonDecode(e.response.toString());
+      print(errorjson);
+      return false;
+    }
+  }
+
   final List<ChatModel> _samplemsg = [
-    ChatModel(
-        chatroomID: 1,
-        senderID: 10,
-        sentAt: '2022-07-25 11:14',
-        message: '주비 테스트 계정입니다 1번방'),
-    ChatModel(
-        chatroomID: 2,
-        senderID: 10,
-        sentAt: '2022-07-25 11:14',
-        message: '주비 테스트 계정입니다 2번방'),
+    // ChatModel(
+    //     chatroomID: 1,
+    //     senderID: 10,
+    //     sentAt: '2022-07-25 11:14',
+    //     message: '주비 테스트 계정입니다 1번방'),
+    // ChatModel(
+    //     chatroomID: 2,
+    //     senderID: 10,
+    //     sentAt: '2022-07-25 11:14',
+    //     message: '주비 테스트 계정입니다 2번방'),
     // 여기에 DB에서 긁어와서 setState(_message.add)하게 바꾸기
   ];
-  final List<ChatModel> _messages =
-      []; // 여기에 DB에서 긁어와서 setState(_message.add)하게 바꾸기
+  List<ChatModel> _messages = []; // 여기에 DB에서 긁어와서 setState(_message.add)하게 바꾸기
 
   addMessage(msg) {
     setState(() {
@@ -124,6 +168,10 @@ class _ChatScreenState extends State<ChatScreen> {
 
   initializeSocket() {
     try {
+      // socket = io('http://34.64.217.3:3000/', <String, dynamic>{
+      //   'transports': ['websocket'],
+      //   'autoConnect': false,
+      // });
       socket = io('http://34.64.217.3:3000/', <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
@@ -167,6 +215,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    getChatMessages(widget.chatroomID);
     for (var e in _samplemsg) {
       if (e.chatroomID == widget.chatroomID) {
         addMessage(e);
@@ -284,7 +333,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   print('gogo$message');
                                   return ChatBubble(
                                     date: message.sentAt,
-                                    message: message.message,
+                                    message: message.messagetext,
                                     // isMe: message.socketId ==
                                     //     socket
                                     //         .id, // message.userId == 로그인중인아이용
@@ -339,8 +388,9 @@ class _ChatScreenState extends State<ChatScreen> {
                             ChatModel nowSend = ChatModel(
                                 // socketId: socket.id!,
                                 chatroomID: widget.chatroomID,
-                                message: message,
+                                messagetext: message,
                                 senderID: widget.loginID,
+                                receiverID: widget.friendID,
                                 sentAt: DateTime.now()
                                     .toLocal()
                                     .toString()
