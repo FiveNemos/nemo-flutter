@@ -330,13 +330,13 @@ class _CardEditorState extends State<CardEditor> {
                           detailContent);
                     },
                   ),
-                  IconButton(
-                    icon: Icon(Icons.logout),
-                    tooltip: 'logout',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
-                  ),
+                  // IconButton(
+                  //   icon: Icon(Icons.logout),
+                  //   tooltip: 'logout',
+                  //   onPressed: () {
+                  //     Navigator.pushNamed(context, '/login');
+                  //   },
+                  // ),
                 ]),
             body: ListView(
               children: [
