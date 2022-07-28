@@ -4,12 +4,12 @@ import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
-import 'package:nemo_flutter/screens/sharing/sharing_profile_page.dart';
-// import '../mypage/profile_page.dart';
+// import 'package:nemo_flutter/screens/sharing/sharing_profile_page.dart';
+import '../mypage/profile_page.dart';
 
 class PunchPage extends StatefulWidget {
   PunchPage({Key? key, this.friendId}) : super(key: key);
-  var friendId;
+  int? friendId;
 
   @override
   _PunchPageState createState() => _PunchPageState();
@@ -33,7 +33,7 @@ class _PunchPageState extends State<PunchPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ProfilePage(friendId: int.parse(widget.friendId))));
+                      ProfilePage(friendId: widget.friendId, currIndex: 1)));
         } else if ((event.x < -4 || event.x > 4) && cnt == 0) {
           cnt++;
 
@@ -41,7 +41,7 @@ class _PunchPageState extends State<PunchPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ProfilePage(friendId: int.parse(widget.friendId))));
+                      ProfilePage(friendId: widget.friendId, currIndex: 1)));
         } else if ((event.z < -4 || event.z > 4) && cnt == 0) {
           cnt++;
 
@@ -49,7 +49,7 @@ class _PunchPageState extends State<PunchPage> {
               context,
               MaterialPageRoute(
                   builder: (context) =>
-                      ProfilePage(friendId: int.parse(widget.friendId))));
+                      ProfilePage(friendId: widget.friendId, currIndex: 1)));
         } else {}
         super.dispose();
         for (final subscription in _streamSubscriptions) {

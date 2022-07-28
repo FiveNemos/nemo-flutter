@@ -12,7 +12,10 @@ class _MypagePageState extends State<MypagePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: ProfilePage(friendId: null), // mypage니까 friendID = null
+      body: ProfilePage(
+        friendId: null,
+        currIndex: 4,
+      ), // mypage니까 friendID = null
     );
   }
 }
