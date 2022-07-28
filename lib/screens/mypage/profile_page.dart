@@ -11,8 +11,10 @@ import 'dart:convert';
 const BASE_URL = 'http://34.64.217.3:3000/static/';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key, this.friendId}) : super(key: key);
-  var friendId;
+  ProfilePage({Key? key, this.friendId, required this.currIndex})
+      : super(key: key);
+  int currIndex; // 0 도 허용가능
+  int? friendId;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -142,8 +144,18 @@ class _ProfilePageState extends State<ProfilePage> {
       buildImageTag,
       buildAbout,
     ];
-    if (user != null) {
-      return Scaffold(
+
+    return WillPopScope(
+      onWillPop: () {
+        setState(() {});
+        // shraring
+        if (widget.currIndex == 1) {
+          return Future.value(false);
+        } else {
+          return Future.value(true);
+        }
+      },
+      child: Scaffold(
         appBar: AppBar(
           title: Text(
             'NeMo',
@@ -163,70 +175,29 @@ class _ProfilePageState extends State<ProfilePage> {
                 ]
               : [],
         ),
-        body: ListView.separated(
-          // shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
-          itemCount: buildList.length,
-          itemBuilder: (context, i) {
-            return buildList[i](user);
-          },
-          separatorBuilder: (context, i) => SizedBox(height: 15),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.contacts),
-              label: '연락처',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.share),
-              label: '공유',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: 'Map',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: '메시지',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '마이페이지',
-            ),
-          ],
-          currentIndex: 4,
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.pushNamed(context, '/contacts');
-                break;
-              case 1:
-                Navigator.pushNamed(context, '/sharing');
-                break;
-              case 2:
-                Navigator.pushNamed(context, '/map');
-                break;
-              case 3:
-                Navigator.pushNamed(context, '/message');
-                break;
-              case 4:
-                // Navigator.pushNamed(context, '/mypage');
-                break;
-            }
-          },
-        ),
-      );
-    } else {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Colors.black,
-        ),
-      );
-    }
+        body: (user != null)
+            ? ListView.separated(
+                // shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+                // 전체 박스에 대한 padding
+                itemCount: buildList.length,
+                itemBuilder: (context, i) {
+                  return buildList[i](user);
+                },
+                separatorBuilder: (context, i) => SizedBox(height: 15),
+              )
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.purple,
+                  semanticsLabel: '로딩중입니다 . . .',
+                ),
+              ),
+        bottomNavigationBar:
+            bottomNavigationBarClick(widget.currIndex, context),
+      ),
+    );
   }
 
   Widget buildAvatar2(UserProfile user) => ProfileWidget(
@@ -264,7 +235,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                 return ChatScreen(
                                   chatroomID: roomID, // chatroomID // 수정필요
                                   loginID: loginID,
-                                  friendID: widget.friendId,
+                                  friendID: widget.friendId!, // not isMe
                                   friendName: user.nickname,
                                   friendImage: user.imagePath,
                                 );
@@ -350,4 +321,55 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       );
+
+  bottomNavigationBarClick(nowIndex, context) {
+    return BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.contacts),
+            label: '연락처',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.share),
+            label: '공유',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: '메시지',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: '마이페이지',
+          ),
+        ],
+        currentIndex: nowIndex,
+        onTap: (int nextIndex) {
+          if (nextIndex == nowIndex) {
+            return;
+          }
+          switch (nextIndex) {
+            case 0:
+              Navigator.pushNamed(context, '/contacts');
+              break;
+
+            case 1:
+              Navigator.pushNamed(context, '/sharing');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/map');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/message');
+              break;
+            case 4:
+              Navigator.pushNamed(context, '/mypage');
+              break;
+          }
+        });
+  }
 }

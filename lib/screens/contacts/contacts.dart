@@ -169,8 +169,10 @@ class _ContactsPageState extends State<ContactsPage> {
                       onTap: () => Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (c) =>
-                                  ProfilePage(friendId: friends[i]))),
+                              builder: (c) => ProfilePage(
+                                    friendId: friends[i],
+                                    currIndex: 0,
+                                  ))),
                       child: Container(
                         decoration: BoxDecoration(
                           color: Colors.white,
