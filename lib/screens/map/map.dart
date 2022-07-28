@@ -11,8 +11,8 @@ import 'dart:convert';
 
 //
 // import '../sharing/sharing_profile_page.dart';
-// import '../mypage/profile_page.dart';
-import '../sharing/map_profile_page.dart';
+import '../mypage/profile_page.dart';
+// import '../sharing/map_profile_page.dart';
 
 class CurrentLocationScreen extends StatefulWidget {
   const CurrentLocationScreen({Key? key}) : super(key: key);
@@ -152,8 +152,8 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) =>
-                                  ProfilePage(friendId: e.user_id)));
+                              builder: (context) => ProfilePage(
+                                  friendId: e.user_id, currIndex: 2)));
                     },
                   ),
                   icon: BitmapDescriptor.defaultMarker));

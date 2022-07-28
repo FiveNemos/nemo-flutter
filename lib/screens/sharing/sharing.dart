@@ -523,7 +523,7 @@ class _DraggableCardState extends State<DraggableCard>
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PunchPage(friendId: id_2)));
+                  builder: (context) => PunchPage(friendId: int.parse(id_2))));
         }
       }
     });
