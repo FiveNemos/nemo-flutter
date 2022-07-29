@@ -8,8 +8,9 @@ import 'package:shimmer/shimmer.dart';
 import '../mypage/profile_page.dart';
 
 class PunchPage extends StatefulWidget {
-  PunchPage({Key? key, this.friendId}) : super(key: key);
+  PunchPage({Key? key, this.friendId, this.latlng}) : super(key: key);
   int? friendId;
+  List? latlng;
 
   @override
   _PunchPageState createState() => _PunchPageState();
@@ -32,24 +33,30 @@ class _PunchPageState extends State<PunchPage> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ProfilePage(friendId: widget.friendId, currIndex: 1)));
+                  builder: (context) => ProfilePage(
+                      friendId: widget.friendId,
+                      currIndex: 1,
+                      latlng: widget.latlng)));
         } else if ((event.x < -4 || event.x > 4) && cnt == 0) {
           cnt++;
 
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ProfilePage(friendId: widget.friendId, currIndex: 1)));
+                  builder: (context) => ProfilePage(
+                      friendId: widget.friendId,
+                      currIndex: 1,
+                      latlng: widget.latlng)));
         } else if ((event.z < -4 || event.z > 4) && cnt == 0) {
           cnt++;
 
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) =>
-                      ProfilePage(friendId: widget.friendId, currIndex: 1)));
+                  builder: (context) => ProfilePage(
+                      friendId: widget.friendId,
+                      currIndex: 1,
+                      latlng: widget.latlng)));
         } else {}
         super.dispose();
         for (final subscription in _streamSubscriptions) {
