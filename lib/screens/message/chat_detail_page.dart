@@ -8,7 +8,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
-  var chatroomID;
+  int chatroomID;
   int loginID;
   int friendID;
   String friendName;
@@ -33,7 +33,7 @@ class _ChatScreenState extends State<ChatScreen> {
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  getChatMessages(chatroomid) async {
+  getChatMessages(int chatroomid) async {
     try {
       var dio = Dio();
       Response response = await dio.get(
