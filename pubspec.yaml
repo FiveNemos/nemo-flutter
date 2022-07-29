@@ -34,7 +34,7 @@ dependencies:
   shared_preferences: ^2.0.11
   blinking_text: ^1.0.2
   socket_io_client: ^2.0.0
-
+  cached_network_image : ^3.2.1
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -50,13 +50,13 @@ dependencies:
       ref: chan # branch name
   permission_handler: ^10.0.0
   sensors_plus: ^1.3.2
-  shimmer: ^2.0.0 
+  shimmer: ^2.0.0
   google_maps_flutter: ^2.1.9
   geolocator: ^9.0.1
   intl: ^0.17.0
 
 
-  
+
   # swipe: ^0.0.1
 #  flutter_nfc_reader:
 #    git:
@@ -118,7 +118,7 @@ flutter:
     - family: Gamja
       fonts:
       - asset: assets/fonts/GamjaFlower-Regular.ttf
-      
+
     - family: Dohyun
       fonts:
       - asset: assets/fonts/dohyun.ttf
