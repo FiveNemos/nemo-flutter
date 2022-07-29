@@ -7,14 +7,16 @@ import '../message/chat_detail_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+import 'package:http/http.dart' as http;
 
 const BASE_URL = 'http://34.64.217.3:3000/static/';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key, this.friendId, required this.currIndex})
+  ProfilePage({Key? key, this.friendId, required this.currIndex, this.latlng})
       : super(key: key);
   int currIndex; // 0 도 허용가능
   int? friendId;
+  List? latlng;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -156,47 +158,116 @@ class _ProfilePageState extends State<ProfilePage> {
         }
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'NeMo',
-            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: true,
-          actions: _isMe
-              ? [
-                  IconButton(
-                    icon: Icon(Icons.logout),
-                    tooltip: 'logout',
+          appBar: AppBar(
+            title: Text(
+              'NeMo',
+              style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+            ),
+            centerTitle: true,
+            leading: !_isMe
+                ? IconButton(
+                    icon: Icon(Icons.keyboard_backspace_outlined),
                     onPressed: () {
-                      Navigator.pushNamed(context, '/login');
+                      if (widget.currIndex == 1) {
+                        showDialog(
+                            context: context,
+                            builder: (context) {
+                              return Dialog(
+                                  alignment: Alignment.center,
+                                  child: SizedBox(
+                                    height: 200,
+                                    width: double.infinity,
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Padding(
+                                          padding: const EdgeInsets.all(20.0),
+                                          child: Text(
+                                              '${user.nickname}님과 명함교환을 취소합니다. \n정말 취소하시겠습니까? '),
+                                        ),
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pushNamed(
+                                                      context, '/contacts');
+                                                },
+                                                child: Text('Yes')),
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context);
+                                                },
+                                                child: Text('No')),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                  ));
+                            });
+                      } else {
+                        Navigator.pop(context);
+                      }
                     },
+                  )
+                : SizedBox(
+                    width: 1,
+                    height: 1,
                   ),
-                ]
-              : [],
-        ),
-        body: (user != null)
-            ? ListView.separated(
-                // shrinkWrap: true,
-                physics: BouncingScrollPhysics(),
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-                // 전체 박스에 대한 padding
-                itemCount: buildList.length,
-                itemBuilder: (context, i) {
-                  return buildList[i](user);
-                },
-                separatorBuilder: (context, i) => SizedBox(height: 15),
-              )
-            : Center(
-                child: CircularProgressIndicator(
-                  color: Colors.purple,
-                  semanticsLabel: '로딩중입니다 . . .',
+            actions: _isMe
+                ? [
+                    IconButton(
+                      icon: Icon(Icons.logout),
+                      tooltip: 'logout',
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/login');
+                      },
+                    ),
+                  ]
+                : widget.currIndex == 1
+                    ? [
+                        IconButton(
+                          icon: Icon(Icons.save_rounded),
+                          tooltip: 'save',
+                          onPressed: () {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return DialogUI(
+                                      popFor: 'save',
+                                      myId: loginID,
+                                      friendId: widget.friendId,
+                                      latlng: widget.latlng);
+                                });
+                            // POST CONNECTION
+                          },
+                        ),
+                      ]
+                    : [],
+          ),
+          body: (user != null)
+              ? ListView.separated(
+                  // shrinkWrap: true,
+                  physics: BouncingScrollPhysics(),
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+                  // 전체 박스에 대한 padding
+                  itemCount: buildList.length,
+                  itemBuilder: (context, i) {
+                    return buildList[i](user);
+                  },
+                  separatorBuilder: (context, i) => SizedBox(height: 15),
+                )
+              : Center(
+                  child: CircularProgressIndicator(
+                    color: Colors.purple,
+                    semanticsLabel: '로딩중입니다 . . .',
+                  ),
                 ),
-              ),
-        bottomNavigationBar:
-            bottomNavigationBarClick(widget.currIndex, context),
-      ),
+          bottomNavigationBar:
+              bottomNavigationBarClick(widget.currIndex, context)),
     );
   }
 
@@ -219,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 user.nickname,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
-              !_isMe
+              widget.currIndex == 0
                   ? Transform.rotate(
                       angle: 6,
                       child: IconButton(
@@ -323,6 +394,7 @@ class _ProfilePageState extends State<ProfilePage> {
       );
 
   bottomNavigationBarClick(nowIndex, context) {
+    if (nowIndex == 1) return;
     return BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
         items: [
@@ -371,5 +443,138 @@ class _ProfilePageState extends State<ProfilePage> {
               break;
           }
         });
+  }
+}
+
+class DialogUI extends StatelessWidget {
+  DialogUI(
+      {Key? key, required this.popFor, this.myId, this.friendId, this.latlng})
+      : super(key: key);
+  String popFor;
+  int? myId;
+  int? friendId;
+  List? latlng;
+
+  var inputData = TextEditingController();
+  saveCardDecoration(labelText) {
+    return InputDecoration(
+      constraints: BoxConstraints(maxHeight: 45),
+      labelText: labelText,
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(
+          color: Color(0xff8338EC),
+        ),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        borderSide: BorderSide(
+          color: Color(0xff8338EC),
+        ),
+      ),
+    );
+  }
+
+  saveFriend() async {
+    var uri = Uri.parse(
+        'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=$friendId&lat=${latlng![0]}&lng=${latlng![1]}');
+    var request = http.MultipartRequest('GET', uri);
+
+    final response = await request.send();
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        alignment: Alignment.center,
+        child: SizedBox(
+            height: 150,
+            width: 150,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 70,
+                  padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+                  child: TextField(
+                    decoration: saveCardDecoration('어떤 모임에서 교환하셨나요?'),
+                    controller: inputData,
+                    maxLength: 15,
+                  ),
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        if (inputData.text.isNotEmpty) {
+                          // Navigator.pop(context);
+                          // 저장하기 // POST
+                          bool saveResult = await saveFriend();
+                          // bool saveResult = true; // 저장에 성공했습니다 🙌
+                          if (saveResult) {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                      alignment: Alignment.center,
+                                      child: SizedBox(
+                                        height: 150,
+                                        width: 150,
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: [
+                                            Padding(
+                                              padding:
+                                                  const EdgeInsets.all(20.0),
+                                              child: Text('저장에 성공했습니다 🙌\n'),
+                                            ),
+                                            TextButton(
+                                                onPressed: () {
+                                                  Navigator.pushNamed(
+                                                      context, '/contacts');
+                                                },
+                                                child: Text('확인'))
+                                          ],
+                                        ),
+                                      ));
+                                });
+                            // 명함첩으로 이동
+                            // 저장에 성공했습니다 띄울까
+                          } else {
+                            showDialog(
+                                context: context,
+                                builder: (context) {
+                                  return Dialog(
+                                      alignment: Alignment.center,
+                                      child: Container(
+                                          height: 100,
+                                          width: 100,
+                                          alignment: Alignment.center,
+                                          child:
+                                              Text('저장에 실패했습니다😓 다시 시도해주세요.')));
+                                });
+                            // Navigator.pop(context);
+                          }
+                        }
+                      },
+                      child: Text('저장'),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      child: Text('취소'),
+                    )
+                  ],
+                )
+              ],
+            )));
   }
 }
