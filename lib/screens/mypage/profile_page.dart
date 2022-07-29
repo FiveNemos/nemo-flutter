@@ -290,7 +290,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 user.nickname,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
-              widget.currIndex == 0
+              [0, 2].contains(widget.currIndex)
                   ? Transform.rotate(
                       angle: 6,
                       child: IconButton(
