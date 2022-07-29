@@ -300,11 +300,12 @@ class _ProfilePageState extends State<ProfilePage> {
                             var roomID =
                                 await getChatRoom(loginID, widget.friendId);
                             if (!mounted) return;
-                            if (int.parse(roomID) > 0) {
+                            int chatroomID = int.parse(roomID);
+                            if (chatroomID > 0) {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return ChatScreen(
-                                  chatroomID: roomID, // chatroomID // 수정필요
+                                  chatroomID: chatroomID, // chatroomID // 수정필요
                                   loginID: loginID,
                                   friendID: widget.friendId!, // not isMe
                                   friendName: user.nickname,
