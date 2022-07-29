@@ -98,7 +98,8 @@ class _ChatScreenState extends State<ChatScreen> {
   final bool _showSpinner = false;
   final bool _showVisibleWidget = false;
   final bool _showErrorIcon = false;
-  var socketFlag = false;
+  bool socketFlag = false;
+  String hintmsg = 'Loading...';
 
   void setStateIfMounted(f) {
     if (mounted) setState(f);
@@ -184,6 +185,7 @@ class _ChatScreenState extends State<ChatScreen> {
         socket.emit('join', widget.chatroomID);
         setState(() {
           socketFlag = true;
+          hintmsg = 'Write message...';
         });
         debugPrint('연결완료');
       });
@@ -205,6 +207,10 @@ class _ChatScreenState extends State<ChatScreen> {
       });
       socket.on('disconnect', (data) {
         debugPrint('socket disconnected');
+        setState(() {
+          socketFlag = false;
+          hintmsg = 'Disconnected...';
+        });
         socket.disconnect();
       });
       // socket.onDisconnect((_) => debugPrint('disconnect'));
@@ -368,8 +374,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         onTap: () {},
                         decoration: InputDecoration.collapsed(
                             enabled: socketFlag ? true : false,
-                            hintText:
-                                socketFlag ? 'Write message...' : 'Loading...',
+                            hintText: hintmsg,
                             hintStyle: TextStyle(color: Colors.grey),
                             border: InputBorder.none),
                         controller: _messageController,
