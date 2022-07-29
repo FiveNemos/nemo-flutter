@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import '../../screens/message/chat_detail_page.dart';
 
 class ConversationList extends StatefulWidget {
@@ -45,8 +46,9 @@ class _ConversationListState extends State<ConversationList> {
               child: Row(
                 children: <Widget>[
                   CircleAvatar(
-                    backgroundImage: NetworkImage(widget.friendImage),
-                    // backgroundImage: AssetImage('${widget.imageUrl}'),
+                    // backgroundImage: NetworkImage(widget.friendImage),
+                    backgroundImage:
+                        CachedNetworkImageProvider(widget.friendImage),
                     maxRadius: 30,
                   ),
                   SizedBox(

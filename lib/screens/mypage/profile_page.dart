@@ -8,6 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
+import 'package:cached_network_image/cached_network_image.dart';
 
 const BASE_URL = 'http://34.64.217.3:3000/static/';
 
@@ -354,9 +355,8 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        // user.image1,
-                        user.image[i],
+                      child: Image(
+                        image: CachedNetworkImageProvider(user.image[i]),
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'dart:convert'; // json decode 등등 관리
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
 import '../../models/contacts/user.dart';
 // import '../../tests/contacts/preferences.dart';
@@ -228,11 +229,11 @@ class _ContactsPageState extends State<ContactsPage> {
                                     border: Border(
                                         right: BorderSide(color: Colors.black)),
                                   ),
-                                  child: Image.network(
-                                    friendsData[friends[i]].imagePath,
+                                  child: Image(
+                                    image: CachedNetworkImageProvider(
+                                        friendsData[friends[i]].imagePath),
                                     width: 155,
                                     height: 180,
-                                    // alignment: Alignment(-1, -0.7),
                                     fit: BoxFit.cover,
                                   ),
                                 ),
