@@ -802,7 +802,7 @@ class _NameState extends State<NameCard> {
                       bottomLeft: Radius.circular(10.0),
                     ),
                     child: (CHANGED['userImage'] == 1)
-                        ? Image.file(widget.userImage)
+                        ? Image.file(widget.userImage, fit: BoxFit.fill)
                         : Image.network(BASE_URL + widget.userImage.path,
                             fit: BoxFit.fill),
                   ),
