@@ -664,7 +664,7 @@ class _TookPageState extends State<TookPage> {
                     ),
                     child: Image(
                       image: CachedNetworkImageProvider(
-                          'http://34.64.217.3:3000/static/${myDataFromJson.image}'),
+                          'https://storage.googleapis.com/nemo-bucket/${myDataFromJson.image}'),
                       width: 300,
                       height: 240,
                       fit: BoxFit.fitWidth,

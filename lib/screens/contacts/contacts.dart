@@ -35,7 +35,8 @@ class _ContactsPageState extends State<ContactsPage> {
         json['cards'].forEach((e) {
           var friendId = e['user_id'];
           nowfriendsData[friendId] = User(
-            imagePath: 'http://34.64.217.3:3000/static/${e['image']}',
+            imagePath:
+                'https://storage.googleapis.com/nemo-bucket/${e['image']}',
             nickname: e['nickname'],
             introduction: e['intro'],
             tag: [
