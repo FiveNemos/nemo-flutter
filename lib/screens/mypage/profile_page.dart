@@ -214,20 +214,20 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                     },
                   )
-                : SizedBox(
-                    width: 1,
-                    height: 1,
-                  ),
+                : IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CardEditor();
+                      }));
+                    }),
+            // : SizedBox(
+            //     width: 1,
+            //     height: 1,
+            //   ),
             actions: _isMe
                 ? [
-                    IconButton(
-                        icon: Icon(Icons.edit),
-                        onPressed: () {
-                          Navigator.push(context,
-                              MaterialPageRoute(builder: (context) {
-                            return CardEditor();
-                          }));
-                        }),
                     IconButton(
                       icon: Icon(Icons.logout),
                       tooltip: 'logout',
