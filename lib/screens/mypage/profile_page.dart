@@ -9,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import './cardeditor.dart';
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -219,6 +220,14 @@ class _ProfilePageState extends State<ProfilePage> {
                   ),
             actions: _isMe
                 ? [
+                    IconButton(
+                        icon: Icon(Icons.edit),
+                        onPressed: () {
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) {
+                            return CardEditor();
+                          }));
+                        }),
                     IconButton(
                       icon: Icon(Icons.logout),
                       tooltip: 'logout',
