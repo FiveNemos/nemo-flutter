@@ -131,6 +131,18 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
+  errorDialog(msg) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return Center(
+            child: DialogUI(
+              errorMsg: msg,
+            ),
+          );
+        });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -239,7 +251,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 user.nickname,
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
               ),
-              [0, 2].contains(widget.currIndex)
+              !_isMe
                   ? Transform.rotate(
                       angle: 6,
                       child: IconButton(
@@ -261,6 +273,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                   friendImage: user.imagePath,
                                 );
                               }));
+                            } else {
+                              errorDialog('명함이 서로 있어야 대화가 가능합니다 🙇🏻');
                             }
                           },
                           icon: Icon(
@@ -390,5 +404,25 @@ class _ProfilePageState extends State<ProfilePage> {
               break;
           }
         });
+  }
+}
+
+class DialogUI extends StatelessWidget {
+  DialogUI({Key? key, this.errorMsg}) : super(key: key);
+  var errorMsg;
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+        alignment: Alignment.center,
+        child: SizedBox(
+          height: 100,
+          width: double.infinity,
+          child: Center(
+            child: Text(
+              errorMsg,
+              textAlign: TextAlign.center,
+            ),
+          ),
+        ));
   }
 }
