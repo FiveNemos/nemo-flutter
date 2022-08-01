@@ -9,8 +9,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:cached_network_image/cached_network_image.dart';
+import './cardeditor.dart';
 
-const BASE_URL = 'http://34.64.217.3:3000/static/';
+const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.friendId, required this.currIndex, this.latlng})
@@ -176,10 +177,18 @@ class _ProfilePageState extends State<ProfilePage> {
                       }
                     },
                   )
-                : SizedBox(
-                    width: 1,
-                    height: 1,
-                  ),
+                : IconButton(
+                    icon: Icon(Icons.edit),
+                    onPressed: () {
+                      Navigator.push(context,
+                          MaterialPageRoute(builder: (context) {
+                        return CardEditor();
+                      }));
+                    }),
+            // : SizedBox(
+            //     width: 1,
+            //     height: 1,
+            //   ),
             actions: _isMe
                 ? [
                     IconButton(

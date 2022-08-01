@@ -6,7 +6,7 @@ import '../../widgets/message/conversation_list.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-const BASE_URL = 'http://34.64.217.3:3000/static/';
+const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);

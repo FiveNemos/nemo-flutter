@@ -10,7 +10,7 @@ import 'package:dio/dio.dart';
 import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
 
-const BASE_URL = 'http://34.64.217.3:3000/static/';
+const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
 Map<String, int> CHANGED = {
   'nickname': 0,
