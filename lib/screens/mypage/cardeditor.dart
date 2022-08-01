@@ -9,6 +9,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
+import 'package:flutter/services.dart';
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -460,6 +461,7 @@ class _CardEditorState extends State<CardEditor> {
                           itemBuilder: (c, i) {
                             return SizedBox(
                               width: 100,
+                              height: 35,
                               child: TagSpace(
                                   saveTags: saveTags, num: i + 1, user: user),
                             );
@@ -470,10 +472,15 @@ class _CardEditorState extends State<CardEditor> {
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                       SizedBox(
                         height: 35,
-                        child: TextField(
+                        child: TextFormField(
+                          initialValue: detailTitle,
+                          inputFormatters: [
+                            LengthLimitingTextInputFormatter(30),
+                          ],
                           decoration: InputDecoration(
+                            isDense: true,
                             // labelText: 'title',
-                            hintText: detailTitle,
+                            // hintText: detailTitle,
                             hintStyle: TextStyle(fontSize: 13),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
@@ -497,16 +504,19 @@ class _CardEditorState extends State<CardEditor> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                      TextField(
+                      TextFormField(
+                        initialValue: detailContent,
                         // keyboardType: TextInputType.multiline,
                         minLines: 1,
                         maxLines: 2,
                         maxLength: 50,
                         decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: EdgeInsets.all(10),
                           constraints: BoxConstraints(maxHeight: 80),
                           // labelText: 'details',
                           labelStyle: TextStyle(fontSize: 12),
-                          hintText: detailContent,
+                          // hintText: detailContent,
                           hintStyle: TextStyle(fontSize: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -630,12 +640,17 @@ class _NameSpaceState extends State<NameSpace> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      initialValue: widget.nickname,
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(10),
+      ],
       decoration: InputDecoration(
+        isDense: true,
         constraints: BoxConstraints(maxHeight: 40),
         // labelText: '닉네임',
         labelStyle: TextStyle(fontSize: 12),
-        hintText: widget.nickname,
+        // hintText: widget.nickname,
         hintStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -669,18 +684,24 @@ class TagSpace extends StatefulWidget {
 }
 
 class _TagSpaceState extends State<TagSpace> {
-  var controller = TextEditingController();
+  // var controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      initialValue: widget.user.tag[widget.num - 1],
+      // controller: controller,
       onChanged: (text) {
         widget.saveTags(widget.num, text);
       },
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(8),
+      ],
       decoration: InputDecoration(
+        isDense: true,
         // labelText: '태그',
         labelStyle: TextStyle(fontSize: 12),
-        hintText: '${widget.user.tag[widget.num - 1]}',
+        contentPadding: EdgeInsets.all(10),
+        // hintText: '${widget.user.tag[widget.num - 1]}',
         hintStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -714,12 +735,17 @@ class _IntroSpaceState extends State<IntroSpace> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+        initialValue: widget.introduction,
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(30),
+        ],
         decoration: InputDecoration(
+          isDense: true,
           constraints: BoxConstraints(maxHeight: 40),
           // labelText: '한줄소개',
           labelStyle: TextStyle(fontSize: 12),
-          hintText: widget.introduction,
+          // hintText: widget.introduction,
           hintStyle: TextStyle(fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),
