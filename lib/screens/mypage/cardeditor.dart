@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -10,6 +10,9 @@ import 'package:dio/dio.dart';
 import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
 import 'package:flutter/services.dart';
+import 'package:path/path.dart';
+import 'package:photofilters/photofilters.dart';
+import 'package:image/image.dart' as imageLib;
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -241,12 +244,48 @@ class _CardEditorState extends State<CardEditor> {
     // setEverything(user);
   }
 
-  saveUserImage(File file) {
-    setState(() {
-      userImage = file;
-      CHANGED['userImage'] = 1;
-    });
+  List<Filter> filters = presetFiltersList;
+  // File imageFile;
+
+  Future getImage(context) async {
+    var pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      String fileName = basename(imageFile.path);
+      var image = imageLib.decodeImage(imageFile.readAsBytesSync());
+      image = imageLib.copyResize(image!, width: 600);
+
+      Map imagefile = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PhotoFilterSelector(
+            title: Text('필터를 골라주세요'),
+            image: image!,
+            filters: presetFiltersList,
+            filename: fileName,
+            loader: Center(child: CircularProgressIndicator()),
+            fit: BoxFit.contain,
+          ),
+        ),
+      );
+      if (imagefile.containsKey('image_filtered')) {
+        setState(() {
+          userImage = imagefile['image_filtered'];
+          CHANGED['userImage'] = 1;
+          // imageFile = imagefile['image_filtered'];
+        });
+        // print(imageFile.path);
+      }
+    }
   }
+
+  // saveUserImage(File file) {
+  //   setState(() {
+  //     userImage = file;
+  //     CHANGED['userImage'] = 1;
+  //   });
+  // }
 
   saveTagImage(int num, File picture) {
     setState(() {
@@ -351,7 +390,8 @@ class _CardEditorState extends State<CardEditor> {
                         tags: tags,
                         introduction: introduction,
                         userImage: userImage,
-                        saveUserImage: saveUserImage,
+                        // saveUserImage: saveUserImage,
+                        getImage: getImage,
                         user: user,
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 25)),
@@ -773,13 +813,15 @@ class NameCard extends StatefulWidget {
       this.tags,
       this.introduction,
       this.userImage,
-      this.saveUserImage,
+      // this.saveUserImage,
+      this.getImage,
       this.user})
       : super(key: key);
 
   var nickname, tags, introduction;
   dynamic userImage;
-  var saveUserImage;
+  // var saveUserImage;
+  var getImage;
   var user;
 
   @override
@@ -814,13 +856,15 @@ class _NameState extends State<NameCard> {
                 margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                 decoration: BoxDecoration(color: Color(0xffE6E6FA)),
                 child: InkWell(
-                  onTap: () async {
-                    var picker = ImagePicker();
-                    var image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      widget.saveUserImage(File(image.path));
-                    }
+                  // onTap: () async {
+                  onTap: () {
+                    widget.getImage(context);
+                    // var picker = ImagePicker();
+                    // var image =
+                    //     await picker.pickImage(source: ImageSource.gallery);
+                    // if (image != null) {
+                    //   widget.saveUserImage(File(image.path));
+                    // }
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
