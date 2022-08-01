@@ -1,10 +1,11 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/screens/sharing/sharing_accept_page.dart';
 import 'package:sensors_plus/sensors_plus.dart';
 import 'package:shimmer/shimmer.dart';
 
 // import 'package:nemo_flutter/screens/mypage/profile_page.dart';
-// import 'package:nemo_flutter/screens/sharing/sharing_profile_page.dart';
+// import 'package:nemo_flutter/screens/sharing/sharing_accept_page.dart';
 import '../mypage/profile_page.dart';
 
 class PunchPage extends StatefulWidget {
@@ -29,34 +30,35 @@ class _PunchPageState extends State<PunchPage> {
         // Manipulate the UI here, something like:
         if ((event.y > 5 || event.y < -5) && cnt == 0) {
           cnt++;
-
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfilePage(
-                      friendId: widget.friendId,
-                      currIndex: 1,
-                      latlng: widget.latlng)));
+                  builder: (context) => SharingFriendPage(
+                        currIndex: 1,
+                        friendId: widget.friendId,
+                        latlng: widget.latlng,
+                      )));
         } else if ((event.x < -4 || event.x > 4) && cnt == 0) {
           cnt++;
 
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfilePage(
-                      friendId: widget.friendId,
-                      currIndex: 1,
-                      latlng: widget.latlng)));
+                  builder: (context) => SharingFriendPage(
+                        currIndex: 1,
+                        friendId: widget.friendId,
+                        latlng: widget.latlng,
+                      )));
         } else if ((event.z < -4 || event.z > 4) && cnt == 0) {
           cnt++;
-
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => ProfilePage(
-                      friendId: widget.friendId,
-                      currIndex: 1,
-                      latlng: widget.latlng)));
+                  builder: (context) => SharingFriendPage(
+                        currIndex: 1,
+                        friendId: widget.friendId,
+                        latlng: widget.latlng,
+                      )));
         } else {}
         super.dispose();
         for (final subscription in _streamSubscriptions) {

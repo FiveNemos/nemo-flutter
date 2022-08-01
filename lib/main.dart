@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/screens/sharing/sharing_accept_page.dart';
 
 // import widget style
 import './styles/style.dart' as style;
