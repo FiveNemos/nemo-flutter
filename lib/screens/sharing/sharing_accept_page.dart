@@ -233,9 +233,9 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                                                 ),
                                                 child: Image(
                                                   image: CachedNetworkImageProvider(
-                                                      'http://34.64.217.3:3000/static/${friendDataFromJson.image}'),
-                                                  // width: 300,
-                                                  // height: 240,
+                                                      'https://storage.googleapis.com/nemo-bucket/${friendDataFromJson.image}'),
+                                                  width: 300,
+                                                  height: 240,
                                                   fit: BoxFit.fitWidth,
                                                 ),
                                               ),
