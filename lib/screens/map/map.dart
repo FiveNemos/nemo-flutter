@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
@@ -75,21 +74,21 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
         });
         setState(() {
           userCord = temp;
-          print("temp:$temp");
+          print('temp:$temp');
         });
 
         // print(double.parse(userCord.lat));
         // print(double.parse(userCord.long));
         // print(userCord.user_id);
         // print('접속성공');
-        print("true");
+        print('true');
         return true;
       } else {
         print('error');
         return false;
       }
     } catch (e) {
-      print("에라이 에러");
+      print('에라이 에러');
       return false;
     }
   }
@@ -137,9 +136,9 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
             if (!snapshot.hasData) {
               return Center(child: CircularProgressIndicator());
             }
-            print("snapshot");
+            print('snapshot');
             Set<Marker> markers = {};
-            userCord.forEach((e) {
+            for (var e in userCord) {
               var latt = double.parse(e.lat);
               var long = double.parse(e.long);
               markers.add(Marker(
@@ -157,7 +156,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                     },
                   ),
                   icon: BitmapDescriptor.defaultMarker));
-            });
+            }
             return GoogleMap(
               initialCameraPosition: initialCameraPosition,
               markers: markers,

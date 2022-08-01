@@ -470,10 +470,11 @@ class _CardEditorState extends State<CardEditor> {
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
                       SizedBox(
                         height: 35,
-                        child: TextField(
+                        child: TextFormField(
+                          initialValue: detailTitle,
                           decoration: InputDecoration(
                             // labelText: 'title',
-                            hintText: detailTitle,
+                            // hintText: detailTitle,
                             hintStyle: TextStyle(fontSize: 13),
                             enabledBorder: OutlineInputBorder(
                               borderRadius:
@@ -497,7 +498,8 @@ class _CardEditorState extends State<CardEditor> {
                         ),
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 15)),
-                      TextField(
+                      TextFormField(
+                        initialValue: detailContent,
                         // keyboardType: TextInputType.multiline,
                         minLines: 1,
                         maxLines: 2,
@@ -506,7 +508,7 @@ class _CardEditorState extends State<CardEditor> {
                           constraints: BoxConstraints(maxHeight: 80),
                           // labelText: 'details',
                           labelStyle: TextStyle(fontSize: 12),
-                          hintText: detailContent,
+                          // hintText: detailContent,
                           hintStyle: TextStyle(fontSize: 12),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -630,12 +632,13 @@ class _NameSpaceState extends State<NameSpace> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+      initialValue: widget.nickname,
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
         // labelText: '닉네임',
         labelStyle: TextStyle(fontSize: 12),
-        hintText: widget.nickname,
+        // hintText: widget.nickname,
         hintStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -669,18 +672,19 @@ class TagSpace extends StatefulWidget {
 }
 
 class _TagSpaceState extends State<TagSpace> {
-  var controller = TextEditingController();
+  // var controller = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return TextFormField(
-      controller: controller,
+      initialValue: widget.user.tag[widget.num - 1],
+      // controller: controller,
       onChanged: (text) {
         widget.saveTags(widget.num, text);
       },
       decoration: InputDecoration(
         // labelText: '태그',
         labelStyle: TextStyle(fontSize: 12),
-        hintText: '${widget.user.tag[widget.num - 1]}',
+        // hintText: '${widget.user.tag[widget.num - 1]}',
         hintStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -714,12 +718,13 @@ class _IntroSpaceState extends State<IntroSpace> {
 
   @override
   Widget build(BuildContext context) {
-    return TextField(
+    return TextFormField(
+        initialValue: widget.introduction,
         decoration: InputDecoration(
           constraints: BoxConstraints(maxHeight: 40),
           // labelText: '한줄소개',
           labelStyle: TextStyle(fontSize: 12),
-          hintText: widget.introduction,
+          // hintText: widget.introduction,
           hintStyle: TextStyle(fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),

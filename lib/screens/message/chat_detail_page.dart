@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import '../../models/message/chatmodel.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:intl/intl.dart';
 
 class ChatScreen extends StatefulWidget {
   int chatroomID;

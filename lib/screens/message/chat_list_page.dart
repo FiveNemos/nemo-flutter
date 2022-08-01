@@ -20,7 +20,7 @@ class _ChatPageState extends State<ChatPage> {
   dynamic userInfo = '';
   int? loginID;
 
-  StreamController _streamController = StreamController();
+  final StreamController _streamController = StreamController();
   Timer? _timer;
   List<ChatRooms> original_chatUsers = []; // 이걸 DB에서 받아오는거로 바꾸면 될듯
   List chatUsers = [];
@@ -29,7 +29,7 @@ class _ChatPageState extends State<ChatPage> {
     Duration diff = DateTime.now().difference(msgtime);
     if (diff.inDays > 0) {
       if (diff.inDays > 7) {
-        DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = DateFormat('yyyy-MM-dd');
         return dateFormat.format(msgtime);
       } else {
         return '${diff.inDays}일 전';
@@ -124,9 +124,9 @@ class _ChatPageState extends State<ChatPage> {
       _timer =
           Timer.periodic(Duration(seconds: 3), (timer) => getData(loginID));
     });
-    print("loginID: $loginID");
+    print('loginID: $loginID');
     await getData(loginID);
-    print("here");
+    print('here');
     resetConversation();
     // await getAllCards(nowId);
   }
@@ -231,10 +231,10 @@ class _ChatPageState extends State<ChatPage> {
               StreamBuilder(
                   stream: _streamController.stream,
                   builder: (BuildContext context, AsyncSnapshot snapshot) {
-                    print("snapshot");
+                    print('snapshot');
                     print(snapshot.data);
                     if (snapshot.hasData) {
-                      print("snapshot입니다");
+                      print('snapshot입니다');
                       chatUsers = snapshot.data;
                       return ListView.builder(
                         itemCount: chatUsers.length,
