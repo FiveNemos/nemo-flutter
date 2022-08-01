@@ -6,8 +6,7 @@ import 'package:image_picker/image_picker.dart';
 // import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:flutter/services.dart' show rootBundle;
+import 'package:flutter/services.dart';
 
 import '../sharing/sharing.dart';
 
@@ -153,13 +152,13 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
     });
   }
 
-  Future<File> getImageFileFromAssets(String path) async {
-    final byteData = await rootBundle.load('assets/$path');
-    final file = File('${(await getTemporaryDirectory()).path}/$path');
-    await file.writeAsBytes(byteData.buffer
-        .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
-    return file;
-  }
+  // Future<File> getImageFileFromAssets(String path) async {
+  //   final byteData = await rootBundle.load('assets/$path');
+  //   final file = File('${(await getTemporaryDirectory()).path}/$path');
+  //   await file.writeAsBytes(byteData.buffer
+  //       .asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+  //   return file;
+  // }
 
   saveName(String value) {
     setState(() {
@@ -384,6 +383,9 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                   SizedBox(
                     height: 35,
                     child: TextField(
+                      inputFormatters: [
+                        LengthLimitingTextInputFormatter(30),
+                      ],
                       decoration: InputDecoration(
                         labelText: detailTitle,
                         labelStyle: TextStyle(fontSize: 13),
@@ -525,9 +527,12 @@ class _NameSpaceState extends State<NameSpace> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(10),
+      ],
       decoration: InputDecoration(
         constraints: BoxConstraints(maxHeight: 40),
-        labelText: widget.nickname,
+        labelText: '닉네임',
         labelStyle: TextStyle(fontSize: 12),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -568,6 +573,9 @@ class _TagSpaceState extends State<TagSpace> {
       onChanged: (text) {
         widget.saveTags(widget.num, text);
       },
+      inputFormatters: [
+        LengthLimitingTextInputFormatter(8),
+      ],
       decoration: InputDecoration(
         hintText: '',
         labelText: '태그',
@@ -603,9 +611,12 @@ class _IntroSpaceState extends State<IntroSpace> {
   @override
   Widget build(BuildContext context) {
     return TextField(
+        inputFormatters: [
+          LengthLimitingTextInputFormatter(30),
+        ],
         decoration: InputDecoration(
           constraints: BoxConstraints(maxHeight: 40),
-          labelText: widget.introduction,
+          labelText: '한줄소개',
           labelStyle: TextStyle(fontSize: 12),
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.all(Radius.circular(10)),

@@ -5,7 +5,6 @@ import 'dart:math';
 import 'dart:typed_data';
 import 'package:nearby_connections/nearby_connections.dart';
 import 'package:permission_handler/permission_handler.dart';
-import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -118,8 +117,8 @@ class SharingPage extends StatelessWidget {
             ),
             // add text
             actions: <Widget>[
-              new ElevatedButton(
-                child: new Text("아~ 완벽히 이해했어요!",
+              ElevatedButton(
+                child: Text('아~ 완벽히 이해했어요!',
                     style: TextStyle(
                         fontSize: 15,
                         color: Color.fromARGB(255, 255, 255, 255),
@@ -160,6 +159,7 @@ class SharingPage extends StatelessWidget {
         // bottomOpacity: 0.8,
 
         bottom: PreferredSize(
+          preferredSize: Size(50, 50),
           child: Container(
             alignment: Alignment.center,
             constraints: BoxConstraints.expand(height: 50),
@@ -181,7 +181,6 @@ class SharingPage extends StatelessWidget {
               },
             ),
           ),
-          preferredSize: Size(50, 50),
         ),
       ),
       body: Container(
