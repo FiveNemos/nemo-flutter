@@ -8,7 +8,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 
-const BASE_URL = 'http://34.64.217.3:3000/static/';
+const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.friendId}) : super(key: key);
