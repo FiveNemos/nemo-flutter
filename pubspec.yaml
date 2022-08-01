@@ -55,8 +55,13 @@ dependencies:
   geolocator: ^9.0.1
   intl: ^0.17.0
   page_transition: ^2.0.9
-  photofilters: ^3.0.1
+  photofilters:
+    git:
+      url: https://github.com/jessy1001/photofilters.git
+      ref: fivenemos # branch name
   image: ^3.2.0
+  image_editor_plus: ^0.1.5
+  image_utils_class: ^2.0.0
 
 
   # swipe: ^0.0.1

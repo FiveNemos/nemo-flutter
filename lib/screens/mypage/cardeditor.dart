@@ -10,9 +10,10 @@ import 'package:dio/dio.dart';
 import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
 import 'package:flutter/services.dart';
-import 'package:path/path.dart';
-import 'package:photofilters/photofilters.dart';
-import 'package:image/image.dart' as imageLib;
+import 'package:image_editor_plus/image_editor_plus.dart';
+import 'dart:typed_data';
+import './image_editor_example.dart';
+import 'package:path_provider/path_provider.dart';
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -244,41 +245,80 @@ class _CardEditorState extends State<CardEditor> {
     // setEverything(user);
   }
 
-  List<Filter> filters = presetFiltersList;
-  // File imageFile;
-
   Future getImage(context) async {
+    Uint8List bytes = Uint8List(0);
+
     var pickedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
-      String fileName = basename(imageFile.path);
-      var image = imageLib.decodeImage(imageFile.readAsBytesSync());
-      image = imageLib.copyResize(image!, width: 600);
-
-      Map imagefile = await Navigator.push(
+      await imageFile
+          .readAsBytes()
+          .then((value) => bytes = Uint8List.fromList(value))
+          .catchError((onError) {
+        print('Exception error while reading file from path');
+      });
+      // var finalImage = Image.file(imageFile);
+      // var data = await rootBundle.load(pickedImage.path);
+      var imageData = bytes.buffer.asUint8List();
+      var editedImage = await Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => PhotoFilterSelector(
-            title: Text('필터를 골라주세요'),
-            image: image!,
-            filters: presetFiltersList,
-            filename: fileName,
-            loader: Center(child: CircularProgressIndicator()),
-            fit: BoxFit.contain,
+          builder: (context) => ImageEditor(
+            image: imageData,
           ),
         ),
       );
-      if (imagefile.containsKey('image_filtered')) {
+      if (editedImage != null) {
+        Uint8List imageInUnit8List =
+            editedImage; // store unit8List image here ;
+        final tempDir = await getTemporaryDirectory();
+        File file = await File('${tempDir.path}/image.png').create();
+        file.writeAsBytesSync(imageInUnit8List);
         setState(() {
-          userImage = imagefile['image_filtered'];
+          userImage = file;
           CHANGED['userImage'] = 1;
-          // imageFile = imagefile['image_filtered'];
         });
-        // print(imageFile.path);
       }
     }
   }
+
+  // List<Filter> filters = presetFiltersList;
+  // File imageFile;
+
+  // Future getImage(context) async {
+  //   var pickedImage =
+  //       await ImagePicker().pickImage(source: ImageSource.gallery);
+  //   if (pickedImage != null) {
+  //     File imageFile = File(pickedImage.path);
+  //     String fileName = basename(imageFile.path);
+  //     var image = imageLib.decodeImage(imageFile.readAsBytesSync());
+  //     image = imageLib.copyResize(image!, width: 600);
+  //
+  //     Map imagefile = await Navigator.push(
+  //       context,
+  //       MaterialPageRoute(
+  //         builder: (context) => PhotoFilterSelector(
+  //           title: Text('필터를 골라주세요'),
+  //           // theme: ,
+  //           image: image!,
+  //           filters: presetFiltersList,
+  //           filename: fileName,
+  //           loader: Center(child: CircularProgressIndicator()),
+  //           fit: BoxFit.contain,
+  //         ),
+  //       ),
+  //     );
+  //     if (imagefile.containsKey('image_filtered')) {
+  //       setState(() {
+  //         userImage = imagefile['image_filtered'];
+  //         CHANGED['userImage'] = 1;
+  //         // imageFile = imagefile['image_filtered'];
+  //       });
+  //       // print(imageFile.path);
+  //     }
+  //   }
+  // }
 
   // saveUserImage(File file) {
   //   setState(() {
