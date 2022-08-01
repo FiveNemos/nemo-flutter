@@ -10,7 +10,7 @@ class ConversationList extends StatefulWidget {
   String lastMsgText;
   String friendImage;
   String lastMsgTime;
-  bool isMessageRead;
+  int notReadCnt;
   ConversationList(
       {required this.chatroomID,
       required this.loginID,
@@ -19,7 +19,7 @@ class ConversationList extends StatefulWidget {
       required this.lastMsgText,
       required this.friendImage,
       required this.lastMsgTime,
-      required this.isMessageRead});
+      required this.notReadCnt});
   @override
   _ConversationListState createState() => _ConversationListState();
 }
@@ -72,7 +72,7 @@ class _ConversationListState extends State<ConversationList> {
                             style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey.shade600,
-                                fontWeight: widget.isMessageRead
+                                fontWeight: widget.notReadCnt > 0
                                     ? FontWeight.bold
                                     : FontWeight.normal),
                           ),
@@ -87,7 +87,7 @@ class _ConversationListState extends State<ConversationList> {
               widget.lastMsgTime, // 현재 시간을 계산해서, 'now' '2 hr' '8 Jul' 등으로 바꿔주기
               style: TextStyle(
                   fontSize: 12,
-                  fontWeight: widget.isMessageRead
+                  fontWeight: widget.notReadCnt > 0
                       ? FontWeight.bold
                       : FontWeight.normal),
             ),
