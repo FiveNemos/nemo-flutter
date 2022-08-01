@@ -31,6 +31,37 @@ class _ChatScreenState extends State<ChatScreen> {
   dynamic userInfo = '';
   final TextEditingController _messageController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
+  int? myConnId;
+  int? friendConnId;
+
+  getChatConns() async {
+    try {
+      var dio = Dio();
+      // Response response = await dio
+      //     .get('http://10.0.2.2:3000/api/chatroom/conns?id_1=1&id_2=3');
+      Response response = await dio.get(
+          'http://34.64.217.3:3000/api/chatroom/conns?id_1=${widget.loginID}&id_2=${widget.friendID}');
+      if (response.statusCode == 200) {
+        final jsonData = response.data;
+        print(jsonData[0].runtimeType);
+        print(jsonData[1].runtimeType);
+        print(jsonData.runtimeType);
+        setState(() {
+          myConnId = jsonData[0];
+          friendConnId = jsonData[1];
+        });
+        socket.emit('reset', jsonData[0]);
+        print('접속 성공!');
+      } else {
+        print('error');
+        return false;
+      }
+    } on DioError catch (e) {
+      final errorjson = jsonDecode(e.response.toString());
+      print(errorjson);
+      return false;
+    }
+  }
 
   getChatMessages(int chatroomid) async {
     try {
@@ -168,14 +199,14 @@ class _ChatScreenState extends State<ChatScreen> {
 
   initializeSocket() {
     try {
-      // socket = io('http://34.64.217.3:3000/', <String, dynamic>{
-      //   'transports': ['websocket'],
-      //   'autoConnect': false,
-      // });
       socket = io('http://34.64.217.3:3000/', <String, dynamic>{
         'transports': ['websocket'],
         'autoConnect': false,
       });
+      // socket = io('http://10.0.2.2:3000/', <String, dynamic>{
+      //   'transports': ['websocket'],
+      //   'autoConnect': false,
+      // });
 
       socket.connect();
       socket.on('connect', (data) {
@@ -198,10 +229,20 @@ class _ChatScreenState extends State<ChatScreen> {
         debugPrint('socket leave');
       });
 
+      socket.on('reset', (data) {
+        debugPrint('socket reset');
+      });
+
       socket.on('message', (data) {
         var message = ChatModel.fromJson(data);
         setStateIfMounted(() {
           _messages.add(message);
+          socket.emit('reset', myConnId);
+          // socket.emit('reset', {
+          //   'senderID': widget.loginID,
+          //   'receiverID': widget.friendID,
+          //   'chatroom': widget.chatroomID
+          // });
         });
       });
       socket.on('disconnect', (data) {
@@ -220,13 +261,13 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    getChatConns();
     getChatMessages(widget.chatroomID);
     for (var e in _samplemsg) {
       if (e.chatroomID == widget.chatroomID) {
         addMessage(e);
       }
     }
-
     super.initState();
     // enterChatRoom();
     initializeSocket();
