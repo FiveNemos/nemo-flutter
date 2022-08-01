@@ -5,6 +5,7 @@ import '../../models/message/chatrooms.dart';
 import '../../widgets/message/conversation_list.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
+import 'dart:async';
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -17,7 +18,12 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
-  var loginID;
+  int? loginID;
+
+  StreamController _streamController = StreamController();
+  Timer? _timer;
+  List<ChatRooms> original_chatUsers = []; // 이걸 DB에서 받아오는거로 바꾸면 될듯
+  List chatUsers = [];
 
   dateToText(DateTime msgtime) {
     Duration diff = DateTime.now().difference(msgtime);
@@ -37,7 +43,7 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  getChatRooms(id) async {
+  Future getData(id) async {
     try {
       var dio = Dio();
       Response response = await dio
@@ -70,10 +76,11 @@ class _ChatPageState extends State<ChatPage> {
         });
         setState(() {
           // temp를 시간순에 따라서 sort하기
-          temp.sort((a, b) => a.lastMsgTime.compareTo(b.lastMsgTime));
+          temp.sort((a, b) => b.lastMsgTime.compareTo(a.lastMsgTime));
           original_chatUsers = temp;
         });
         print('접속 성공!');
+        _streamController.add(temp);
       } else {
         print('error');
         return false;
@@ -86,9 +93,6 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
-  List<ChatRooms> original_chatUsers = []; // 이걸 DB에서 받아오는거로 바꾸면 될듯
-
-  List chatUsers = [];
   resetConversation() {
     setState(() {
       chatUsers = original_chatUsers; // DB에서 받아오는 코드 '여기에도' 넣기
@@ -96,7 +100,7 @@ class _ChatPageState extends State<ChatPage> {
   }
 
   searchConversation(text) {
-    var temp = [];
+    var searchList = [];
     for (var e in original_chatUsers) {
       if (e.friendName.startsWith(text)) {
         // temp.add(e);
@@ -104,12 +108,12 @@ class _ChatPageState extends State<ChatPage> {
           print('뭐냐고요');
           print(e.friendID);
           print(loginID);
-          temp.add(e);
+          searchList.add(e);
         }
       }
     }
     setState(() {
-      chatUsers = temp;
+      chatUsers = searchList;
     });
   }
 
@@ -117,38 +121,29 @@ class _ChatPageState extends State<ChatPage> {
     dynamic userInfo = await storage.read(key: 'login');
     setState(() {
       loginID = int.parse(jsonDecode(userInfo)['user_id']);
+      _timer =
+          Timer.periodic(Duration(seconds: 3), (timer) => getData(loginID));
     });
-    await getChatRooms(loginID);
+    print("loginID: $loginID");
+    await getData(loginID);
+    print("here");
     resetConversation();
     // await getAllCards(nowId);
   }
 
   @override
   void initState() {
-    super.initState();
     checkUser();
+    super.initState();
   }
 
-  // @override
-  // Widget buildSuggestions(BuildContext context) {
-  //   List<String> suggestions = [
-  //     'Brazil',
-  //     'China',
-  //     'India',
-  //     'Russia',
-  //     'USA',
-  //   ];
-  //   return ListView.builder(
-  //     itemCount: 5,
-  //     itemBuilder: (context, index) {
-  //       final suggestion = suggestions[index];
-  //       return ListTile(
-  //         title: Text(suggestion),
-  //         onTap: () {},
-  //       );
-  //     },
-  //   );
-  // }
+  @override
+  void dispose() {
+    //cancel the timer
+    if (_timer!.isActive) _timer!.cancel();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -162,94 +157,106 @@ class _ChatPageState extends State<ChatPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
-              SafeArea(
-                child: Padding(
-                  padding: EdgeInsets.only(left: 16, right: 16, top: 10),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        'Conversations',
-                        style: TextStyle(
-                            fontSize: 24, fontWeight: FontWeight.bold),
-                      ),
-                      Container(
-                        padding: EdgeInsets.only(
-                            left: 8, right: 8, top: 2, bottom: 2),
-                        height: 30,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(30),
-                          color: Colors.grey[200],
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            Icon(
-                              Icons.add,
-                              color: Colors.pink,
-                              size: 20,
-                            ),
-                            SizedBox(
-                              width: 2,
-                            ),
-                            Text(
-                              'Add New',
-                              style: TextStyle(
-                                  fontSize: 14, fontWeight: FontWeight.w800),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(top: 16, left: 16, right: 16),
-                child: TextField(
-                  onChanged: (text) {
-                    if (text.isNotEmpty) {
-                      searchConversation(text);
-                    } else {
-                      resetConversation();
+              // SafeArea(
+              //   child: Padding(
+              //     padding: EdgeInsets.only(left: 16, right: 16, top: 10),
+              //     child: Row(
+              //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              //       children: <Widget>[
+              //         Text(
+              //           'Conversations',
+              //           style: TextStyle(
+              //               fontSize: 24, fontWeight: FontWeight.bold),
+              //         ),
+              //         Container(
+              //           padding: EdgeInsets.only(
+              //               left: 8, right: 8, top: 2, bottom: 2),
+              //           height: 30,
+              //           decoration: BoxDecoration(
+              //             borderRadius: BorderRadius.circular(30),
+              //             color: Colors.grey[200],
+              //           ),
+              //           child: Row(
+              //             children: <Widget>[
+              //               Icon(
+              //                 Icons.add,
+              //                 color: Colors.pink,
+              //                 size: 20,
+              //               ),
+              //               SizedBox(
+              //                 width: 2,
+              //               ),
+              //               Text(
+              //                 'Add New',
+              //                 style: TextStyle(
+              //                     fontSize: 14, fontWeight: FontWeight.w800),
+              //               ),
+              //             ],
+              //           ),
+              //         )
+              //       ],
+              //     ),
+              //   ),
+              // ),
+              // Padding(
+              //   padding: EdgeInsets.only(top: 16, left: 16, right: 16),
+              //   child: TextField(
+              //     onChanged: (text) {
+              //       if (text.isNotEmpty) {
+              //         searchConversation(text);
+              //       } else {
+              //         resetConversation();
+              //       }
+              //     },
+              //     decoration: InputDecoration(
+              //       hintText: 'Search...',
+              //       hintStyle: TextStyle(color: Colors.grey.shade600),
+              //       prefixIcon: Icon(
+              //         Icons.search,
+              //         color: Colors.grey.shade600,
+              //         size: 20,
+              //       ),
+              //       filled: true,
+              //       fillColor: Colors.grey.shade100,
+              //       contentPadding: EdgeInsets.all(8),
+              //       enabledBorder: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(20),
+              //           borderSide: BorderSide(color: Colors.grey.shade100)),
+              //       focusedBorder: OutlineInputBorder(
+              //           borderRadius: BorderRadius.circular(20),
+              //           borderSide: BorderSide(color: Colors.grey.shade100)),
+              //     ),
+              //   ),
+              // ),
+              StreamBuilder(
+                  stream: _streamController.stream,
+                  builder: (BuildContext context, AsyncSnapshot snapshot) {
+                    print("snapshot");
+                    print(snapshot.data);
+                    if (snapshot.hasData) {
+                      print("snapshot입니다");
+                      chatUsers = snapshot.data;
+                      return ListView.builder(
+                        itemCount: chatUsers.length,
+                        shrinkWrap: true,
+                        padding: EdgeInsets.only(top: 16),
+                        physics: NeverScrollableScrollPhysics(),
+                        itemBuilder: (context, index) {
+                          return ConversationList(
+                              chatroomID: chatUsers[index].chatroomID,
+                              loginID: loginID!,
+                              friendID: chatUsers[index].friendID,
+                              friendName: chatUsers[index].friendName,
+                              lastMsgText: chatUsers[index].lastMsgText,
+                              friendImage: chatUsers[index].friendImage,
+                              lastMsgTime:
+                                  dateToText(chatUsers[index].lastMsgTime),
+                              isMessageRead: true);
+                        },
+                      );
                     }
-                  },
-                  decoration: InputDecoration(
-                    hintText: 'Search...',
-                    hintStyle: TextStyle(color: Colors.grey.shade600),
-                    prefixIcon: Icon(
-                      Icons.search,
-                      color: Colors.grey.shade600,
-                      size: 20,
-                    ),
-                    filled: true,
-                    fillColor: Colors.grey.shade100,
-                    contentPadding: EdgeInsets.all(8),
-                    enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey.shade100)),
-                    focusedBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(20),
-                        borderSide: BorderSide(color: Colors.grey.shade100)),
-                  ),
-                ),
-              ),
-              ListView.builder(
-                itemCount: chatUsers.length,
-                shrinkWrap: true,
-                padding: EdgeInsets.only(top: 16),
-                physics: NeverScrollableScrollPhysics(),
-                itemBuilder: (context, index) {
-                  return ConversationList(
-                      chatroomID: chatUsers[index].chatroomID,
-                      loginID: loginID,
-                      friendID: chatUsers[index].friendID,
-                      friendName: chatUsers[index].friendName,
-                      lastMsgText: chatUsers[index].lastMsgText,
-                      friendImage: chatUsers[index].friendImage,
-                      lastMsgTime: dateToText(chatUsers[index].lastMsgTime),
-                      isMessageRead: true);
-                },
-              ),
+                    return Text('loading,,');
+                  })
             ],
           ),
         ),
