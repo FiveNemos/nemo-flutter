@@ -64,6 +64,8 @@ class _ChatPageState extends State<ChatPage> {
           var roomId = e[0];
           int friendId = json.decode(e[2]).where((x) => x != id).toList()[0];
           var nowFriendData = friendDataMap[friendId];
+          print("friendId: $friendId");
+          print("friendDataMap: $friendDataMap");
           DateTime lastmsgtime = DateTime.parse(e[3]);
           ChatRooms nowRoom = ChatRooms(
               chatroomID: roomId,
