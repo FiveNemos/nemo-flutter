@@ -41,7 +41,7 @@ class MyApp extends StatelessWidget {
         '/contacts': (context) => ContactsPage(),
         '/message': (context) => MessagePage(),
         '/mypage': (context) => MypagePage(),
-        '/sharing': (context) => SharingPage(),
+        '/sharing': (context) => QRforTOOK(isSender: true, latlng: [33, 175]),
         '/namecard': (context) => NameCardGenerator(),
         '/map': (context) => CurrentLocationScreen(),
       }, // end routes

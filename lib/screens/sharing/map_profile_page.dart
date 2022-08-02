@@ -1,353 +1,114 @@
+import 'dart:developer';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/screens/sharing/punch.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+import 'package:barcode_scan2/barcode_scan2.dart';
+import 'package:qr_code_scanner/qr_code_scanner.dart';
 
-import '../../models/mypage/user.dart';
-import '../../widgets/mypage/profile_widget.dart';
-import '../message/chat_detail_page.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-import 'package:dio/dio.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'dart:convert';
+// sharing.dart
+// Sharing 페이지를 stateful widget으로 변경하기
+// isQRmode = false 로 state 변수 추가하기
+// isQRmode 를 ON/OFF 해주는 버튼을 actions:[]에 추가하기
+// Draggable 클래스에 child: TookPage()와 함께 isQRmode : _isQRmode를 전달하기
+// 삼항연산자로 드래그 시에 실행하는거 나누기.
 
-const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
+/* 명함 보내는 중 ... !isQRmode ? (원래 동작 try-catch) : (QRforTOOK으로 Navigator.push => QR 생성자 모드로 보여주기) */
+// 명함을 보내는 사람은 'QR${myId}' 라는 소켓 방에 접속해있도록 함
+// 접속자가 2명이 되면, 즉 QR을 읽은 receiver가 자기 아이디를 emit해주면, 해당 내용을 확인하고 disconnect하고 PunchPage로 이동
 
-class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key, this.friendId}) : super(key: key);
-  var friendId;
+/* 명함 받는 중 ... !isQRmode ? (원래 동작 try-catch) : (QRforTOOK으로 Navigator.push => QR 촬영 모드로 보여주기) */
+// 명함을 받는 사람은 QR를 촬영한 후에, 담기는 데이터 (id) 를 기반으로 'QR${friendId}' 라는 소켓 방으로 접속
+// 접속에 성공한 후에, 자기 아이디가 뭔지를 emit해주고, 1초 후에 disconnect 하고 PunchPage로 이동
+
+
+
+class QRforTOOK extends StatefulWidget {
+  QRforTOOK({Key? key, required this.isSender, this.myId, required this.latlng})
+      : super(key: key);
+  bool isSender;
+  int? myId;
+  List? latlng;
 
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  State<QRforTOOK> createState() => _QRforTOOKState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
-  static final storage = FlutterSecureStorage();
-  dynamic userInfo = '';
-  var loginID;
-  var user;
-  bool _isMe = false;
-  checkUser() async {
-    dynamic userInfo = await storage.read(key: 'login');
-    setState(() {
-      loginID = int.parse(jsonDecode(userInfo)['user_id']);
-    });
-    if (widget.friendId != null) {
-      getCard(widget.friendId);
-      setState(() {
-        _isMe = false;
-      });
-    } else {
-      getCard(loginID);
-      setState(() {
-        _isMe = true;
-      });
-    }
-  }
+class _QRforTOOKState extends State<QRforTOOK> {
+  final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
+  Barcode? result;
+  QRViewController? controller;
 
-  getChatRoom(loginID, friendID) async {
-    try {
-      var dio = Dio();
-      Response response = await dio.get(
-          'http://34.64.217.3:3000/api/chatroom/enter?id_1=$loginID&id_2=$friendID');
-      if (response.statusCode == 200) {
-        final jsonData = response.data;
-        return jsonData;
-      } else {
-        print('error');
-        return 0;
-      }
-    } on DioError catch (e) {
-      print('뭔가 에러가');
-      final errorjson = jsonDecode(e.response.toString());
-      print(errorjson);
-      return 0;
-    }
-  }
-
-  getCard(id) async {
-    print('http://34.64.217.3:3000/api/card/$id');
-    try {
-      var dio = Dio();
-      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
-      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
-
-      if (response.statusCode == 200) {
-        final json = response.data;
-        setState(() {
-          user = UserProfile(
-            imagePath: BASE_URL + json['image'],
-            nickname: json['nickname'],
-            introduction: json['intro'],
-            title: json['detail_title'], // title로 변경 필요
-            about: json['detail_content'], // about로 변경 필요
-            image1: BASE_URL + json['tag_img_1'],
-            image2: BASE_URL + json['tag_img_2'],
-            image3: BASE_URL + json['tag_img_3'],
-            tag1: json['tag_1'],
-            tag2: json['tag_2'],
-            tag3: json['tag_3'],
-            image: [
-              BASE_URL + json['tag_img_1'],
-              BASE_URL + json['tag_img_2'],
-              BASE_URL + json['tag_img_3'],
-            ],
-            tag: [
-              json['tag_1'],
-              json['tag_2'],
-              json['tag_3'],
-            ],
-          );
-        });
-        print('접속 성공!');
-        print('json : $json');
-        print(json['image']);
-        print(json['image'].runtimeType);
-        // /* 여기부턴 실험중 */
-        // final json2 = response2.data;
-        // var result = json2['tag_1'];
-        // print("json2: ${result}");
-        // print(result.runtimeType);
-        // List result2 = result.split(' ');
-        // // result2.remove , result2.add
-        // String json3 = result2.join(' ');
-        // print("here");
-        // print("result2: $result2");
-        // print(result2.runtimeType);
-        // var string1 = '1658212922913-image_picker855487046303368457.png';
-        // print(string1.length);
-
-        // print('jsonBody : $jsonBody');
-        return true;
-      } else {
-        print('error');
-        return false;
-      }
-    } catch (e) {
-      return false;
-    }
-  }
-
+  // In order to get hot reload to work we need to pause the camera if the platform
+  // is android, or resume the camera if the platform is iOS.
   @override
-  void initState() {
-    // TODO: implement initState
-    checkUser();
-    super.initState();
+  void reassemble() {
+    super.reassemble();
+    if (Platform.isAndroid) {
+      controller!.pauseCamera();
+    } else if (Platform.isIOS) {
+      controller!.resumeCamera();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final user = UserPreferences.myUser;
-    // var user = UserProfiles[widget.nickname];
-    List buildList = [
-      buildAvatar,
-      buildName,
-      buildImageTag,
-      buildAbout,
-    ];
-    if (user != null) {
-      return Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'NeMo',
-            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: true,
-          actions: _isMe
-              ? [
-                  IconButton(
-                    icon: Icon(Icons.logout),
-                    tooltip: 'logout',
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/login');
-                    },
+    return Scaffold(
+      appBar: AppBar(),
+      body: widget.isSender
+          ? Center(
+              child: QrImage(
+                data: widget.myId.toString(),
+                backgroundColor: Colors.white,
+                size: 200,
+              ),
+            )
+          : Column(
+              children: <Widget>[
+                Expanded(
+                  flex: 5,
+                  child: QRView(
+                    key: qrKey,
+                    onQRViewCreated: _onQRViewCreated,
                   ),
-                ]
-              : [],
-        ),
-        body: ListView.separated(
-          // shrinkWrap: true,
-          physics: BouncingScrollPhysics(),
-          scrollDirection: Axis.vertical,
-          padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
-          itemCount: buildList.length,
-          itemBuilder: (context, i) {
-            return buildList[i](user);
-          },
-          separatorBuilder: (context, i) => SizedBox(height: 15),
-        ),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.contacts),
-              label: '연락처',
+                  // " 이번엔 내가 찍기 " 버튼 만들기. (QR코드 읽혔는지를 감지할 수 있는지)
+                ),
+                Expanded(
+                  flex: 1,
+                  child: Center(
+                    child: (result != null)
+                        ? Text(
+                            'Barcode Type: ${describeEnum(result!.format)}   Data: ${result!.code}')
+                        : Text('Scan a code'),
+                  ),
+                )
+              ],
             ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.share),
-              label: '공유',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: 'Map',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: '메시지',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '마이페이지',
-            ),
-          ],
-          currentIndex: 2,
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                Navigator.pushNamed(context, '/contacts');
-                break;
-              case 1:
-                Navigator.pushNamed(context, '/sharing');
-                break;
-              case 2:
-                Navigator.pushNamed(context, '/map');
-                break;
-              case 3:
-                Navigator.pushNamed(context, '/message');
-                break;
-              case 4:
-                Navigator.pushNamed(context, '/mypage');
-                break;
-            }
-          },
-        ),
-      );
-    } else {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Colors.black,
-        ),
-      );
-    }
+    );
   }
 
-  Widget buildAvatar2(UserProfile user) => ProfileWidget(
-        imagePath: user.imagePath,
-        onClicked: () async {},
-      );
+  void _onQRViewCreated(QRViewController controller) {
+    this.controller = controller;
+    controller.scannedDataStream.listen((scanData) {
+      int friendId;
+      String? friendIdinStr = scanData.code;
+      friendId = int.parse(friendIdinStr!);
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) =>
+                  PunchPage(friendId: friendId, latlng: widget.latlng)));
 
-  Widget buildAvatar(UserProfile user) => ProfileWidget(
-        imagePath: user.imagePath,
-        onClicked: () async {},
-      );
+      setState(() {
+        result = scanData;
+      });
+    });
+  }
 
-  Widget buildName(UserProfile user) => Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Text(
-                user.nickname,
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
-              ),
-              !_isMe
-                  ? Transform.rotate(
-                      angle: 6,
-                      child: IconButton(
-                          onPressed: () async {
-                            // http 요청해서, chatroomID 찾기 by loginID, friendID
-                            // var chatroomID = getHTTP(loginID, friendID)
-                            var roomID =
-                                await getChatRoom(loginID, widget.friendId);
-                            if (!mounted) return;
-                            if (int.parse(roomID) > 0) {
-                              Navigator.push(context,
-                                  MaterialPageRoute(builder: (context) {
-                                return ChatScreen(
-                                  chatroomID: roomID, // chatroomID // 수정필요
-                                  loginID: loginID,
-                                  friendID: widget.friendId,
-                                  friendName: user.nickname,
-                                  friendImage: user.imagePath,
-                                );
-                              }));
-                            }
-                          },
-                          icon: Icon(
-                            Icons.send,
-                            color: Colors.purple,
-                          )),
-                    )
-                  : SizedBox(
-                      width: 1,
-                      height: 1,
-                    ),
-            ],
-          ),
-          const SizedBox(height: 4),
-          Text(
-            user.introduction,
-            style: TextStyle(color: Colors.grey, fontSize: 18),
-          )
-        ],
-      );
-
-  Widget buildImageTag(UserProfile user) => Align(
-        alignment: Alignment.center,
-        child: Container(
-          width: double.infinity,
-          alignment: Alignment.topCenter,
-          // color: Colors.red,
-          height: 150,
-          child: ListView.separated(
-            scrollDirection: Axis.horizontal,
-            physics: BouncingScrollPhysics(),
-            shrinkWrap: true,
-            // padding:
-            //     EdgeInsets.fromLTRB(10, 10, 10, 10), // 추가적인 padding을 줄 경우에 사용
-            itemCount: user.image.length,
-            itemBuilder: (c, i) {
-              return Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        // user.image1,
-                        user.image[i],
-                        width: 100,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
-                    ),
-                    Text(
-                      user.tag[i],
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                  ]);
-            },
-            separatorBuilder: (c, j) => SizedBox(width: 25),
-          ),
-        ),
-      );
-
-  Widget buildAbout(UserProfile user) => Container(
-        // color: Colors.blue,
-        // padding: EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start, // 문장의 시작점
-          children: [
-            Text(
-              user.title,
-              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(
-              user.about,
-              style: TextStyle(
-                  fontSize: 17, height: 1.5), // height가 자간? 다른 방법 있었던듯
-            ),
-          ],
-        ),
-      );
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
 }
