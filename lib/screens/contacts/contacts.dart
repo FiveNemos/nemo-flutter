@@ -16,6 +16,7 @@ class ContactsPage extends StatefulWidget {
 }
 
 class _ContactsPageState extends State<ContactsPage> {
+  bool isSearching = false;
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
   var nowId;
@@ -108,249 +109,255 @@ class _ContactsPageState extends State<ContactsPage> {
         FocusScope.of(context).unfocus();
       },
       child: Scaffold(
-        appBar: AppBar(
-          title: Text(
-            'NeMo',
-            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-          ),
-          centerTitle: true,
-          automaticallyImplyLeading: false,
-        ),
-        body: Column(
-          children: [
-            Padding(
-              padding: EdgeInsets.only(top: 16, left: 16, right: 16, bottom: 5),
-              child: TextField(
-                controller: _controller,
-                onChanged: (text) async {
-                  if (text.isNotEmpty) {
-                    searchContacts(text);
-                  } else {
-                    resetContacts();
-                    // await getAllCards(nowId); // 그냥 original friends로 바꾸는 방법도..
-                  }
-                },
-                decoration: InputDecoration(
-                  hintText: 'Search...',
-                  hintStyle: TextStyle(color: Colors.grey.shade600),
-                  prefixIcon: Icon(
-                    Icons.search,
-                    color: Colors.grey.shade600,
-                    size: 20,
-                  ),
-                  suffixIcon: _controller.text.isEmpty
-                      ? null
-                      : IconButton(
-                          icon: Icon(Icons.clear),
-                          color: Colors.black, //Color(0xff8338EC)
-                          iconSize: 15,
-                          onPressed: () {
-                            _controller.clear();
-                            resetContacts();
-                          }),
-                  filled: true,
-                  fillColor: Colors.grey.shade100,
-                  contentPadding: EdgeInsets.all(8),
-                  enabledBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.grey.shade100)),
-                  focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.grey.shade100)),
-                ),
-              ),
-            ),
-            Expanded(
-              child: ListView.separated(
-                  padding: EdgeInsets.fromLTRB(22, 8, 22, 10),
-                  shrinkWrap: false,
-                  physics: BouncingScrollPhysics(),
-                  itemCount: friends.length,
-                  itemBuilder: (c, i) {
-                    return InkWell(
-                      onTap: () => Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (c) => ProfilePage(
-                                    friendId: friends[i],
-                                    currIndex: 0,
-                                  ))),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 1.0,
-                              offset:
-                                  Offset(2, 4), // changes position of shadow
-                            ),
-                          ],
+        appBar: isSearching
+            ? AppBar(
+                title: Padding(
+                    padding: EdgeInsets.only(
+                        top: 10, left: 22, right: 0, bottom: 15),
+                    child: TextField(
+                      controller: _controller,
+                      onChanged: (text) async {
+                        searchContacts(text);
+                      },
+                      decoration: InputDecoration(
+                        hintText: 'Search...',
+                        hintStyle: TextStyle(color: Colors.grey.shade600),
+                        prefixIcon: Icon(
+                          Icons.search,
+                          color: Colors.grey.shade600,
+                          size: 20,
                         ),
-                        // margin: EdgeInsets.all(5),
-                        height: 180,
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10),
-                          child: Slidable(
-                            key: UniqueKey(),
-                            startActionPane: ActionPane(
-                              motion: const ScrollMotion(),
-                              // dismissible: DismissiblePane(onDismissed: () {
-                              //   // Navigator.pushNamed(context, '/contacts2');
-                              //   doNothing;
-                              // }),
-                              children: [
-                                SlidableAction(
-                                  onPressed: (_) {
-                                    showDialog(
-                                        context: context,
-                                        builder: (context) {
-                                          return DialogUI(
-                                              target: friends[i],
-                                              deleteFriend: deleteFriend);
-                                        });
-                                  },
-                                  backgroundColor: Color(0xFFFE4A49),
-                                  foregroundColor: Colors.white,
-                                  icon: Icons.delete,
-                                  label: 'Delete',
-                                ),
-                              ],
-                            ),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment
-                                  .start, // 정글러버, Pintos 정복자의 컬럼위치(위, 중간, 아래)
-                              children: [
-                                Container(
-                                  decoration: BoxDecoration(
-                                    border: Border(
-                                        right: BorderSide(color: Colors.black)),
-                                  ),
-                                  child: Image(
-                                    image: CachedNetworkImageProvider(
-                                        friendsData[friends[i]].imagePath),
-                                    width: 155,
-                                    height: 180,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                Expanded(
-                                  flex: 1,
-                                  child: Container(
-                                    padding: EdgeInsets.fromLTRB(8, 14, 0, 0),
-                                    child: Column(
-                                      // mainAxisAlignment: MainAxisAlignment.end, // 태그만 오른쪽 배치하고 싶다면
-                                      crossAxisAlignment: CrossAxisAlignment
-                                          .start, // 사진 옆 박스 row 시작점
-                                      children: [
-                                        Text(
-                                          friendsData[friends[i]].nickname,
-                                          style: TextStyle(
-                                            fontSize: 16,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 5, 0, 0),
-                                        ),
-                                        Text(
-                                          friendsData[friends[i]].introduction,
-                                          overflow: TextOverflow.ellipsis,
-                                          maxLines: 1,
-                                          style: TextStyle(
-                                            fontSize: 14,
-                                            fontWeight: FontWeight.w600,
-                                            color: Colors.grey.shade600,
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              EdgeInsets.fromLTRB(0, 10, 0, 0),
-                                        ),
-                                        Wrap(
-                                          direction: Axis.vertical,
-                                          spacing:
-                                              5, // gap between adjacent chips
-                                          runSpacing: 4.0,
-                                          children: [
-                                            Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  8, 2, 8, 2),
-                                              decoration: BoxDecoration(
-                                                color: Color(0xff8338EC),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Text(
-                                                friendsData[friends[i]].tag[0],
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  7, 2, 7, 2),
-                                              decoration: BoxDecoration(
-                                                color: Colors.white,
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                                border: Border.all(
-                                                  width: 1.5,
-                                                  color: Color(0xff8338EC),
-                                                ),
-                                              ),
-                                              child: Text(
-                                                friendsData[friends[i]].tag[1],
-                                                style: TextStyle(
-                                                  color: Colors.black,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                            Container(
-                                              // color: Colors.white,
-                                              padding: EdgeInsets.fromLTRB(
-                                                  8, 3, 8, 3),
-                                              decoration: BoxDecoration(
-                                                color: Color(0xff8338EC),
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                              child: Text(
-                                                friendsData[friends[i]].tag[2],
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 13,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
+                        suffixIcon: _controller.text.isEmpty
+                            ? null
+                            : IconButton(
+                                icon: Icon(Icons.clear),
+                                color: Colors.black, //Color(0xff8338EC)
+                                iconSize: 15,
+                                onPressed: () {
+                                  _controller.clear();
+                                  resetContacts();
+                                }),
+                        filled: true,
+                        fillColor: Colors.grey.shade100,
+                        contentPadding: EdgeInsets.all(8),
+                        enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide:
+                                BorderSide(color: Colors.grey.shade100)),
+                        focusedBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(20),
+                            borderSide:
+                                BorderSide(color: Colors.grey.shade100)),
+                      ),
+                    )),
+                toolbarHeight: 45,
+                actions: [
+                  IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _controller.clear();
+                          isSearching = false;
+                          resetContacts();
+                        });
+                      },
+                      icon: Icon(
+                        Icons.cancel,
+                        size: 20,
+                      ))
+                ],
+                automaticallyImplyLeading: false,
+              )
+            : AppBar(
+                title: Text(
+                  'NeMo',
+                  style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+                ),
+                centerTitle: true,
+                automaticallyImplyLeading: false,
+                toolbarHeight: 45,
+                actions: [
+                  IconButton(
+                    icon: Icon(Icons.search),
+                    onPressed: () {
+                      setState(() {
+                        isSearching = true;
+                      });
+                    },
+                  )
+                ],
+              ),
+        body: ListView.separated(
+            scrollDirection: Axis.vertical,
+            padding: EdgeInsets.fromLTRB(25, 15, 25, 15), // 사진 크기 조절 1
+            // shrinkWrap: false,
+            physics: BouncingScrollPhysics(),
+            itemCount: friends.length,
+            itemBuilder: (c, i) {
+              return InkWell(
+                onTap: () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (c) => ProfilePage(
+                              friendId: friends[i],
+                              currIndex: 0,
+                            ))),
+                child: Container(
+                  // height: 500,
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0), // 사진 크기 조절 2
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    border: Border.all(color: Colors.black),
+                    borderRadius: BorderRadius.circular(10),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.grey.withOpacity(0.5),
+                        spreadRadius: 1,
+                        blurRadius: 1.0,
+                        offset: Offset(2, 4), // changes position of shadow
+                      ),
+                    ],
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch, // add this
+                    children: <Widget>[
+                      ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(10.0),
+                          topRight: Radius.circular(10.0),
+                        ),
+                        child: Image(
+                          image: CachedNetworkImageProvider(
+                              friendsData[friends[i]].imagePath),
+                          width: double.infinity,
+                          height: 230,
+                          fit: BoxFit.fill,
                         ),
                       ),
-                    );
-                  },
-                  separatorBuilder: (context, i) => SizedBox(height: 10)),
-            ),
-          ],
-        ),
+                      Container(
+                        padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                        decoration: BoxDecoration(
+                            border:
+                                Border(top: BorderSide(color: Colors.black))),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Align(
+                              alignment: Alignment.center,
+                              child: Container(
+                                width: double.infinity,
+                                height: 23,
+                                child: ListView.separated(
+                                    // shrinkWrap: true,
+                                    scrollDirection: Axis.horizontal,
+                                    physics: ClampingScrollPhysics(),
+                                    itemBuilder: (c, j) {
+                                      if (j == 0) {
+                                        return buildNickName(
+                                            friendsData[friends[i]].nickname);
+                                      } else if (j == 2) {
+                                        return buildWhiteTag(
+                                            friendsData[friends[i]].tag[j - 1]);
+                                      } else {
+                                        return buildPurPleTag(
+                                            friendsData[friends[i]].tag[j - 1]);
+                                      }
+                                    },
+                                    separatorBuilder: (c, k) =>
+                                        SizedBox(width: 5),
+                                    itemCount: 4),
+                              ),
+                            ),
+                            // Row(
+                            //   children: [
+                            //     buildNickName(friendsData[friends[i]].nickname),
+                            //     buildTag(friendsData[friends[i]].tag[0]),
+                            //     buildTag(friendsData[friends[i]].tag[1]),
+                            //     buildTag(friendsData[friends[i]].tag[2]),
+                            //   ],
+                            // ),
+                            Text(
+                              friendsData[friends[i]].introduction,
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 14,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                            // SizedBox(height: 5),
+                            // Row(
+                            //   children: [
+                            //     Container(
+                            //       padding:
+                            //           EdgeInsets.fromLTRB(7, 2, 7, 2),
+                            //       decoration: BoxDecoration(
+                            //         color: Color(0xff8338EC),
+                            //         borderRadius:
+                            //             BorderRadius.circular(10),
+                            //       ),
+                            //       child: Text(
+                            //         friendsData[friends[i]].tag[0],
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 12,
+                            //           fontWeight: FontWeight.bold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     Padding(
+                            //         padding:
+                            //             EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                            //     Container(
+                            //       padding:
+                            //           EdgeInsets.fromLTRB(7, 1, 7, 1),
+                            //       decoration: BoxDecoration(
+                            //         color: Colors.white,
+                            //         borderRadius:
+                            //             BorderRadius.circular(12),
+                            //         border: Border.all(
+                            //           width: 1.5,
+                            //           color: Color(0xff8338EC),
+                            //         ),
+                            //       ),
+                            //       child: Text(
+                            //         friendsData[friends[i]].tag[1],
+                            //         style: TextStyle(
+                            //           color: Colors.black,
+                            //           fontSize: 12,
+                            //           fontWeight: FontWeight.bold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //     Padding(
+                            //         padding:
+                            //             EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                            //     Container(
+                            //       padding:
+                            //           EdgeInsets.fromLTRB(7, 2, 7, 2),
+                            //       decoration: BoxDecoration(
+                            //         color: Color(0xff8338EC),
+                            //         borderRadius:
+                            //             BorderRadius.circular(10),
+                            //       ),
+                            //       child: Text(
+                            //         friendsData[friends[i]].tag[2],
+                            //         style: TextStyle(
+                            //           color: Colors.white,
+                            //           fontSize: 12,
+                            //           fontWeight: FontWeight.bold,
+                            //         ),
+                            //       ),
+                            //     ),
+                            //   ],
+                            // )
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              );
+            },
+            separatorBuilder: (context, i) => SizedBox(height: 10)),
         bottomNavigationBar: BottomNavigationBar(
           type: BottomNavigationBarType.fixed,
           items: [
@@ -399,6 +406,50 @@ class _ContactsPageState extends State<ContactsPage> {
       ),
     );
   }
+
+  Widget buildNickName(nickname) => Text(
+        nickname,
+        style: TextStyle(
+          color: Colors.black,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+  Widget buildPurPleTag(tagname) => Container(
+        padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
+        decoration: BoxDecoration(
+          color: Color(0xff8338EC),
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Text(
+          tagname,
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
+
+  Widget buildWhiteTag(tagname) => Container(
+        padding: EdgeInsets.fromLTRB(7, 1, 7, 1),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            width: 1.5,
+            color: Color(0xff8338EC),
+          ),
+        ),
+        child: Text(
+          tagname,
+          style: TextStyle(
+            color: Colors.black,
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+      );
 }
 
 void doNothing(BuildContext context) {}
