@@ -5,7 +5,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:nemo_flutter/screens/mypage/profile_page.dart';
+import 'package:provider/provider.dart';
 import '../../models/contacts/user.dart';
+import '../../providers/bottomBar.dart';
 // import '../../tests/contacts/preferences.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -357,51 +359,9 @@ class _ContactsPageState extends State<ContactsPage> {
               );
             },
             separatorBuilder: (context, i) => SizedBox(height: 10)),
-        bottomNavigationBar: BottomNavigationBar(
-          type: BottomNavigationBarType.fixed,
-          items: [
-            BottomNavigationBarItem(
-              icon: Icon(Icons.contacts),
-              label: '연락처',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.share),
-              label: '공유',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.map),
-              label: 'Map',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.message),
-              label: '메시지',
-            ),
-            BottomNavigationBarItem(
-              icon: Icon(Icons.person),
-              label: '마이페이지',
-            ),
-          ],
-          currentIndex: 0,
-          onTap: (int index) {
-            switch (index) {
-              case 0:
-                // Navigator.pushNamed(context, '/contacts');
-                break;
-              case 1:
-                Navigator.pushNamed(context, '/sharing');
-                break;
-              case 2:
-                Navigator.pushNamed(context, '/map');
-                break;
-              case 3:
-                Navigator.pushNamed(context, '/message');
-                break;
-              case 4:
-                Navigator.pushNamed(context, '/mypage');
-                break;
-            }
-          },
-        ),
+        bottomNavigationBar: context
+            .read<BottomNavigationProvider>()
+            .bottomNavigationBarClick(0, context),
       ),
     );
   }
