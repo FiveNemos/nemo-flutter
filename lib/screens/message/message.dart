@@ -9,21 +9,22 @@ class MessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Scaffold for route message page
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          'NeMo',
-          style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-      ),
-      body: ChatPage(),
-      // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
-      bottomNavigationBar: context
-          .read<BottomNavigationProvider>()
-          .bottomNavigationBarClick(3, context),
-    );
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: Text(
+    //       'NeMo',
+    //       style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
+    //     ),
+    //     centerTitle: true,
+    //     automaticallyImplyLeading: false,
+    //   ),
+    //   body: ChatPage(),
+    //   // bottomnavigatonbar for rotue to the main page -> contacts, sharing, message, mypage
+    //   bottomNavigationBar: context
+    //       .read<BottomNavigationProvider>()
+    //       .bottomNavigationBarClick(3, context),
+    // );
+    return ChatPage();
   }
 
   // bottomNavigationBarClick(nowIndex, context) {
