@@ -26,7 +26,7 @@ class _InitPageState extends State<InitPage> {
     } else if (await findCard(userInfo['user_id']) == false) {
       Navigator.pushNamed(context, '/namecard');
     } else {
-      Navigator.pushNamed(context, '/contacts');
+      Navigator.pushNamed(context, '/sharing');
     }
   }
 
