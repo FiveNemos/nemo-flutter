@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:nemo_flutter/screens/contacts/contacts.dart';
 import 'package:provider/provider.dart';
 import '../../models/message/chatrooms.dart';
 import '../../providers/bottomBar.dart';
@@ -148,11 +149,19 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void dispose() {
     //cancel the timer
-    // if (_timer!.isActive) _timer!.cancel();
-    setState(() {
-      _timer!.cancel();
-    });
+    if (_timer!.isActive) _timer!.cancel();
+    // setState(() {
+    //   _timer!.cancel();
+    // });
     super.dispose();
+  }
+
+  @override
+  void deactivate() {
+    // setState(() {
+    //   _timer!.cancel();
+    // });
+    super.deactivate();
   }
 
   @override
@@ -294,9 +303,56 @@ class _ChatPageState extends State<ChatPage> {
               ],
             ),
           ),
-          bottomNavigationBar: context
-              .read<BottomNavigationProvider>()
-              .bottomNavigationBarClick(3, context)),
+          bottomNavigationBar: BottomNavigationBar(
+              type: BottomNavigationBarType.fixed,
+              items: [
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.contacts),
+                  label: '연락처',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.map),
+                  label: '지도',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.share),
+                  label: '공유',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.message),
+                  label: '메시지',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.person),
+                  label: '마이페이지',
+                ),
+              ],
+              currentIndex: 3,
+              onTap: (int nextIndex) {
+                if (nextIndex == 3) {
+                  return;
+                }
+                setState(() {
+                  _timer!.cancel();
+                });
+                switch (nextIndex) {
+                  case 0:
+                    Navigator.pushNamed(context, '/contacts');
+                    break;
+                  case 1:
+                    Navigator.pushNamed(context, '/map');
+                    break;
+                  case 2:
+                    Navigator.pushNamed(context, '/sharing');
+                    break;
+                  case 3:
+                    Navigator.pushNamed(context, '/message');
+                    break;
+                  case 4:
+                    Navigator.pushNamed(context, '/mypage');
+                    break;
+                }
+              })),
     );
   }
 }
