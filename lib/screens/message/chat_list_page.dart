@@ -234,6 +234,15 @@ class _ChatPageState extends State<ChatPage> {
                     // print(snapshot.data);
                     if (snapshot.hasData) {
                       chatUsers = snapshot.data;
+                      if (chatUsers.isEmpty) {
+                        return Container(
+                          alignment: Alignment.center,
+                          height: 200,
+                          child: Text(
+                              '대화 내역이 없습니다. \n 명함을 교환한 친구에게 메세지를 보내보세요!',
+                              textAlign: TextAlign.center),
+                        );
+                      }
                       chatUsers = chatUsers
                           .where((x) => x.friendName.startsWith(searchText))
                           .toList();
@@ -261,8 +270,7 @@ class _ChatPageState extends State<ChatPage> {
                       return Container(
                         alignment: Alignment.center,
                         height: 200,
-                        child: Text('대화 내역이 없습니다. \n 명함을 교환한 친구에게 메세지를 보내보세요!',
-                            textAlign: TextAlign.center),
+                        child: Text('로딩 중입니다 :)', textAlign: TextAlign.center),
                       );
                     }
                   })
