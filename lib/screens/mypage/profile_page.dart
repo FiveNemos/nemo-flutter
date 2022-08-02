@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/mypage/user.dart';
+import '../../providers/bottomBar.dart';
 import '../../widgets/mypage/profile_widget.dart';
 import '../message/chat_detail_page.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
@@ -164,75 +166,77 @@ class _ProfilePageState extends State<ProfilePage> {
       onWillPop: () {
         setState(() {});
         // shraring
-        if (widget.currIndex == 1) {
+        if (widget.currIndex == 2) {
           return Future.value(false);
         } else {
           return Future.value(true);
         }
       },
       child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'NeMo',
-              style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-            ),
-            centerTitle: true,
-            leading: !_isMe
-                ? IconButton(
-                    icon: Icon(Icons.keyboard_backspace_outlined),
-                    onPressed: () {
-                      if (widget.currIndex == 1) {
-                        Navigator.pushNamed(context, '/sharing');
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    },
-                  )
-                : IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return CardEditor();
-                      }));
-                    }),
-            // : SizedBox(
-            //     width: 1,
-            //     height: 1,
-            //   ),
-            actions: _isMe
-                ? [
-                    IconButton(
-                      icon: Icon(Icons.logout),
-                      tooltip: 'logout',
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                    ),
-                  ]
-                : [],
+        appBar: AppBar(
+          title: Text(
+            'NeMo',
+            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
           ),
-          body: (user != null)
-              ? ListView.separated(
-                  // shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-                  // 전체 박스에 대한 padding
-                  itemCount: buildList.length,
-                  itemBuilder: (context, i) {
-                    return buildList[i](user);
+          centerTitle: true,
+          leading: !_isMe
+              ? IconButton(
+                  icon: Icon(Icons.keyboard_backspace_outlined),
+                  onPressed: () {
+                    if (widget.currIndex == 2) {
+                      Navigator.pushNamed(context, '/sharing');
+                    } else {
+                      Navigator.pop(context);
+                    }
                   },
-                  separatorBuilder: (context, i) => SizedBox(height: 15),
                 )
-              : Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.purple,
-                    semanticsLabel: '로딩중입니다 . . .',
+              : IconButton(
+                  icon: Icon(Icons.edit),
+                  onPressed: () {
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) {
+                      return CardEditor();
+                    }));
+                  }),
+          // : SizedBox(
+          //     width: 1,
+          //     height: 1,
+          //   ),
+          actions: _isMe
+              ? [
+                  IconButton(
+                    icon: Icon(Icons.logout),
+                    tooltip: 'logout',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
                   ),
+                ]
+              : [],
+        ),
+        body: (user != null)
+            ? ListView.separated(
+                // shrinkWrap: true,
+                physics: BouncingScrollPhysics(),
+                scrollDirection: Axis.vertical,
+                padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
+                // 전체 박스에 대한 padding
+                itemCount: buildList.length,
+                itemBuilder: (context, i) {
+                  return buildList[i](user);
+                },
+                separatorBuilder: (context, i) => SizedBox(height: 15),
+              )
+            : Center(
+                child: CircularProgressIndicator(
+                  color: Colors.purple,
+                  semanticsLabel: '로딩중입니다 . . .',
                 ),
-          bottomNavigationBar:
-              bottomNavigationBarClick(widget.currIndex, context)),
+              ),
+        bottomNavigationBar: context
+            .read<BottomNavigationProvider>()
+            .bottomNavigationBarClick(widget.currIndex, context),
+      ),
     );
   }
 
@@ -364,12 +368,12 @@ class _ProfilePageState extends State<ProfilePage> {
             label: '연락처',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.share),
-            label: '공유',
+            icon: Icon(Icons.map),
+            label: '지도',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
+            icon: Icon(Icons.share),
+            label: '공유',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.message),
