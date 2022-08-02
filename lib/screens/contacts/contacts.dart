@@ -229,8 +229,8 @@ class _ContactsPageState extends State<ContactsPage> {
                           image: CachedNetworkImageProvider(
                               friendsData[friends[i]].imagePath),
                           width: double.infinity,
-                          height: 230,
-                          fit: BoxFit.fill,
+                          height: 235,
+                          fit: BoxFit.fitWidth,
                         ),
                       ),
                       Container(
@@ -245,36 +245,35 @@ class _ContactsPageState extends State<ContactsPage> {
                               alignment: Alignment.center,
                               child: Container(
                                 width: double.infinity,
-                                height: 23,
-                                child: ListView.separated(
-                                    // shrinkWrap: true,
-                                    scrollDirection: Axis.horizontal,
-                                    physics: ClampingScrollPhysics(),
-                                    itemBuilder: (c, j) {
-                                      if (j == 0) {
-                                        return buildNickName(
-                                            friendsData[friends[i]].nickname);
-                                      } else if (j == 2) {
-                                        return buildWhiteTag(
-                                            friendsData[friends[i]].tag[j - 1]);
-                                      } else {
-                                        return buildPurPleTag(
-                                            friendsData[friends[i]].tag[j - 1]);
-                                      }
-                                    },
-                                    separatorBuilder: (c, k) =>
-                                        SizedBox(width: 5),
-                                    itemCount: 4),
+                                height: 25,
+                                child: Center(
+                                  child: ListView.separated(
+                                      // shrinkWrap: true,
+                                      scrollDirection: Axis.horizontal,
+                                      physics: ClampingScrollPhysics(),
+                                      itemBuilder: (c, j) {
+                                        if (j == 0) {
+                                          return buildNickName(
+                                              friendsData[friends[i]].nickname);
+                                        } else if (j == 2) {
+                                          return buildWhiteTag(
+                                              friendsData[friends[i]]
+                                                  .tag[j - 1]);
+                                        } else {
+                                          return buildPurPleTag(
+                                              friendsData[friends[i]]
+                                                  .tag[j - 1]);
+                                        }
+                                      },
+                                      separatorBuilder: (c, k) =>
+                                          SizedBox(width: 5),
+                                      itemCount: 4),
+                                ),
                               ),
                             ),
-                            // Row(
-                            //   children: [
-                            //     buildNickName(friendsData[friends[i]].nickname),
-                            //     buildTag(friendsData[friends[i]].tag[0]),
-                            //     buildTag(friendsData[friends[i]].tag[1]),
-                            //     buildTag(friendsData[friends[i]].tag[2]),
-                            //   ],
-                            // ),
+                            SizedBox(
+                              height: 2,
+                            ),
                             Text(
                               friendsData[friends[i]].introduction,
                               style: TextStyle(
@@ -407,32 +406,42 @@ class _ContactsPageState extends State<ContactsPage> {
     );
   }
 
-  Widget buildNickName(nickname) => Text(
-        nickname,
-        style: TextStyle(
-          color: Colors.black,
-          fontSize: 20,
-          fontWeight: FontWeight.bold,
+  Widget buildNickName(nickname) => Container(
+        child: Center(
+          child: Text(
+            nickname,
+            style: TextStyle(
+              color: Colors.black,
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
         ),
       );
   Widget buildPurPleTag(tagname) => Container(
         padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
         decoration: BoxDecoration(
           color: Color(0xff8338EC),
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+            width: 1.5,
+            color: Colors.grey.shade100,
+          ),
         ),
-        child: Text(
-          tagname,
-          style: TextStyle(
-            color: Colors.white,
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
+        child: Center(
+          child: Text(
+            tagname.trim(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 12,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ),
       );
 
   Widget buildWhiteTag(tagname) => Container(
-        padding: EdgeInsets.fromLTRB(7, 1, 7, 1),
+        padding: EdgeInsets.fromLTRB(7, 2, 7, 2),
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(12),
