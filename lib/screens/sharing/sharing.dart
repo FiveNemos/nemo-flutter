@@ -70,7 +70,7 @@ class _SharingPageState extends State<SharingPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
-                    height: 20,
+                    height: 10,
                   ),
                   Image.asset(
                     'assets/took_up.jpg',
@@ -116,7 +116,7 @@ class _SharingPageState extends State<SharingPage> {
                   // SizedBox(height: 30),
                   SizedBox(
                     width: 350.0,
-                    height: 70.0,
+                    height: 80.0,
                     child: Shimmer.fromColors(
                       baseColor: Colors.red,
                       highlightColor: Colors.yellow,
@@ -124,7 +124,7 @@ class _SharingPageState extends State<SharingPage> {
                         'TooK !',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 50.0,
+                          fontSize: 60.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -132,7 +132,7 @@ class _SharingPageState extends State<SharingPage> {
                   ),
                   Image.asset(
                     'assets/bump_hand.gif',
-                    height: 180,
+                    height: 200,
                     fit: BoxFit.cover,
                   ),
                   // SizedBox(
