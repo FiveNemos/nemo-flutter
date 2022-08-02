@@ -229,7 +229,7 @@ class _ContactsPageState extends State<ContactsPage> {
                           image: CachedNetworkImageProvider(
                               friendsData[friends[i]].imagePath),
                           width: double.infinity,
-                          height: 222,
+                          height: 230,
                           fit: BoxFit.fill,
                         ),
                       ),
