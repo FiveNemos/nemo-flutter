@@ -58,6 +58,7 @@ dependencies:
   qr_flutter: ^4.0.0
   barcode_scan2: ^4.2.1
   qr_code_scanner: ^1.0.0
+  flutter_switch: ^0.3.2
 
 
 

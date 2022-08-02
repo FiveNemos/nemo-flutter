@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/screens/sharing/sharing_qr_page.dart';
 
 // import widget style
 import './styles/style.dart' as style;
@@ -41,7 +42,7 @@ class MyApp extends StatelessWidget {
         '/contacts': (context) => ContactsPage(),
         '/message': (context) => MessagePage(),
         '/mypage': (context) => MypagePage(),
-        '/sharing': (context) => QRforTOOK(isSender: true, latlng: [33, 175]),
+        '/sharing': (context) => SharingPage(),
         '/namecard': (context) => NameCardGenerator(),
         '/map': (context) => CurrentLocationScreen(),
       }, // end routes
