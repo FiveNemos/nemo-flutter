@@ -3,9 +3,13 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nemo_flutter/screens/sharing/punch.dart';
+import 'package:page_transition/page_transition.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:socket_io_client/socket_io_client.dart';
+
+import '../mypage/profile_page.dart';
 
 // sharing.dart
 // Sharing 페이지를 stateful widget으로 변경하기
@@ -22,10 +26,12 @@ import 'package:qr_code_scanner/qr_code_scanner.dart';
 // 명함을 받는 사람은 QR를 촬영한 후에, 담기는 데이터 (id) 를 기반으로 'QR${friendId}' 라는 소켓 방으로 접속
 // 접속에 성공한 후에, 자기 아이디가 뭔지를 emit해주고, 1초 후에 disconnect 하고 PunchPage로 이동
 
-
-
 class QRforTOOK extends StatefulWidget {
-  QRforTOOK({Key? key, required this.isSender, this.myId, required this.latlng})
+  QRforTOOK(
+      {Key? key,
+      required this.isSender,
+      required this.myId,
+      required this.latlng})
       : super(key: key);
   bool isSender;
   int? myId;
@@ -39,6 +45,62 @@ class _QRforTOOKState extends State<QRforTOOK> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   Barcode? result;
   QRViewController? controller;
+  dynamic socket;
+  void setStateIfMounted(f) {
+    if (mounted) setState(f);
+  }
+
+  initializeSocket() {
+    try {
+      socket = io('http://34.64.217.3:3000/', <String, dynamic>{
+        'transports': ['websocket'],
+        'autoConnect': false,
+      });
+
+      socket.connect();
+      socket.on('connect', (data) {
+        debugPrint('socket connected');
+        if (widget.isSender) {
+          socket.emit('join', 'QR${widget.myId}');
+        }
+        debugPrint('연결완료');
+      });
+
+      socket.on('join', (data) {
+        debugPrint('socket join');
+      });
+
+      socket.on('leave', (data) {
+        debugPrint('socket leave');
+      });
+
+      socket.on('took', (data) {
+        int friendId = widget.isSender ? data.receiverID : data.senderID;
+        socket.emit('leave', data.chatroomID); // receiver, sender 공통
+        socket.emit('disconnect');
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) =>
+                    PunchPage(friendId: friendId, latlng: widget.latlng)));
+      });
+
+      socket.on('disconnect', (data) {
+        debugPrint('socket disconnected');
+        socket.disconnect();
+      });
+      // socket.onDisconnect((_) => debugPrint('disconnect'));
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    initializeSocket();
+    super.initState();
+  }
 
   // In order to get hot reload to work we need to pause the camera if the platform
   // is android, or resume the camera if the platform is iOS.
@@ -59,11 +121,11 @@ class _QRforTOOKState extends State<QRforTOOK> {
       body: widget.isSender
           ? Center(
               child: QrImage(
-                data: widget.myId.toString(),
-                backgroundColor: Colors.white,
-                size: 200,
-              ),
-            )
+              data: widget.myId.toString(),
+              backgroundColor: Colors.white,
+              size: 200,
+            ))
+          // child: Text("난 샌즈라고!!!"))
           : Column(
               children: <Widget>[
                 Expanded(
@@ -91,17 +153,18 @@ class _QRforTOOKState extends State<QRforTOOK> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      int friendId;
-      String? friendIdinStr = scanData.code;
-      friendId = int.parse(friendIdinStr!);
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) =>
-                  PunchPage(friendId: friendId, latlng: widget.latlng)));
+      int senderId;
+      String? senderIdinStr = scanData.code;
+      senderId = int.parse(senderIdinStr!);
 
       setState(() {
         result = scanData;
+        socket.emit('join', 'QR$senderId');
+        socket.emit('took', {
+          'chatroomID': 'QR$senderId',
+          'senderID': senderId,
+          'receiverID': widget.myId
+        }); // 칭구
       });
     });
   }
