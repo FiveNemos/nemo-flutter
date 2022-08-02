@@ -55,6 +55,11 @@ dependencies:
   geolocator: ^9.0.1
   intl: ^0.17.0
   page_transition: ^2.0.9
+  qr_flutter: ^4.0.0
+  barcode_scan2: ^4.2.1
+  qr_code_scanner: ^1.0.0
+
+
 
 
   # swipe: ^0.0.1
