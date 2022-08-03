@@ -24,6 +24,7 @@ class _SignupPageState extends State<SignupPage> {
   var errorDetail;
   var loginID;
   bool isChecked = false;
+  bool isuserChecked = false;
 
   static final storage = FlutterSecureStorage();
   dynamic userInfo = '';
@@ -97,6 +98,42 @@ class _SignupPageState extends State<SignupPage> {
     );
   }
 
+  checkNemoAgreements() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        RichText(
+          // style: TextStyle(fontSize: 13),
+          text: TextSpan(children: [
+            TextSpan(
+                text: '네모 서비스 이용약관',
+                style: TextStyle(color: Colors.blue),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () async {
+                    final uri = Uri.parse(
+                        'https://sites.google.com/view/nemoserviceguide/%ED%99%88');
+                    if (!await launchUrl(uri)) {
+                      throw 'Could not launch $uri';
+                    }
+                  }),
+            TextSpan(text: '에 동의합니다', style: TextStyle(color: Colors.black))
+          ]),
+        ),
+        // controlAffinity: ListTileControlAffinity.platform,
+        Checkbox(
+          value: isuserChecked,
+          onChanged: (bool? value) {
+            setState(() {
+              isuserChecked = value!;
+            });
+          },
+          activeColor: Colors.blue,
+          checkColor: Colors.white,
+        ),
+      ],
+    );
+  }
+
   checkAgreements() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -131,6 +168,10 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ],
     );
+  }
+
+  checktext() {
+    return Center(child: Text('미동의시 서비스 이용이 제한됩니다.'));
   }
 
   signupDecoration(labelText) {
@@ -208,7 +249,9 @@ class _SignupPageState extends State<SignupPage> {
       changePassword,
       changePasswordAgain,
       changePhoneNumber,
+      checkNemoAgreements,
       checkAgreements,
+      checktext,
     ];
     return GestureDetector(
       onTap: () {
@@ -234,7 +277,7 @@ class _SignupPageState extends State<SignupPage> {
                   } else if (!phoneNumberExp.hasMatch(phoneNumber)) {
                     errorDialog('유효하지 않은 전화번호입니다.\n -을 제외한 11자리 번호만 입력해주세요!');
                   } else if (isChecked == false) {
-                    errorDialog('개인정보 처리방침에 동의해주세요.');
+                    errorDialog('서비스 이용약관 및 개인정보 처리방침에 동의해주세요.');
                   } else {
                     print('Trying to POST signup. . . ');
                     if (await postUser(accountName, password, phoneNumber) ==
