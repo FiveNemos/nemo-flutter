@@ -7,6 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
+import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
 
 import '../sharing/sharing.dart';
 
@@ -132,12 +135,56 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
   dynamic tagImage3 = Image.asset('assets/mypage/grey_gallery.png');
   var detailTitle = '인삿말을 입력해주세요!';
   var detailContent = '더 하고픈 말이 있나요?';
+  int editCount = 0;
 
-  saveUserImage(File file) {
-    setState(() {
-      userImage = file;
-    });
+  Future getImage(context) async {
+    Uint8List bytes = Uint8List(0);
+
+    var pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      await imageFile
+          .readAsBytes()
+          .then((value) => bytes = Uint8List.fromList(value))
+          .catchError((onError) {
+        print('Exception error while reading file from path');
+      });
+      print('pickedImage.path = ${pickedImage.path}!!!!!!!!!!!!!');
+      // var finalImage = Image.file(imageFile);
+      // var data = await rootBundle.load(pickedImage.path);
+      var imageData = bytes.buffer.asUint8List();
+      var editedImage = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImageEditor(
+            image: imageData,
+          ),
+        ),
+      );
+      // print('editedImage = ${editedImage.path}');
+      if (editedImage != null) {
+        Uint8List imageInUnit8List =
+            editedImage; // store unit8List image here ;
+        final tempDir = await getTemporaryDirectory();
+        File file = await File('${tempDir.path}/image$editCount.png').create();
+        file.writeAsBytesSync(imageInUnit8List);
+        setState(() {
+          userImage = file;
+          editCount++;
+        });
+      } else {
+        print('Edited Image was null~~~~~~~');
+      }
+      print('처리 다 끝났달룽~~~~~~~~~~');
+    }
   }
+
+  // saveUserImage(File file) {
+  //   setState(() {
+  //     userImage = file;
+  //   });
+  // }
 
   saveTagImage(int num, File picture) {
     setState(() {
@@ -253,7 +300,7 @@ class _NameCardGeneratorState extends State<NameCardGenerator> {
                     tags: tags,
                     introduction: introduction,
                     userImage: userImage,
-                    saveUserImage: saveUserImage,
+                    getImage: getImage,
                   ),
                   Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 25)),
                   SizedBox(
@@ -644,12 +691,14 @@ class NameCard extends StatefulWidget {
     this.tags,
     this.introduction,
     this.userImage,
-    this.saveUserImage,
+    this.getImage,
+    // this.saveUserImage,
   }) : super(key: key);
 
   var nickname, tags, introduction;
   dynamic userImage;
-  var saveUserImage;
+  // var saveUserImage;
+  var getImage;
 
   @override
   State<NameCard> createState() => _NameState();
@@ -684,13 +733,15 @@ class _NameState extends State<NameCard> {
                 margin: EdgeInsets.fromLTRB(0, 0, 10, 0),
                 child: GestureDetector(
                   onTap: () async {
-                    var picker = ImagePicker();
-                    var image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      widget.saveUserImage(File(image.path));
-                    }
+                    await widget.getImage(context);
                   },
+                  // var picker = ImagePicker();
+                  // var image =
+                  //     await picker.pickImage(source: ImageSource.gallery);
+                  // if (image != null) {
+                  //   widget.saveUserImage(File(image.path));
+                  // }
+                  // },
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10.0),

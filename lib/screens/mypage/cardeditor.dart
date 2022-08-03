@@ -15,7 +15,8 @@ import 'dart:typed_data';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 
-const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
+const BASE_URL = 'https://storage.googlea'
+    'pis.com/nemo-bucket/';
 
 Map<String, int> CHANGED = {
   'nickname': 0,
@@ -267,6 +268,7 @@ class _CardEditorState extends State<CardEditor> {
     });
   }
 
+  int editCount = 0;
   Future getImage(context) async {
     print('getImage 들어옴!!!!!!!!!');
     print('CHANGED[\'userImage\'] = ${CHANGED['userImage']}');
@@ -289,7 +291,8 @@ class _CardEditorState extends State<CardEditor> {
           .catchError((onError) {
         print('Exception error while reading file from path');
       });
-      print('pickedImage.path = ${pickedImage.path}!!!!!!!!!!!!!');
+      print(
+          'pickedImage.path = ${pickedImage.path}!!!!!!!!!!!!!'); //어쩐지 이게 계속 똑같더
       // var finalImage = Image.file(imageFile);
       // var data = await rootBundle.load(pickedImage.path);
       var imageData = bytes.buffer.asUint8List();
@@ -306,11 +309,12 @@ class _CardEditorState extends State<CardEditor> {
         Uint8List imageInUnit8List =
             editedImage; // store unit8List image here ;
         final tempDir = await getTemporaryDirectory();
-        File file = await File('${tempDir.path}/image.png').create();
+        File file = await File('${tempDir.path}/image$editCount.png').create();
         file.writeAsBytesSync(imageInUnit8List);
         setState(() {
           userImage = file;
           CHANGED['userImage'] = 1;
+          editCount++;
         });
       } else {
         print('Edited Image was null~~~~~~~');
@@ -932,15 +936,16 @@ class _NameState extends State<NameCard> {
                 decoration: BoxDecoration(color: Color(0xffE6E6FA)),
                 child: InkWell(
                   // onTap: () async {
-                  onTap: () {
-                    widget.getImage(context);
-                    // var picker = ImagePicker();
-                    // var image =
-                    //     await picker.pickImage(source: ImageSource.gallery);
-                    // if (image != null) {
-                    //   widget.saveUserImage(File(image.path));
-                    // }
+                  onTap: () async {
+                    await widget.getImage(context);
                   },
+                  // var picker = ImagePicker();
+                  // var image =
+                  //     await picker.pickImage(source: ImageSource.gallery);
+                  // if (image != null) {
+                  //   widget.saveUserImage(File(image.path));
+                  // }
+                  // },
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
                       topLeft: Radius.circular(10.0),
