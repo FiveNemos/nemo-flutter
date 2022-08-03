@@ -141,7 +141,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: 'Gamja',
-                          fontSize: 30,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.red)),
                   SizedBox(
@@ -151,7 +151,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontFamily: 'dohyeon',
-                          fontSize: 20,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
@@ -161,7 +161,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontFamily: 'dohyeon',
-                          fontSize: 20,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
@@ -171,7 +171,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       textAlign: TextAlign.left,
                       style: TextStyle(
                           fontFamily: 'dohyeon',
-                          fontSize: 20,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
@@ -192,7 +192,7 @@ class _ContactsPageState extends State<ContactsPage> {
                       textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: 'dohyeon',
-                          fontSize: 20,
+                          fontSize: 15,
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                 ],
@@ -203,7 +203,7 @@ class _ContactsPageState extends State<ContactsPage> {
               ElevatedButton(
                 child: Text('명함 밀어서 신고하기! 이해완료!',
                     style: TextStyle(
-                        fontSize: 15,
+                        fontSize: 10,
                         color: Color.fromARGB(255, 255, 255, 255),
                         fontFamily: 'Dohyun')),
                 onPressed: () {
