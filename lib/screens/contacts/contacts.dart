@@ -36,28 +36,33 @@ class _ContactsPageState extends State<ContactsPage> {
           await dio.get('http://34.64.217.3:3000/api/card/all/$id');
       if (response.statusCode == 200) {
         final json = response.data;
+        if (json == 'no friend') {
+          setState(() {
+            isLoading = false;
+          });
+        } else {
+          json['cards'].forEach((e) {
+            var friendId = e['user_id'];
+            nowfriendsData[friendId] = User(
+              imagePath:
+                  'https://storage.googleapis.com/nemo-bucket/${e['image']}',
+              nickname: e['nickname'],
+              introduction: e['intro'],
+              tag: [
+                '#${e['tag_1']}',
+                '#${e['tag_2']}',
+                '#${e['tag_3']}',
+              ],
+            );
+          });
 
-        json['cards'].forEach((e) {
-          var friendId = e['user_id'];
-          nowfriendsData[friendId] = User(
-            imagePath:
-                'https://storage.googleapis.com/nemo-bucket/${e['image']}',
-            nickname: e['nickname'],
-            introduction: e['intro'],
-            tag: [
-              '#${e['tag_1']}',
-              '#${e['tag_2']}',
-              '#${e['tag_3']}',
-            ],
-          );
-        });
-
-        setState(() {
-          friends = List.from(json['friends'].reversed);
-          friendsData = nowfriendsData;
-          friendsStash = friends;
-          isLoading = false;
-        });
+          setState(() {
+            friends = List.from(json['friends'].reversed);
+            friendsData = nowfriendsData;
+            friendsStash = friends;
+            isLoading = false;
+          });
+        }
         print('접속 성공!');
       } else {
         print('error');
@@ -65,6 +70,9 @@ class _ContactsPageState extends State<ContactsPage> {
       }
     } catch (e) {
       print('뭔가 에러가');
+      setState(() {
+        isLoading = false;
+      });
       return false;
     }
   }
@@ -323,203 +331,223 @@ class _ContactsPageState extends State<ContactsPage> {
                   context.read<ShimmerLoadProvider>().shimmerForSharing(),
                 ],
               )
-            : ListView.separated(
-                scrollDirection: Axis.vertical,
-                padding: EdgeInsets.fromLTRB(25, 15, 25, 15), // 사진 크기 조절 1
-                // shrinkWrap: false,
-                physics: BouncingScrollPhysics(),
-                itemCount: friends.length,
-                itemBuilder: (c, i) {
-                  return InkWell(
-                    onTap: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (c) => ProfilePage(
-                                  friendId: friends[i],
-                                  currIndex: 0,
-                                ))),
-                    child: Slidable(
-                      key: UniqueKey(),
-                      startActionPane: ActionPane(
-                        motion: const ScrollMotion(),
-                        children: [
-                          SlidableAction(
-                            onPressed: (_) {
-                              showDialog(
-                                  context: context,
-                                  builder: (context) {
-                                    return DialogUI(
-                                        target: friends[i],
-                                        deleteFriend: deleteFriend);
-                                  });
-                            },
-                            backgroundColor: Color(0xFFFE4A49),
-                            foregroundColor: Colors.white,
-                            icon: Icons.report,
-                            label: '신고 및 차단하기',
-                          )
-                        ],
-                      ),
-                      child: Container(
-                        // height: 500,
-                        margin: EdgeInsets.fromLTRB(0, 0, 0, 0), // 사진 크기 조절 2
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          border: Border.all(color: Colors.black),
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Colors.grey.withOpacity(0.5),
-                              spreadRadius: 1,
-                              blurRadius: 1.0,
-                              offset:
-                                  Offset(2, 4), // changes position of shadow
+            : friends.length > 0
+                ? ListView.separated(
+                    scrollDirection: Axis.vertical,
+                    padding: EdgeInsets.fromLTRB(25, 15, 25, 15), // 사진 크기 조절 1
+                    // shrinkWrap: false,
+                    physics: BouncingScrollPhysics(),
+                    itemCount: friends.length,
+                    itemBuilder: (c, i) {
+                      return InkWell(
+                        onTap: () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (c) => ProfilePage(
+                                      friendId: friends[i],
+                                      currIndex: 0,
+                                    ))),
+                        child: Slidable(
+                          key: UniqueKey(),
+                          startActionPane: ActionPane(
+                            motion: const ScrollMotion(),
+                            children: [
+                              SlidableAction(
+                                onPressed: (_) {
+                                  showDialog(
+                                      context: context,
+                                      builder: (context) {
+                                        return DialogUI(
+                                            target: friends[i],
+                                            deleteFriend: deleteFriend);
+                                      });
+                                },
+                                backgroundColor: Color(0xFFFE4A49),
+                                foregroundColor: Colors.white,
+                                icon: Icons.report,
+                                label: '신고 및 차단하기',
+                              )
+                            ],
+                          ),
+                          child: Container(
+                            // height: 500,
+                            margin:
+                                EdgeInsets.fromLTRB(0, 0, 0, 0), // 사진 크기 조절 2
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              border: Border.all(color: Colors.black),
+                              borderRadius: BorderRadius.circular(10),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: Colors.grey.withOpacity(0.5),
+                                  spreadRadius: 1,
+                                  blurRadius: 1.0,
+                                  offset: Offset(
+                                      2, 4), // changes position of shadow
+                                ),
+                              ],
                             ),
-                          ],
-                        ),
-                        child: Column(
-                          crossAxisAlignment:
-                              CrossAxisAlignment.stretch, // add this
-                          children: <Widget>[
-                            ClipRRect(
-                              borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                topRight: Radius.circular(10.0),
-                              ),
-                              child: Image(
-                                image: CachedNetworkImageProvider(
-                                    friendsData[friends[i]].imagePath),
-                                width: double.infinity,
-                                height: 235,
-                                fit: BoxFit.fitWidth,
-                              ),
-                            ),
-                            Container(
-                              padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
-                              decoration: BoxDecoration(
-                                  border: Border(
-                                      top: BorderSide(color: Colors.black))),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Align(
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: 25,
-                                      child: Center(
-                                        child: ListView.separated(
-                                            // shrinkWrap: true,
-                                            scrollDirection: Axis.horizontal,
-                                            physics: ClampingScrollPhysics(),
-                                            itemBuilder: (c, j) {
-                                              if (j == 0) {
-                                                return buildNickName(
-                                                    friendsData[friends[i]]
-                                                        .nickname);
-                                              } else if (j == 2) {
-                                                return buildWhiteTag(
-                                                    friendsData[friends[i]]
-                                                        .tag[j - 1]);
-                                              } else {
-                                                return buildPurPleTag(
-                                                    friendsData[friends[i]]
-                                                        .tag[j - 1]);
-                                              }
-                                            },
-                                            separatorBuilder: (c, k) =>
-                                                SizedBox(width: 5),
-                                            itemCount: 4),
+                            child: Column(
+                              crossAxisAlignment:
+                                  CrossAxisAlignment.stretch, // add this
+                              children: <Widget>[
+                                ClipRRect(
+                                  borderRadius: BorderRadius.only(
+                                    topLeft: Radius.circular(10.0),
+                                    topRight: Radius.circular(10.0),
+                                  ),
+                                  child: Image(
+                                    image: CachedNetworkImageProvider(
+                                        friendsData[friends[i]].imagePath),
+                                    width: double.infinity,
+                                    height: 235,
+                                    fit: BoxFit.fitWidth,
+                                  ),
+                                ),
+                                Container(
+                                  padding: EdgeInsets.fromLTRB(10, 5, 10, 5),
+                                  decoration: BoxDecoration(
+                                      border: Border(
+                                          top:
+                                              BorderSide(color: Colors.black))),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Align(
+                                        alignment: Alignment.center,
+                                        child: Container(
+                                          width: double.infinity,
+                                          height: 25,
+                                          child: Center(
+                                            child: ListView.separated(
+                                                // shrinkWrap: true,
+                                                scrollDirection:
+                                                    Axis.horizontal,
+                                                physics:
+                                                    ClampingScrollPhysics(),
+                                                itemBuilder: (c, j) {
+                                                  if (j == 0) {
+                                                    return buildNickName(
+                                                        friendsData[friends[i]]
+                                                            .nickname);
+                                                  } else if (j == 2) {
+                                                    return buildWhiteTag(
+                                                        friendsData[friends[i]]
+                                                            .tag[j - 1]);
+                                                  } else {
+                                                    return buildPurPleTag(
+                                                        friendsData[friends[i]]
+                                                            .tag[j - 1]);
+                                                  }
+                                                },
+                                                separatorBuilder: (c, k) =>
+                                                    SizedBox(width: 5),
+                                                itemCount: 4),
+                                          ),
+                                        ),
                                       ),
-                                    ),
+                                      SizedBox(
+                                        height: 2,
+                                      ),
+                                      Text(
+                                        friendsData[friends[i]].introduction,
+                                        style: TextStyle(
+                                          color: Colors.grey.shade600,
+                                          fontSize: 14,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                                      // SizedBox(height: 5),
+                                      // Row(
+                                      //   children: [
+                                      //     Container(
+                                      //       padding:
+                                      //           EdgeInsets.fromLTRB(7, 2, 7, 2),
+                                      //       decoration: BoxDecoration(
+                                      //         color: Color(0xff8338EC),
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(10),
+                                      //       ),
+                                      //       child: Text(
+                                      //         friendsData[friends[i]].tag[0],
+                                      //         style: TextStyle(
+                                      //           color: Colors.white,
+                                      //           fontSize: 12,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //     Padding(
+                                      //         padding:
+                                      //             EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                                      //     Container(
+                                      //       padding:
+                                      //           EdgeInsets.fromLTRB(7, 1, 7, 1),
+                                      //       decoration: BoxDecoration(
+                                      //         color: Colors.white,
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(12),
+                                      //         border: Border.all(
+                                      //           width: 1.5,
+                                      //           color: Color(0xff8338EC),
+                                      //         ),
+                                      //       ),
+                                      //       child: Text(
+                                      //         friendsData[friends[i]].tag[1],
+                                      //         style: TextStyle(
+                                      //           color: Colors.black,
+                                      //           fontSize: 12,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //     Padding(
+                                      //         padding:
+                                      //             EdgeInsets.fromLTRB(0, 0, 8, 0)),
+                                      //     Container(
+                                      //       padding:
+                                      //           EdgeInsets.fromLTRB(7, 2, 7, 2),
+                                      //       decoration: BoxDecoration(
+                                      //         color: Color(0xff8338EC),
+                                      //         borderRadius:
+                                      //             BorderRadius.circular(10),
+                                      //       ),
+                                      //       child: Text(
+                                      //         friendsData[friends[i]].tag[2],
+                                      //         style: TextStyle(
+                                      //           color: Colors.white,
+                                      //           fontSize: 12,
+                                      //           fontWeight: FontWeight.bold,
+                                      //         ),
+                                      //       ),
+                                      //     ),
+                                      //   ],
+                                      // )
+                                    ],
                                   ),
-                                  SizedBox(
-                                    height: 2,
-                                  ),
-                                  Text(
-                                    friendsData[friends[i]].introduction,
-                                    style: TextStyle(
-                                      color: Colors.grey.shade600,
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w600,
-                                    ),
-                                  ),
-                                  // SizedBox(height: 5),
-                                  // Row(
-                                  //   children: [
-                                  //     Container(
-                                  //       padding:
-                                  //           EdgeInsets.fromLTRB(7, 2, 7, 2),
-                                  //       decoration: BoxDecoration(
-                                  //         color: Color(0xff8338EC),
-                                  //         borderRadius:
-                                  //             BorderRadius.circular(10),
-                                  //       ),
-                                  //       child: Text(
-                                  //         friendsData[friends[i]].tag[0],
-                                  //         style: TextStyle(
-                                  //           color: Colors.white,
-                                  //           fontSize: 12,
-                                  //           fontWeight: FontWeight.bold,
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //     Padding(
-                                  //         padding:
-                                  //             EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                                  //     Container(
-                                  //       padding:
-                                  //           EdgeInsets.fromLTRB(7, 1, 7, 1),
-                                  //       decoration: BoxDecoration(
-                                  //         color: Colors.white,
-                                  //         borderRadius:
-                                  //             BorderRadius.circular(12),
-                                  //         border: Border.all(
-                                  //           width: 1.5,
-                                  //           color: Color(0xff8338EC),
-                                  //         ),
-                                  //       ),
-                                  //       child: Text(
-                                  //         friendsData[friends[i]].tag[1],
-                                  //         style: TextStyle(
-                                  //           color: Colors.black,
-                                  //           fontSize: 12,
-                                  //           fontWeight: FontWeight.bold,
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //     Padding(
-                                  //         padding:
-                                  //             EdgeInsets.fromLTRB(0, 0, 8, 0)),
-                                  //     Container(
-                                  //       padding:
-                                  //           EdgeInsets.fromLTRB(7, 2, 7, 2),
-                                  //       decoration: BoxDecoration(
-                                  //         color: Color(0xff8338EC),
-                                  //         borderRadius:
-                                  //             BorderRadius.circular(10),
-                                  //       ),
-                                  //       child: Text(
-                                  //         friendsData[friends[i]].tag[2],
-                                  //         style: TextStyle(
-                                  //           color: Colors.white,
-                                  //           fontSize: 12,
-                                  //           fontWeight: FontWeight.bold,
-                                  //         ),
-                                  //       ),
-                                  //     ),
-                                  //   ],
-                                  // )
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
-                          ],
+                          ),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, i) => SizedBox(height: 10))
+                : Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        height: 200,
+                        child: Center(
+                          child: Text(
+                              '보유한 명함이 없습니다. \n 공유페이지에서 TOOK으로 새 친구를 만나보세요!',
+                              textAlign: TextAlign.center),
                         ),
                       ),
-                    ),
-                  );
-                },
-                separatorBuilder: (context, i) => SizedBox(height: 10)),
+                    ],
+                  ),
         bottomNavigationBar: context
             .read<BottomNavigationProvider>()
             .bottomNavigationBarClick(0, context),
