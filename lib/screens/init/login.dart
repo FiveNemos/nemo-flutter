@@ -210,7 +210,7 @@ class _LoginPageState extends State<LoginPage> {
                             print('loginID : $loginID');
                             if (await findCard(loginID) == true) {
                               print('card 찾음');
-                              Navigator.pushNamed(context, '/contacts');
+                              Navigator.pushNamed(context, '/sharing');
                             } else {
                               print('card 못찾음');
                               Navigator.pushNamed(
