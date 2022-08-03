@@ -313,7 +313,6 @@ class _CardEditorState extends State<CardEditor> {
           userImage = file;
           CHANGED['userImage'] = 1;
         });
-        setState(() {});
       } else {
         print('Edited Image was null~~~~~~~');
       }
