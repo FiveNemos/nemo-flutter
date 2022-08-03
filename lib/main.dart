@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/providers/shimmerLoad.dart';
 import 'package:nemo_flutter/screens/sharing/sharing_qr_page.dart';
 import 'package:nemo_flutter/providers/bottomBar.dart';
 import 'package:provider/provider.dart';
@@ -36,7 +37,9 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-            create: (BuildContext context) => BottomNavigationProvider())
+            create: (BuildContext context) => BottomNavigationProvider()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => ShimmerLoadProvider())
       ],
       child: MaterialApp(
         title: 'Nemo test',

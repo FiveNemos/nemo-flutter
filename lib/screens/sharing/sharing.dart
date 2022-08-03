@@ -12,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/bottomBar.dart';
+import '../../providers/shimmerLoad.dart';
 import '../mypage/cardeditor.dart';
 import '../../models/sharing/user.dart';
 import '../sharing/punch.dart';
@@ -861,11 +862,7 @@ class _TookPageState extends State<TookPage> {
         ),
       );
     } else {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Colors.black,
-        ),
-      );
+      return context.read<ShimmerLoadProvider>().shimmerForProfile();
     }
   }
 }
