@@ -315,6 +315,8 @@ class _DraggableCardState extends State<DraggableCard>
   // geolocator
   bool servicestatus = false;
   bool haspermission = false;
+  bool isChecked = false;
+
   late LocationPermission permission;
   late Position position;
   String lng = '', lat = '';
@@ -425,6 +427,9 @@ class _DraggableCardState extends State<DraggableCard>
                 Nearby().stopDiscovery();
                 Nearby().stopAdvertising();
                 Nearby().stopAllEndpoints();
+                if (isChecked == false) {
+                  showSnackbar('연결에 실패하였습니다. QR을 시도해주세요.');
+                }
               });
               bool a = await Nearby().startAdvertising(
                 userName,
@@ -500,6 +505,9 @@ class _DraggableCardState extends State<DraggableCard>
                 Nearby().stopDiscovery();
                 Nearby().stopAdvertising();
                 Nearby().stopAllEndpoints();
+                if (isChecked == false) {
+                  showSnackbar('연결에 실패하였습니다. QR을 시도해주세요.');
+                }
               });
               bool a = await Nearby().startDiscovery(
                 userName,
@@ -604,6 +612,9 @@ class _DraggableCardState extends State<DraggableCard>
     });
     Nearby().acceptConnection(id, onPayLoadRecieved: (endid, payload) async {
       if (payload.type == PayloadType.BYTES) {
+        setState(() {
+          isChecked = true;
+        });
         Nearby().disconnectFromEndpoint(id);
         Nearby().stopDiscovery();
         Nearby().stopAdvertising();
