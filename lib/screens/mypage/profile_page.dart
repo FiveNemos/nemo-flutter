@@ -263,8 +263,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             var roomdata =
                                 await getChatRoom(loginID, widget.friendId);
                             if (!mounted) return;
+                            print("roomdata : $roomdata");
                             int chatroomID = int.parse(roomdata['chatroomID']);
-                            int notReadCnt = int.parse(roomdata['notreadcnt']);
+                            // int notReadCnt = int.parse(roomdata['notreadcnt']);
                             if (chatroomID > 0) {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
