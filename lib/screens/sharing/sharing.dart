@@ -65,9 +65,21 @@ class _SharingPageState extends State<SharingPage> {
                 // alignment: Alignment.center,
                 children: <Widget>[
                   Text('툭 사용법을 알려드릴게요!',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: 'Gamja',
                           fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                      '우측 상단에서 Nearby와 QR 모드를 선택해 공유할 수 있어요😎\n\n 먼저 Nearby 모드를 알려드릴게요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Gamja',
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
@@ -105,7 +117,17 @@ class _SharingPageState extends State<SharingPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.blue)),
                   SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Text('QR 모드도 동일하게 한명은 올리고, 다른 한명은 내려요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Gamja',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 10,
                   ),
 
                   Text('서로의 명함이 교환되면...',
