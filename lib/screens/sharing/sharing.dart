@@ -862,7 +862,7 @@ class _TookPageState extends State<TookPage> {
         ),
       );
     } else {
-      return context.read<ShimmerLoadProvider>().shimmerForProfile();
+      return context.read<ShimmerLoadProvider>().shimmerForSharing();
     }
   }
 }
