@@ -1,16 +1,10 @@
-import 'dart:developer';
-import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:nemo_flutter/screens/sharing/punch.dart';
-import 'package:page_transition/page_transition.dart';
 import 'package:qr_flutter/qr_flutter.dart';
-import 'package:barcode_scan2/barcode_scan2.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'dart:convert';
-
-import '../mypage/profile_page.dart';
 
 // sharing.dart
 // Sharing 페이지를 stateful widget으로 변경하기

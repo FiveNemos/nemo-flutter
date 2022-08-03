@@ -272,16 +272,15 @@ class _CardEditorState extends State<CardEditor> {
     print('CHANGED[\'userImage\'] = ${CHANGED['userImage']}');
     Uint8List bytes = Uint8List(0);
 
-    if (CHANGED['userImage'] == 0) {
-      await _download(BASE_URL + userImage.path);
-    } else {
-      setState(() {
-        pickedImage = userImage;
-      });
-    }
-    print('그리고 userImage path는: ${userImage.path}');
-    // var pickedImage =
-    //     await ImagePicker().pickImage(source: ImageSource.gallery);
+    // if (CHANGED['userImage'] == 0) {
+    //   await _download(BASE_URL + userImage.path);
+    // } else {
+    //   setState(() {
+    //     pickedImage = userImage;
+    //   });
+    // }
+    var pickedImage =
+        await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       await imageFile

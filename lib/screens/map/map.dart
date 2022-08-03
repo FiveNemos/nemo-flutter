@@ -8,7 +8,6 @@ import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import '../../models/map/cord.dart';
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
 import 'package:permission_handler/permission_handler.dart';

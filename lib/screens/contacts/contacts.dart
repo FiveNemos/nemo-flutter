@@ -331,7 +331,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   context.read<ShimmerLoadProvider>().shimmerForSharing(),
                 ],
               )
-            : friends.length > 0
+            : friends.isNotEmpty
                 ? ListView.separated(
                     scrollDirection: Axis.vertical,
                     padding: EdgeInsets.fromLTRB(25, 15, 25, 15), // 사진 크기 조절 1
@@ -416,7 +416,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                     children: [
                                       Align(
                                         alignment: Alignment.center,
-                                        child: Container(
+                                        child: SizedBox(
                                           width: double.infinity,
                                           height: 25,
                                           child: Center(

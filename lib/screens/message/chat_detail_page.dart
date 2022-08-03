@@ -34,19 +34,19 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   int? myConnId;
   int? friendConnId;
-  StreamController _streamController = StreamController();
+  final StreamController _streamController = StreamController();
   int? notReadCnt;
 
   getChatReadCnts() async {
-    print("start");
+    print('start');
     try {
-      print("try");
+      print('try');
       var dio = Dio();
       print(
           'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
       Response response = await dio.get(
           'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
-      print("here i go");
+      print('here i go');
       if (response.statusCode == 200) {
         final jsonData = response.data;
         int tempCnt = jsonData['notreadcnt'] == null
@@ -175,7 +175,7 @@ class _ChatScreenState extends State<ChatScreen> {
       socket.on('connect', (data) {
         debugPrint('socket connected');
         // debugPrint(socket.connected);
-        print("왜지감자");
+        print('왜지감자');
         socket.emit('join', widget.chatroomID);
         setState(() {
           socketFlag = true;
@@ -240,7 +240,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    print("hello");
+    print('hello');
     getChatReadCnts();
     getChatConns();
     super.initState();
@@ -503,7 +503,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             _messageController.clear();
                           } else {
                             print(
-                                "출력합니다: ${_messages.where((e) => e.isread = false).length}");
+                                '출력합니다: ${_messages.where((e) => e.isread = false).length}');
                           }
                         },
                         mini: true,
