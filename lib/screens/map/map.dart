@@ -5,13 +5,17 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 import 'package:dio/dio.dart';
+import 'package:provider/provider.dart';
 import '../../models/map/cord.dart';
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart';
+import 'dart:async';
 
 //
 // import '../sharing/sharing_accept_page.dart';
+import '../../providers/bottomBar.dart';
 import '../mypage/profile_page.dart';
-// import '../sharing/map_profile_page.dart';
+// import '../sharing/sharing_qr_page.dart';
 
 class CurrentLocationScreen extends StatefulWidget {
   const CurrentLocationScreen({Key? key}) : super(key: key);
@@ -28,14 +32,59 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
   List userCord = [];
 
   var loginID;
+
   // var myId;
   // var latt;
   // var longg;
+  // geolocator
+  bool servicestatus = false;
+  bool haspermission = false;
+  late LocationPermission permission;
+  late Position position;
+  String lng = '', lat = '';
+  late StreamSubscription<Position> positionStream;
 
   @override
   void initState() {
-    checkUser();
     super.initState();
+    getLocation();
+    checkUser();
+  }
+
+  getLocation() async {
+    LatLng currentPostion;
+
+    position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    // print(position.longitude); //Output: 80.24599079
+    // print(position.latitude); //Output: 29.6593457
+
+    // lng = position.longitude.toString();
+    // lat = position.latitude.toString();
+
+    setState(() {
+      currentPostion = LatLng(position.latitude, position.longitude);
+    });
+
+    LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high, //accuracy of the location data
+      distanceFilter: 100, //minimum distance (measured in meters) a
+      //device must move horizontally before an update event is generated;
+    );
+
+    StreamSubscription<Position> positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position position) {
+      print(position.longitude);
+      print(position.latitude);
+
+      lng = position.longitude.toString();
+      lat = position.latitude.toString();
+
+      setState(() {
+        currentPostion = LatLng(position.latitude, position.longitude);
+      });
+    });
   }
 
   getCord(id) async {
@@ -103,22 +152,6 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
 
   GoogleMapController? googleMapController;
 
-  static const CameraPosition initialCameraPosition =
-      CameraPosition(target: LatLng(36.392865, 127.398889), zoom: 17);
-  //
-  // Set<Marker> markers = {
-  //   Marker(
-  //     markerId: MarkerId('1'),
-  //     // position: LatLng(latt, longg),
-  //     position: LatLng(36.392865, 127.398889),
-  //     // infoWindow: InfoWindow(
-  //     //   title: '${userCord.user_id}',
-  //     //   snippet: '${userCord.lat}, ${userCord.long}',
-  //     // ),
-  //     icon: BitmapDescriptor.defaultMarker,
-  //   )
-  // }; //
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -152,64 +185,32 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
                           context,
                           MaterialPageRoute(
                               builder: (context) => ProfilePage(
-                                  friendId: e.user_id, currIndex: 2)));
+                                  friendId: e.user_id, currIndex: 1)));
                     },
                   ),
                   icon: BitmapDescriptor.defaultMarker));
             }
             return GoogleMap(
-              initialCameraPosition: initialCameraPosition,
+              initialCameraPosition: CameraPosition(
+                target: LatLng(position.latitude, position.longitude),
+                zoom: 15,
+              ),
               markers: markers,
               zoomControlsEnabled: false,
               mapType: MapType.normal,
               onMapCreated: mapCreated,
+              myLocationEnabled: true,
+              myLocationButtonEnabled: true,
+              compassEnabled: true,
+              rotateGesturesEnabled: true,
+              scrollGesturesEnabled: true,
+              tiltGesturesEnabled: true,
+              zoomGesturesEnabled: true,
             );
           }),
-      bottomNavigationBar: BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.contacts),
-            label: '연락처',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.share),
-            label: '공유',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: '메시지',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '마이페이지',
-          ),
-        ],
-        currentIndex: 2,
-        onTap: (int index) {
-          switch (index) {
-            case 0:
-              Navigator.pushNamed(context, '/contacts');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/sharing');
-              break;
-            case 2:
-              // Navigator.pushNamed(context, '/map');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/message');
-              break;
-            case 4:
-              Navigator.pushNamed(context, '/mypage');
-              break;
-          }
-        },
-      ),
+      bottomNavigationBar: context
+          .read<BottomNavigationProvider>()
+          .bottomNavigationBarClick(1, context),
     );
   }
 

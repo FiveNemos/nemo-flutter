@@ -1,3 +1,4 @@
+import 'package:badges/badges.dart';
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../screens/message/chat_detail_page.dart';
@@ -10,7 +11,7 @@ class ConversationList extends StatefulWidget {
   String lastMsgText;
   String friendImage;
   String lastMsgTime;
-  bool isMessageRead;
+  int notReadCnt;
   ConversationList(
       {required this.chatroomID,
       required this.loginID,
@@ -19,7 +20,7 @@ class ConversationList extends StatefulWidget {
       required this.lastMsgText,
       required this.friendImage,
       required this.lastMsgTime,
-      required this.isMessageRead});
+      required this.notReadCnt});
   @override
   _ConversationListState createState() => _ConversationListState();
 }
@@ -72,7 +73,7 @@ class _ConversationListState extends State<ConversationList> {
                             style: TextStyle(
                                 fontSize: 13,
                                 color: Colors.grey.shade600,
-                                fontWeight: widget.isMessageRead
+                                fontWeight: widget.notReadCnt > 0
                                     ? FontWeight.bold
                                     : FontWeight.normal),
                           ),
@@ -83,13 +84,32 @@ class _ConversationListState extends State<ConversationList> {
                 ],
               ),
             ),
-            Text(
-              widget.lastMsgTime, // 현재 시간을 계산해서, 'now' '2 hr' '8 Jul' 등으로 바꿔주기
-              style: TextStyle(
-                  fontSize: 12,
-                  fontWeight: widget.isMessageRead
-                      ? FontWeight.bold
-                      : FontWeight.normal),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Text(
+                  widget
+                      .lastMsgTime, // 현재 시간을 계산해서, 'now' '2 hr' '8 Jul' 등으로 바꿔주기
+                  style: TextStyle(
+                      fontSize: 12,
+                      fontWeight: widget.notReadCnt > 0
+                          ? FontWeight.bold
+                          : FontWeight.normal),
+                ),
+                SizedBox(
+                  height: 5,
+                ),
+                widget.notReadCnt > 0
+                    ? Badge(
+                        badgeContent: Text(widget.notReadCnt.toString(),
+                            style: TextStyle(
+                                color: Colors.white,
+                                fontFamily: 'CherryBomb',
+                                fontSize: 13)),
+                        badgeColor: Color(0xff8338EC),
+                      )
+                    : SizedBox(width: 1)
+              ],
             ),
           ],
         ),

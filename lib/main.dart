@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/screens/sharing/sharing_qr_page.dart';
+import 'package:nemo_flutter/providers/bottomBar.dart';
+import 'package:provider/provider.dart';
 
 // import widget style
 import './styles/style.dart' as style;
@@ -30,21 +33,27 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Nemo test',
-      theme: style.theme,
-      initialRoute: '/',
-      routes: {
-        '/': (context) => InitPage(),
-        '/login': (context) => LoginPage(),
-        '/signup': (context) => SignupPage(),
-        '/contacts': (context) => ContactsPage(),
-        '/message': (context) => MessagePage(),
-        '/mypage': (context) => MypagePage(),
-        '/sharing': (context) => SharingPage(),
-        '/namecard': (context) => NameCardGenerator(),
-        '/map': (context) => CurrentLocationScreen(),
-      }, // end routes
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (BuildContext context) => BottomNavigationProvider())
+      ],
+      child: MaterialApp(
+        title: 'Nemo test',
+        theme: style.theme,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => InitPage(),
+          '/login': (context) => LoginPage(),
+          '/signup': (context) => SignupPage(),
+          '/contacts': (context) => ContactsPage(),
+          '/message': (context) => MessagePage(),
+          '/mypage': (context) => MypagePage(),
+          '/sharing': (context) => SharingPage(),
+          '/namecard': (context) => NameCardGenerator(),
+          '/map': (context) => CurrentLocationScreen(),
+        }, // end routes
+      ),
     );
   }
 }
