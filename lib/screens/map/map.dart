@@ -15,6 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 //
 // import '../sharing/sharing_accept_page.dart';
 import '../../providers/bottomBar.dart';
+import '../../providers/shimmerLoad.dart';
 import '../mypage/profile_page.dart';
 // import '../sharing/sharing_qr_page.dart';
 
@@ -183,7 +184,8 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
           future: _future,
           builder: (context, AsyncSnapshot snapshot) {
             if (!snapshot.hasData) {
-              return Center(child: CircularProgressIndicator());
+              return Center(
+                  child: context.read<ShimmerLoadProvider>().shimmerForMap());
             }
             print('snapshot');
             Set<Marker> markers = {};

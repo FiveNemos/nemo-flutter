@@ -19,16 +19,17 @@ class PunchPage extends StatefulWidget {
 class _PunchPageState extends State<PunchPage> {
   final Color _backgroundColor = Color.fromARGB(255, 255, 255, 255);
   List<double>? _userAccelerometerValues;
-  var cnt = 0;
+  bool isTooked = false;
 
   @override
   void initState() {
     // super.initState();
-    userAccelerometerEvents.listen((UserAccelerometerEvent event) {
-      setState(() {
-        // Manipulate the UI here, something like:
-        if ((event.y > 5 || event.y < -5) && cnt == 0) {
-          cnt++;
+    if (!isTooked) {
+      userAccelerometerEvents.listen((UserAccelerometerEvent event) {
+        if ((event.y > 5 || event.y < -5) && !isTooked) {
+          setState(() {
+            isTooked = true;
+          });
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -37,8 +38,10 @@ class _PunchPageState extends State<PunchPage> {
                         friendId: widget.friendId,
                         latlng: widget.latlng,
                       )));
-        } else if ((event.x < -4 || event.x > 4) && cnt == 0) {
-          cnt++;
+        } else if ((event.x < -4 || event.x > 4) && !isTooked) {
+          setState(() {
+            isTooked = true;
+          });
 
           Navigator.push(
               context,
@@ -48,8 +51,10 @@ class _PunchPageState extends State<PunchPage> {
                         friendId: widget.friendId,
                         latlng: widget.latlng,
                       )));
-        } else if ((event.z < -4 || event.z > 4) && cnt == 0) {
-          cnt++;
+        } else if ((event.z < -4 || event.z > 4) && !isTooked) {
+          setState(() {
+            isTooked = true;
+          });
           Navigator.push(
               context,
               MaterialPageRoute(
@@ -59,12 +64,13 @@ class _PunchPageState extends State<PunchPage> {
                         latlng: widget.latlng,
                       )));
         } else {}
-        super.dispose();
-        for (final subscription in _streamSubscriptions) {
-          subscription.cancel();
-        }
       });
-    });
+    } else {
+      super.dispose();
+      for (final subscription in _streamSubscriptions) {
+        subscription.cancel();
+      }
+    }
   }
 
   final _streamSubscriptions = <StreamSubscription<dynamic>>[];

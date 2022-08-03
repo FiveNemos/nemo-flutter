@@ -13,7 +13,6 @@ class ChatScreen extends StatefulWidget {
   int friendID;
   String friendName;
   String friendImage;
-  int notReadCnt;
 
   ChatScreen(
       {Key? key,
@@ -21,8 +20,7 @@ class ChatScreen extends StatefulWidget {
       required this.loginID,
       required this.friendID,
       required this.friendName,
-      required this.friendImage,
-      required this.notReadCnt})
+      required this.friendImage})
       : super(key: key);
 
   @override
@@ -37,6 +35,37 @@ class _ChatScreenState extends State<ChatScreen> {
   int? myConnId;
   int? friendConnId;
   StreamController _streamController = StreamController();
+  int? notReadCnt;
+
+  getChatReadCnts() async {
+    print("start");
+    try {
+      print("try");
+      var dio = Dio();
+      print(
+          'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
+      Response response = await dio.get(
+          'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
+      print("here i go");
+      if (response.statusCode == 200) {
+        final jsonData = response.data;
+        int tempCnt = jsonData['notreadcnt'] == null
+            ? 0
+            : int.parse(jsonData['notreadcnt']);
+        setState(() {
+          notReadCnt = tempCnt;
+        });
+        return await getChatMessages(tempCnt);
+      } else {
+        print('error');
+        return false;
+      }
+    } on DioError catch (e) {
+      final errorjson = jsonDecode(e.response.toString());
+      print(errorjson);
+      return false;
+    }
+  }
 
   getChatConns() async {
     try {
@@ -45,9 +74,6 @@ class _ChatScreenState extends State<ChatScreen> {
           'http://34.64.217.3:3000/api/chatroom/conns?id_1=${widget.loginID}&id_2=${widget.friendID}');
       if (response.statusCode == 200) {
         final jsonData = response.data;
-        print(jsonData[0].runtimeType);
-        print(jsonData[1].runtimeType);
-        print(jsonData.runtimeType);
         setState(() {
           myConnId = jsonData[0];
           friendConnId = jsonData[1];
@@ -69,11 +95,11 @@ class _ChatScreenState extends State<ChatScreen> {
     }
   }
 
-  getChatMessages(int chatroomid) async {
+  getChatMessages(int notReadCnt) async {
     try {
       var dio = Dio();
       Response response = await dio.get(
-          'http://34.64.217.3:3000/api/chatroom/message?room_id=$chatroomid');
+          'http://34.64.217.3:3000/api/chatroom/message?room_id=${widget.chatroomID}');
       if (response.statusCode == 200) {
         final jsonData = response.data;
         List<ChatModel> temp = [];
@@ -82,16 +108,11 @@ class _ChatScreenState extends State<ChatScreen> {
         int i = totalSends;
         jsonData.forEach((e) {
           var nowtime = DateTime.parse(e['sendat']);
-          print(nowtime.runtimeType);
           var realnow = DateTime.now();
-          print(realnow.runtimeType);
           Duration diff = realnow.difference(nowtime);
-          print(diff.inMinutes);
-          print(diff.inHours);
-          print(diff.inDays);
           bool nowisread = true;
           if (e['sender'] == widget.loginID) {
-            if (i <= widget.notReadCnt) {
+            if (i <= notReadCnt) {
               nowisread = false;
             }
             i -= 1;
@@ -109,7 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
           _messages = temp;
           _streamController.add(_messages);
         });
-        print('접속 성공!');
+        return true;
       } else {
         print('error');
         return false;
@@ -219,8 +240,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    print("hello");
+    getChatReadCnts();
     getChatConns();
-    getChatMessages(widget.chatroomID);
     super.initState();
     // enterChatRoom();
     initializeSocket();

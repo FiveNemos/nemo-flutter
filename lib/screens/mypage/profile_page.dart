@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nemo_flutter/providers/shimmerLoad.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 
 import '../../models/mypage/user.dart';
 import '../../providers/bottomBar.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import './cardeditor.dart';
+import 'package:shimmer/shimmer.dart';
+// import 'package:shimmer_example/placeholders.dart';
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -227,12 +231,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 },
                 separatorBuilder: (context, i) => SizedBox(height: 15),
               )
-            : Center(
-                child: CircularProgressIndicator(
-                  color: Colors.purple,
-                  semanticsLabel: '로딩중입니다 . . .',
-                ),
-              ),
+            : context.read<ShimmerLoadProvider>().shimmerForProfile(),
         bottomNavigationBar: context
             .read<BottomNavigationProvider>()
             .bottomNavigationBarClick(widget.currIndex, context),
@@ -264,8 +263,9 @@ class _ProfilePageState extends State<ProfilePage> {
                             var roomdata =
                                 await getChatRoom(loginID, widget.friendId);
                             if (!mounted) return;
+                            print("roomdata : $roomdata");
                             int chatroomID = int.parse(roomdata['chatroomID']);
-                            int notReadCnt = int.parse(roomdata['notreadcnt']);
+                            // int notReadCnt = int.parse(roomdata['notreadcnt']);
                             if (chatroomID > 0) {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
@@ -275,7 +275,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   friendID: widget.friendId!, // not isMe
                                   friendName: user.nickname,
                                   friendImage: user.imagePath,
-                                  notReadCnt: notReadCnt,
                                 );
                               }));
                             } else {

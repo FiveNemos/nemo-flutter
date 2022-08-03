@@ -12,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
 
 import '../../providers/bottomBar.dart';
+import '../../providers/shimmerLoad.dart';
 import '../mypage/cardeditor.dart';
 import '../../models/sharing/user.dart';
 import '../sharing/punch.dart';
@@ -64,9 +65,21 @@ class _SharingPageState extends State<SharingPage> {
                 // alignment: Alignment.center,
                 children: <Widget>[
                   Text('툭 사용법을 알려드릴게요!',
+                      textAlign: TextAlign.center,
                       style: TextStyle(
                           fontFamily: 'Gamja',
                           fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Text(
+                      '우측 상단에서 Nearby와 QR 모드를 선택해 공유할 수 있어요😎\n\n 먼저 Nearby 모드를 알려드릴게요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Gamja',
+                          fontSize: 12,
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
@@ -104,7 +117,17 @@ class _SharingPageState extends State<SharingPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.blue)),
                   SizedBox(
-                    height: 20,
+                    height: 10,
+                  ),
+                  Text('QR 모드도 동일하게 한명은 올리고, 다른 한명은 내려요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Gamja',
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 10,
                   ),
 
                   Text('서로의 명함이 교환되면...',
@@ -315,6 +338,8 @@ class _DraggableCardState extends State<DraggableCard>
   // geolocator
   bool servicestatus = false;
   bool haspermission = false;
+  bool isChecked = false;
+
   late LocationPermission permission;
   late Position position;
   String lng = '', lat = '';
@@ -425,6 +450,9 @@ class _DraggableCardState extends State<DraggableCard>
                 Nearby().stopDiscovery();
                 Nearby().stopAdvertising();
                 Nearby().stopAllEndpoints();
+                if (isChecked == false) {
+                  showSnackbar('연결에 실패하였습니다. QR을 시도해주세요.');
+                }
               });
               bool a = await Nearby().startAdvertising(
                 userName,
@@ -500,6 +528,9 @@ class _DraggableCardState extends State<DraggableCard>
                 Nearby().stopDiscovery();
                 Nearby().stopAdvertising();
                 Nearby().stopAllEndpoints();
+                if (isChecked == false) {
+                  showSnackbar('연결에 실패하였습니다. QR을 시도해주세요.');
+                }
               });
               bool a = await Nearby().startDiscovery(
                 userName,
@@ -604,6 +635,9 @@ class _DraggableCardState extends State<DraggableCard>
     });
     Nearby().acceptConnection(id, onPayLoadRecieved: (endid, payload) async {
       if (payload.type == PayloadType.BYTES) {
+        setState(() {
+          isChecked = true;
+        });
         Nearby().disconnectFromEndpoint(id);
         Nearby().stopDiscovery();
         Nearby().stopAdvertising();
@@ -850,11 +884,7 @@ class _TookPageState extends State<TookPage> {
         ),
       );
     } else {
-      return Center(
-        child: CircularProgressIndicator(
-          color: Colors.black,
-        ),
-      );
+      return context.read<ShimmerLoadProvider>().shimmerForSharing();
     }
   }
 }

@@ -78,8 +78,10 @@ class _QRforTOOKState extends State<QRforTOOK> {
       });
 
       socket.on('took', (data) {
-        int friendId = widget.isSender ? data.receiverID : data.senderID;
-        socket.emit('leave', data.chatroomID); // receiver, sender 공통
+        var tookData = Map<String, dynamic>.from(data);
+        int friendId =
+            widget.isSender ? tookData['receiverID'] : tookData['senderID'];
+        socket.emit('leave', tookData['chatroomID']); // receiver, sender 공통
         socket.emit('disconnect');
         Navigator.push(
             context,
@@ -166,19 +168,21 @@ class _QRforTOOKState extends State<QRforTOOK> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       int senderId;
-      String? chatRoomId = stringToBase64
-          .decode(scanData.code!); // 'QRTOOKExchange${widget.myId.toString()}'
-      String? senderIdinStr = chatRoomId.substring(14);
-      senderId = int.parse(senderIdinStr);
 
       setState(() {
         result = scanData;
-        socket.emit('join', chatRoomId);
-        socket.emit('took', {
-          'chatroomID': 'QR${senderId.toString()}',
-          'senderID': senderId,
-          'receiverID': widget.myId
-        }); // 칭구
+        if (result != null) {
+          String? chatRoomId = stringToBase64.decode(
+              result!.code!); // 'QRTOOKExchange${widget.myId.toString()}'
+          String? senderIdinStr = chatRoomId.substring(14);
+          senderId = int.parse(senderIdinStr);
+          socket.emit('join', chatRoomId);
+          socket.emit('took', {
+            'chatroomID': chatRoomId,
+            'senderID': senderId,
+            'receiverID': widget.myId
+          });
+        } // 칭구
       });
     });
   }

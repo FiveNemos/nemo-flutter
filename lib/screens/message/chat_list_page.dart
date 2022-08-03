@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:nemo_flutter/screens/contacts/contacts.dart';
 import 'package:provider/provider.dart';
+import 'package:shimmer/shimmer.dart';
 import '../../models/message/chatrooms.dart';
 import '../../providers/bottomBar.dart';
 import '../../widgets/message/conversation_list.dart';
@@ -28,6 +29,7 @@ class _ChatPageState extends State<ChatPage> {
   List<ChatRooms> original_chatUsers = []; // 이걸 DB에서 받아오는거로 바꾸면 될듯
   List chatUsers = [];
   String searchText = '';
+  bool isLoading = true;
 
   dateToText(DateTime msgtime) {
     DateFormat dateFormat = DateFormat('yyyy-MM-dd HH:mm:ss');
@@ -57,7 +59,13 @@ class _ChatPageState extends State<ChatPage> {
       var dio = Dio();
       Response response = await dio
           .get('http://34.64.217.3:3000/api/chatroom/list?user_id=$id');
-      if (response.statusCode == 200) {
+      if (response.data == 'false') {
+        setState(() {
+          isLoading = false;
+        });
+      }
+      if (response.statusCode == 200 && response.data != 'false') {
+        print("responsedata : ${response.data}");
         final jsonData = response.data;
         var roomData = jsonData['chatroom'];
         var friendData = jsonData['data'];
@@ -92,11 +100,17 @@ class _ChatPageState extends State<ChatPage> {
         });
         print('접속 성공!');
         _streamController.add(temp);
+        setState(() {
+          isLoading = false;
+        });
       } else {
         print('error');
         return false;
       }
     } on DioError catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       print('뭔가 에러가');
       final errorjson = jsonDecode(e.response.toString());
       print(errorjson);
@@ -251,55 +265,82 @@ class _ChatPageState extends State<ChatPage> {
                     ),
                   ),
                 ),
-                StreamBuilder(
-                    stream: _streamController.stream,
-                    initialData: [],
-                    builder: (BuildContext context, AsyncSnapshot snapshot) {
-                      // print("snapshot");
-                      // print(snapshot.data);
-                      if (snapshot.hasData) {
-                        chatUsers = snapshot.data;
-                        if (chatUsers.isEmpty) {
-                          return Container(
-                            alignment: Alignment.center,
-                            height: 200,
-                            child: Text(
-                                '대화 내역이 없습니다. \n 명함을 교환한 친구에게 메시지를 보내보세요!',
-                                textAlign: TextAlign.center),
-                          );
-                        }
-                        chatUsers = chatUsers
-                            .where((x) => x.friendName.startsWith(searchText))
-                            .toList();
+                isLoading
+                    ? Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Shimmer.fromColors(
+                          baseColor: Colors.grey,
+                          highlightColor: Color(0xff8338EC),
+                          child: ListView.builder(
+                            shrinkWrap: true,
+                            itemCount: 10,
+                            itemBuilder: (c, i) {
+                              return Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: ListTile(
+                                    leading: Icon(Icons.person, size: 50.0),
+                                    title: SizedBox(
+                                      child: Container(
+                                        color: Colors.teal,
+                                      ),
+                                      height: 20.0,
+                                    )),
+                              );
+                            },
+                          ),
+                        ),
+                      )
+                    : StreamBuilder(
+                        stream: _streamController.stream,
+                        initialData: [],
+                        builder:
+                            (BuildContext context, AsyncSnapshot snapshot) {
+                          // print("snapshot");
+                          // print(snapshot.data);
+                          if (snapshot.hasData) {
+                            chatUsers = snapshot.data;
+                            if (chatUsers.isEmpty) {
+                              return Container(
+                                alignment: Alignment.center,
+                                height: 500,
+                                child: Text(
+                                    '대화 내역이 없습니다. \n 명함을 교환한 친구에게 메시지를 보내보세요!',
+                                    textAlign: TextAlign.center),
+                              );
+                            }
+                            chatUsers = chatUsers
+                                .where(
+                                    (x) => x.friendName.startsWith(searchText))
+                                .toList();
 
-                        return ListView.builder(
-                          itemCount: chatUsers.length,
-                          shrinkWrap: true,
-                          padding: EdgeInsets.only(top: 16),
-                          physics: NeverScrollableScrollPhysics(),
-                          itemBuilder: (context, index) {
-                            print(chatUsers[index]);
-                            return ConversationList(
-                                chatroomID: chatUsers[index].chatroomID,
-                                loginID: loginID!,
-                                friendID: chatUsers[index].friendID,
-                                friendName: chatUsers[index].friendName,
-                                lastMsgText: chatUsers[index].lastMsgText,
-                                friendImage: chatUsers[index].friendImage,
-                                lastMsgTime:
-                                    dateToText(chatUsers[index].lastMsgTime),
-                                notReadCnt: chatUsers[index].notReadCnt);
-                          },
-                        );
-                      } else {
-                        return Container(
-                          alignment: Alignment.center,
-                          height: 200,
-                          child:
-                              Text('로딩 중입니다 :)', textAlign: TextAlign.center),
-                        );
-                      }
-                    })
+                            return ListView.builder(
+                              itemCount: chatUsers.length,
+                              shrinkWrap: true,
+                              padding: EdgeInsets.only(top: 16),
+                              physics: NeverScrollableScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                print(chatUsers[index]);
+                                return ConversationList(
+                                    chatroomID: chatUsers[index].chatroomID,
+                                    loginID: loginID!,
+                                    friendID: chatUsers[index].friendID,
+                                    friendName: chatUsers[index].friendName,
+                                    lastMsgText: chatUsers[index].lastMsgText,
+                                    friendImage: chatUsers[index].friendImage,
+                                    lastMsgTime: dateToText(
+                                        chatUsers[index].lastMsgTime),
+                                    notReadCnt: chatUsers[index].notReadCnt);
+                              },
+                            );
+                          } else {
+                            return Container(
+                              alignment: Alignment.center,
+                              height: 200,
+                              child: Text('로딩 중입니다 :)',
+                                  textAlign: TextAlign.center),
+                            );
+                          }
+                        })
               ],
             ),
           ),
