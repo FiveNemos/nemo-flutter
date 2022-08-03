@@ -29,7 +29,7 @@ class BottomNavigationProvider extends ChangeNotifier {
         ],
         currentIndex: nowIndex,
         onTap: (int nextIndex) {
-          if (nextIndex == nowIndex && nextIndex != 2) {
+          if (nextIndex == nowIndex) {
             return;
           }
           switch (nextIndex) {
