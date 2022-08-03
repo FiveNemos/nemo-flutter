@@ -123,6 +123,99 @@ class _ContactsPageState extends State<ContactsPage> {
 
   @override
   Widget build(BuildContext context) {
+    void _showDialog() {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8.0)),
+            // title: new Text("TooK 가이드"),
+            content: SingleChildScrollView(
+              // height: MediaQuery.of(context).size.height * 0.7,
+              child: Column(
+                // alignment: Alignment.center,
+                children: <Widget>[
+                  Text('신고 및 유저 차단 방법을 설명드릴게요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'Gamja',
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text('1. 연락처에서 신고 및 차단하고자 하는 명함을 오른쪽으로 밉니다.',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontFamily: 'dohyeon',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text('2. 신고 및 차단하기 빨간색 버튼을 클릭합니다.',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontFamily: 'dohyeon',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text('3. 확인 버튼을 클릭해 신고를 접수하고, 차단합니다.',
+                      textAlign: TextAlign.left,
+                      style: TextStyle(
+                          fontFamily: 'dohyeon',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text('신고 및 차단한 유저는 더이상 회원님께 보이지 않습니다.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'dohyeon',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.red)),
+                  SizedBox(
+                    height: 20,
+                  ),
+                  Text(
+                      '위 과정 중 문제나 불편사항이 발생한다면, 언제든지 네모 고객센터 fivenemos@gmail.com으로 문의주세요!',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                          fontFamily: 'dohyeon',
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black)),
+                ],
+              ),
+            ),
+            // add text
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('명함 밀어서 신고하기! 이해완료!',
+                    style: TextStyle(
+                        fontSize: 15,
+                        color: Color.fromARGB(255, 255, 255, 255),
+                        fontFamily: 'Dohyun')),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ],
+          );
+        },
+      );
+    }
+
     return GestureDetector(
       onTap: () {
         FocusScope.of(context).unfocus();
@@ -194,6 +287,24 @@ class _ContactsPageState extends State<ContactsPage> {
                 centerTitle: true,
                 automaticallyImplyLeading: false,
                 toolbarHeight: 45,
+                leadingWidth: 120,
+                leading: ElevatedButton.icon(
+                  onPressed: () {
+                    _showDialog();
+                  },
+                  icon: Icon(
+                    Icons.report,
+                    size: 30,
+                    color: Colors.red,
+                  ),
+                  label: Text(
+                    '신고',
+                    style: TextStyle(
+                        fontFamily: 'dohyeon',
+                        fontSize: 20,
+                        color: Colors.white),
+                  ),
+                ),
                 actions: [
                   IconButton(
                     icon: Icon(Icons.search),
