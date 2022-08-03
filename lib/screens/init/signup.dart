@@ -171,7 +171,7 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   checktext() {
-    return Center(child: Text('미동의시 서비스 이용이 제한됩니다.'));
+    return Center(child: Text('미동의시 서비스 이용이 제한될 수 있습니다'));
   }
 
   signupDecoration(labelText) {
@@ -277,6 +277,8 @@ class _SignupPageState extends State<SignupPage> {
                   } else if (!phoneNumberExp.hasMatch(phoneNumber)) {
                     errorDialog('유효하지 않은 전화번호입니다.\n -을 제외한 11자리 번호만 입력해주세요!');
                   } else if (isChecked == false) {
+                    errorDialog('서비스 이용약관 및 개인정보 처리방침에 동의해주세요.');
+                  } else if (isuserChecked == false) {
                     errorDialog('서비스 이용약관 및 개인정보 처리방침에 동의해주세요.');
                   } else {
                     print('Trying to POST signup. . . ');
