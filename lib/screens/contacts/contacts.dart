@@ -244,8 +244,8 @@ class _ContactsPageState extends State<ContactsPage> {
                             },
                             backgroundColor: Color(0xFFFE4A49),
                             foregroundColor: Colors.white,
-                            icon: Icons.add_alert,
-                            label: 'Delete',
+                            icon: Icons.report,
+                            label: '신고 및 차단하기',
                           )
                         ],
                       ),
@@ -487,7 +487,8 @@ class DialogUI extends StatelessWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
-                Text('정말 삭제하시겠습니까?'),
+                Text(
+                    '신고 및 차단은 철회할 수 없으며 신고 회원은 더이상 회원님에게 보이지 않습니다. \n\n 신고 및 차단하시겠습니까?'),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
