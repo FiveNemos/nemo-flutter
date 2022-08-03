@@ -55,12 +55,22 @@ dependencies:
   geolocator: ^9.0.1
   intl: ^0.17.0
   page_transition: ^2.0.9
+#  photofilters:
+#    git:
+#      url: https://github.com/jessy1001/photofilters.git
+#      ref: fivenemos # branch name
+  image: ^3.2.0
+  image_editor_plus:
+    git:
+      url: https://github.com/jessy1001/image_editor_plus.git
+      ref: fivenemos #branch name
+  image_utils_class: ^2.0.0
+
   provider: ^6.0.1
   flutter_switch: ^0.3.2
   qr_flutter: ^4.0.0
   barcode_scan2: ^4.2.1
   qr_code_scanner: ^1.0.0
-
   badges: ^2.0.3
 
 
