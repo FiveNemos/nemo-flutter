@@ -627,7 +627,13 @@ class DialogUI extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 Text(
-                    '신고 및 차단은 철회할 수 없으며 신고 회원은 더이상 회원님에게 보이지 않습니다. \n\n 신고 및 차단하시겠습니까?'),
+                    '신고 및 차단은 철회할 수 없으며 신고 회원은 더이상 회원님에게 보이지 않습니다. \n\n 신고 및 차단하시겠습니까?',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'Dohyun',
+                        fontWeight: FontWeight.bold,
+                        color: Colors.red)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
