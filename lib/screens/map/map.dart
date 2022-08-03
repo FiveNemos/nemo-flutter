@@ -183,7 +183,7 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
       body: FutureBuilder(
           future: _future,
           builder: (context, AsyncSnapshot snapshot) {
-            if (true) {
+            if (!snapshot.hasData) {
               return Center(
                   child: context.read<ShimmerLoadProvider>().shimmerForMap());
             }
