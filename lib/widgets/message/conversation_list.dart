@@ -32,11 +32,13 @@ class _ConversationListState extends State<ConversationList> {
       onTap: () {
         Navigator.push(context, MaterialPageRoute(builder: (context) {
           return ChatScreen(
-              chatroomID: widget.chatroomID,
-              loginID: widget.loginID,
-              friendID: widget.friendID,
-              friendName: widget.friendName,
-              friendImage: widget.friendImage);
+            chatroomID: widget.chatroomID,
+            loginID: widget.loginID,
+            friendID: widget.friendID,
+            friendName: widget.friendName,
+            friendImage: widget.friendImage,
+            notReadCnt: widget.notReadCnt,
+          );
         }));
       },
       child: Container(

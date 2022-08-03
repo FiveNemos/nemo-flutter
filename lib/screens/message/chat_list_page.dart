@@ -264,7 +264,7 @@ class _ChatPageState extends State<ChatPage> {
                             alignment: Alignment.center,
                             height: 200,
                             child: Text(
-                                '대화 내역이 없습니다. \n 명함을 교환한 친구에게 메세지를 보내보세요!',
+                                '대화 내역이 없습니다. \n 명함을 교환한 친구에게 메시지를 보내보세요!',
                                 textAlign: TextAlign.center),
                           );
                         }
