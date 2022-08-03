@@ -274,15 +274,15 @@ class _CardEditorState extends State<CardEditor> {
     print('CHANGED[\'userImage\'] = ${CHANGED['userImage']}');
     Uint8List bytes = Uint8List(0);
 
-    // if (CHANGED['userImage'] == 0) {
-    //   await _download(BASE_URL + userImage.path);
-    // } else {
-    //   setState(() {
-    //     pickedImage = userImage;
-    //   });
-    // }
-    var pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (CHANGED['userImage'] == 0) {
+      await _download(BASE_URL + userImage.path);
+    } else {
+      setState(() {
+        pickedImage = userImage;
+      });
+    }
+    // var pickedImage =
+    //     await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       await imageFile
@@ -316,6 +316,7 @@ class _CardEditorState extends State<CardEditor> {
           CHANGED['userImage'] = 1;
           editCount++;
         });
+        print('file.path = ${file.path}');
       } else {
         print('Edited Image was null~~~~~~~');
       }
