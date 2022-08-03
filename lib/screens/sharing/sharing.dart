@@ -421,6 +421,11 @@ class _DraggableCardState extends State<DraggableCard>
           } else {
             showSnackbar('명함 보내는 중...');
             try {
+              Timer(Duration(seconds: 7), () {
+                Nearby().stopDiscovery();
+                Nearby().stopAdvertising();
+                Nearby().stopAllEndpoints();
+              });
               bool a = await Nearby().startAdvertising(
                 userName,
                 strategy,
@@ -457,7 +462,7 @@ class _DraggableCardState extends State<DraggableCard>
                     // showSnackbar('5초 타이머 자동 연결종료');
 
                   } else {
-                    // showSnackbar('와! Sends! 실패했어요!');
+                    showSnackbar('연결에 실패하였습니다. QR을 시도해주세요.');
                   }
 
                   // showSnackbar(
@@ -491,6 +496,11 @@ class _DraggableCardState extends State<DraggableCard>
           } else {
             showSnackbar('명함 받는중...');
             try {
+              Timer(Duration(seconds: 7), () {
+                Nearby().stopDiscovery();
+                Nearby().stopAdvertising();
+                Nearby().stopAllEndpoints();
+              });
               bool a = await Nearby().startDiscovery(
                 userName,
                 strategy,
@@ -519,7 +529,7 @@ class _DraggableCardState extends State<DraggableCard>
                           //     '와! 샌즈! 자동종료 확인 : ${endpointMap[id]!.endpointName}');
                         });
                       } else {
-                        // showSnackbar('와! Sends! 실패했어요!');
+                        showSnackbar('연결에 실패하였습니다. QR을 시도해주세요.');
                       }
                     },
                     onDisconnected: (id) {
@@ -594,7 +604,13 @@ class _DraggableCardState extends State<DraggableCard>
     });
     Nearby().acceptConnection(id, onPayLoadRecieved: (endid, payload) async {
       if (payload.type == PayloadType.BYTES) {
+        Nearby().disconnectFromEndpoint(id);
+        Nearby().stopDiscovery();
+        Nearby().stopAdvertising();
+        Nearby().stopAllEndpoints();
+
         String friendId = String.fromCharCodes(payload.bytes!);
+
         Navigator.push(
             context,
             MaterialPageRoute(
