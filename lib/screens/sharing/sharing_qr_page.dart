@@ -175,7 +175,7 @@ class _QRforTOOKState extends State<QRforTOOK> {
         result = scanData;
         socket.emit('join', chatRoomId);
         socket.emit('took', {
-          'chatroomID': 'QR${senderId.toString()}',
+          'chatroomID': chatRoomId,
           'senderID': senderId,
           'receiverID': widget.myId
         }); // 칭구
