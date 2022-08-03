@@ -261,10 +261,11 @@ class _ProfilePageState extends State<ProfilePage> {
                           onPressed: () async {
                             // http 요청해서, chatroomID 찾기 by loginID, friendID
                             // var chatroomID = getHTTP(loginID, friendID)
-                            var roomID =
+                            var roomdata =
                                 await getChatRoom(loginID, widget.friendId);
                             if (!mounted) return;
-                            int chatroomID = int.parse(roomID);
+                            int chatroomID = int.parse(roomdata['chatroomID']);
+                            int notReadCnt = int.parse(roomdata['notreadcnt']);
                             if (chatroomID > 0) {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
@@ -274,6 +275,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                   friendID: widget.friendId!, // not isMe
                                   friendName: user.nickname,
                                   friendImage: user.imagePath,
+                                  notReadCnt: notReadCnt,
                                 );
                               }));
                             } else {
