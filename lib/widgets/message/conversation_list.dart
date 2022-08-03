@@ -37,7 +37,6 @@ class _ConversationListState extends State<ConversationList> {
             friendID: widget.friendID,
             friendName: widget.friendName,
             friendImage: widget.friendImage,
-            notReadCnt: widget.notReadCnt,
           );
         }));
       },

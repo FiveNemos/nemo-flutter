@@ -274,7 +274,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                   friendID: widget.friendId!, // not isMe
                                   friendName: user.nickname,
                                   friendImage: user.imagePath,
-                                  notReadCnt: notReadCnt,
                                 );
                               }));
                             } else {
