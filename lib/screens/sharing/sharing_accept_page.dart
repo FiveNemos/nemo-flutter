@@ -517,7 +517,7 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                                                                         friendId:
                                                                             widget.friendId,
                                                                         currIndex:
-                                                                            2,
+                                                                            1,
                                                                       ))
                                                                   // MaterialPageRoute(
                                                                   //     builder: (context) =>
@@ -1072,7 +1072,7 @@ class DialogUI extends StatelessWidget {
                                                                         friendId:
                                                                             friendId,
                                                                         currIndex:
-                                                                            2,
+                                                                            1,
                                                                       )));
                                                     },
                                                     child: Text(

@@ -7,17 +7,12 @@ import '../message/chat_detail_page.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
-import 'package:cached_network_image/cached_network_image.dart';
-import './cardeditor.dart';
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
 class ProfilePage extends StatefulWidget {
-  ProfilePage({Key? key, this.friendId, required this.currIndex, this.latlng})
-      : super(key: key);
-  int currIndex; // 0 도 허용가능
-  int? friendId;
-  List? latlng;
+  ProfilePage({Key? key, this.friendId}) : super(key: key);
+  var friendId;
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -130,18 +125,6 @@ class _ProfilePageState extends State<ProfilePage> {
     }
   }
 
-  errorDialog(msg) {
-    showDialog(
-        context: context,
-        builder: (context) {
-          return Center(
-            child: DialogUI(
-              errorMsg: msg,
-            ),
-          );
-        });
-  }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -159,82 +142,97 @@ class _ProfilePageState extends State<ProfilePage> {
       buildImageTag,
       buildAbout,
     ];
-
-    return WillPopScope(
-      onWillPop: () {
-        setState(() {});
-        // shraring
-        if (widget.currIndex == 1) {
-          return Future.value(false);
-        } else {
-          return Future.value(true);
-        }
-      },
-      child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              'NeMo',
-              style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
-            ),
-            centerTitle: true,
-            leading: !_isMe
-                ? IconButton(
-                    icon: Icon(Icons.keyboard_backspace_outlined),
-                    onPressed: () {
-                      if (widget.currIndex == 1) {
-                        Navigator.pushNamed(context, '/sharing');
-                      } else {
-                        Navigator.pop(context);
-                      }
-                    },
-                  )
-                : IconButton(
-                    icon: Icon(Icons.edit),
-                    onPressed: () {
-                      Navigator.push(context,
-                          MaterialPageRoute(builder: (context) {
-                        return CardEditor();
-                      }));
-                    }),
-            // : SizedBox(
-            //     width: 1,
-            //     height: 1,
-            //   ),
-            actions: _isMe
-                ? [
-                    IconButton(
-                      icon: Icon(Icons.logout),
-                      tooltip: 'logout',
-                      onPressed: () {
-                        Navigator.pushNamed(context, '/login');
-                      },
-                    ),
-                  ]
-                : [],
+    if (user != null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            'NeMo',
+            style: TextStyle(fontFamily: 'CherryBomb', fontSize: 30),
           ),
-          body: (user != null)
-              ? ListView.separated(
-                  // shrinkWrap: true,
-                  physics: BouncingScrollPhysics(),
-                  scrollDirection: Axis.vertical,
-                  padding: EdgeInsets.fromLTRB(15, 20, 15, 20),
-                  // 전체 박스에 대한 padding
-                  itemCount: buildList.length,
-                  itemBuilder: (context, i) {
-                    return buildList[i](user);
-                  },
-                  separatorBuilder: (context, i) => SizedBox(height: 15),
-                )
-              : Center(
-                  child: CircularProgressIndicator(
-                    color: Colors.purple,
-                    semanticsLabel: '로딩중입니다 . . .',
+          centerTitle: true,
+          automaticallyImplyLeading: true,
+          actions: _isMe
+              ? [
+                  IconButton(
+                    icon: Icon(Icons.logout),
+                    tooltip: 'logout',
+                    onPressed: () {
+                      Navigator.pushNamed(context, '/login');
+                    },
                   ),
-                ),
-          bottomNavigationBar:
-              bottomNavigationBarClick(widget.currIndex, context)),
-    );
+                ]
+              : [],
+        ),
+        body: ListView.separated(
+          // shrinkWrap: true,
+          physics: BouncingScrollPhysics(),
+          scrollDirection: Axis.vertical,
+          padding: EdgeInsets.fromLTRB(15, 20, 15, 20), // 전체 박스에 대한 padding
+          itemCount: buildList.length,
+          itemBuilder: (context, i) {
+            return buildList[i](user);
+          },
+          separatorBuilder: (context, i) => SizedBox(height: 15),
+        ),
+        bottomNavigationBar: BottomNavigationBar(
+          type: BottomNavigationBarType.fixed,
+          items: [
+            BottomNavigationBarItem(
+              icon: Icon(Icons.contacts),
+              label: '연락처',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.share),
+              label: '공유',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.map),
+              label: 'Map',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.message),
+              label: '메시지',
+            ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.person),
+              label: '마이페이지',
+            ),
+          ],
+          currentIndex: 2,
+          onTap: (int index) {
+            switch (index) {
+              case 0:
+                Navigator.pushNamed(context, '/contacts');
+                break;
+              case 1:
+                Navigator.pushNamed(context, '/sharing');
+                break;
+              case 2:
+                Navigator.pushNamed(context, '/map');
+                break;
+              case 3:
+                Navigator.pushNamed(context, '/message');
+                break;
+              case 4:
+                Navigator.pushNamed(context, '/mypage');
+                break;
+            }
+          },
+        ),
+      );
+    } else {
+      return Center(
+        child: CircularProgressIndicator(
+          color: Colors.black,
+        ),
+      );
+    }
   }
+
+  Widget buildAvatar2(UserProfile user) => ProfileWidget(
+        imagePath: user.imagePath,
+        onClicked: () async {},
+      );
 
   Widget buildAvatar(UserProfile user) => ProfileWidget(
         imagePath: user.imagePath,
@@ -260,20 +258,17 @@ class _ProfilePageState extends State<ProfilePage> {
                             var roomID =
                                 await getChatRoom(loginID, widget.friendId);
                             if (!mounted) return;
-                            int chatroomID = int.parse(roomID);
-                            if (chatroomID > 0) {
+                            if (int.parse(roomID) > 0) {
                               Navigator.push(context,
                                   MaterialPageRoute(builder: (context) {
                                 return ChatScreen(
-                                  chatroomID: chatroomID, // chatroomID // 수정필요
+                                  chatroomID: roomID, // chatroomID // 수정필요
                                   loginID: loginID,
-                                  friendID: widget.friendId!, // not isMe
+                                  friendID: widget.friendId,
                                   friendName: user.nickname,
                                   friendImage: user.imagePath,
                                 );
                               }));
-                            } else {
-                              errorDialog('명함이 서로 있어야 대화가 가능합니다 🙇🏻');
                             }
                           },
                           icon: Icon(
@@ -316,8 +311,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image(
-                        image: CachedNetworkImageProvider(user.image[i]),
+                      child: Image.network(
+                        // user.image1,
+                        user.image[i],
                         width: 100,
                         height: 100,
                         fit: BoxFit.cover,
@@ -354,74 +350,4 @@ class _ProfilePageState extends State<ProfilePage> {
           ],
         ),
       );
-
-  bottomNavigationBarClick(nowIndex, context) {
-    return BottomNavigationBar(
-        type: BottomNavigationBarType.fixed,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(Icons.contacts),
-            label: '연락처',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.share),
-            label: '공유',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.map),
-            label: 'Map',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message),
-            label: '메시지',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '마이페이지',
-          ),
-        ],
-        currentIndex: nowIndex,
-        onTap: (int nextIndex) {
-          if (nextIndex == nowIndex && nextIndex != 1) {
-            return;
-          }
-          switch (nextIndex) {
-            case 0:
-              Navigator.pushNamed(context, '/contacts');
-              break;
-            case 1:
-              Navigator.pushNamed(context, '/sharing');
-              break;
-            case 2:
-              Navigator.pushNamed(context, '/map');
-              break;
-            case 3:
-              Navigator.pushNamed(context, '/message');
-              break;
-            case 4:
-              Navigator.pushNamed(context, '/mypage');
-              break;
-          }
-        });
-  }
-}
-
-class DialogUI extends StatelessWidget {
-  DialogUI({Key? key, this.errorMsg}) : super(key: key);
-  var errorMsg;
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-        alignment: Alignment.center,
-        child: SizedBox(
-          height: 100,
-          width: double.infinity,
-          child: Center(
-            child: Text(
-              errorMsg,
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ));
-  }
 }

@@ -4,48 +4,22 @@ import 'package:flutter/physics.dart';
 import 'dart:math';
 import 'dart:typed_data';
 import 'package:nearby_connections/nearby_connections.dart';
-import 'package:nemo_flutter/screens/sharing/sharing_qr_page.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:provider/provider.dart';
 
-import '../../providers/bottomBar.dart';
 import '../mypage/cardeditor.dart';
 import '../../models/sharing/user.dart';
 import '../sharing/punch.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter_switch/flutter_switch.dart';
 
 // geolocator
 import 'package:geolocator/geolocator.dart';
 import 'package:shimmer/shimmer.dart';
 
-class SharingPage extends StatefulWidget {
+class SharingPage extends StatelessWidget {
   const SharingPage({super.key});
-
-  @override
-  State<SharingPage> createState() => _SharingPageState();
-}
-
-class _SharingPageState extends State<SharingPage> {
-  bool isQRmode = false;
-  int loginID = 0;
-  static final storage = FlutterSecureStorage();
-  checkUser() async {
-    dynamic userInfo = await storage.read(key: 'login');
-    setState(() {
-      loginID = int.parse(jsonDecode(userInfo)['user_id']);
-    });
-  }
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    checkUser();
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -70,7 +44,7 @@ class _SharingPageState extends State<SharingPage> {
                           fontWeight: FontWeight.bold,
                           color: Colors.black)),
                   SizedBox(
-                    height: 10,
+                    height: 20,
                   ),
                   Image.asset(
                     'assets/took_up.jpg',
@@ -116,7 +90,7 @@ class _SharingPageState extends State<SharingPage> {
                   // SizedBox(height: 30),
                   SizedBox(
                     width: 350.0,
-                    height: 80.0,
+                    height: 70.0,
                     child: Shimmer.fromColors(
                       baseColor: Colors.red,
                       highlightColor: Colors.yellow,
@@ -124,7 +98,7 @@ class _SharingPageState extends State<SharingPage> {
                         'TooK !',
                         textAlign: TextAlign.center,
                         style: TextStyle(
-                          fontSize: 60.0,
+                          fontSize: 50.0,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
@@ -132,7 +106,7 @@ class _SharingPageState extends State<SharingPage> {
                   ),
                   Image.asset(
                     'assets/bump_hand.gif',
-                    height: 200,
+                    height: 180,
                     fit: BoxFit.cover,
                   ),
                   // SizedBox(
@@ -167,16 +141,20 @@ class _SharingPageState extends State<SharingPage> {
         ),
         centerTitle: true,
         automaticallyImplyLeading: false,
-        leading: IconButton(
-            icon: Icon(Icons.edit),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (context) {
-                return CardEditor();
-              }));
-            }),
-
+        // leading: IconButton(
+        //   icon: Icon(Icons.info),
+        //   onPressed: () {
+        //     _showDialog();
+        //   },
+        // ),
         actions: [
-          buildSwitch2(),
+          IconButton(
+              icon: Icon(Icons.edit),
+              onPressed: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) {
+                  return CardEditor();
+                }));
+              }),
         ],
         // bottomOpacity: 0.8,
 
@@ -186,14 +164,10 @@ class _SharingPageState extends State<SharingPage> {
             alignment: Alignment.center,
             constraints: BoxConstraints.expand(height: 50),
             // button
-            child: ElevatedButton(
-              style: ButtonStyle(
-                  backgroundColor: MaterialStateProperty.all(Colors.orange),
-                  shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8.0)))),
-              // shape: RoundedRectangleBorder(
-              //     borderRadius: BorderRadius.circular(8.0)),
-              // color: Colors.orange,
+            child: RaisedButton(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.0)),
+              color: Colors.orange,
               child: Text(
                 '처음 사용한다면 클릭!',
                 style: TextStyle(
@@ -216,95 +190,63 @@ class _SharingPageState extends State<SharingPage> {
             fit: BoxFit.cover,
           ),
         ),
-        child: loginID > 0
-            ? DraggableCard(
-                isQRmode: isQRmode, loginID: loginID, child: TookPage())
-            : TookPage(),
+        child: DraggableCard(child: TookPage()),
       ),
-      bottomNavigationBar: context
-          .read<BottomNavigationProvider>()
-          .bottomNavigationBarClick(2, context),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        items: [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.contacts),
+            label: '연락처',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.share),
+            label: '공유',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.map),
+            label: 'Map',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.message),
+            label: '메시지',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.person),
+            label: '마이페이지',
+          ),
+        ],
+        currentIndex: 1,
+        onTap: (int index) {
+          switch (index) {
+            case 0:
+              Navigator.pushNamed(context, '/contacts');
+              break;
+            case 1:
+              // Navigator.pushNamed(context, '/sharing');
+              break;
+            case 2:
+              Navigator.pushNamed(context, '/map');
+              break;
+            case 3:
+              Navigator.pushNamed(context, '/message');
+              break;
+            case 4:
+              Navigator.pushNamed(context, '/mypage');
+              break;
+          }
+        },
+      ),
     );
   }
-
-  Widget buildSwitch2() => Padding(
-        padding: const EdgeInsets.fromLTRB(0, 5, 15, 0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            FlutterSwitch(
-              width: 50.0,
-              height: 30.0,
-              // toggleSize: 45.0,
-              value: isQRmode,
-              // borderRadius: 30.0,
-              padding: 1.0,
-              activeToggleColor: Color(0xFF6E40C9),
-              inactiveToggleColor: Color(0xFF2F363D),
-              activeSwitchBorder: Border.all(
-                color: Color(0xFF3C1E70),
-                width: 2.0,
-              ),
-              inactiveSwitchBorder: Border.all(
-                // color: Color(0xFFD1D5DA),
-                color: Color(0xFF3C1E70),
-                width: 2.0,
-              ),
-              activeColor: Color(0xFF271052),
-              inactiveColor: Color(0xFF271052),
-              // inactiveColor: Colors.white,
-              activeIcon: Icon(
-                Icons.qr_code,
-                color: Color(0xFFF8E3A1),
-              ),
-              inactiveIcon: Icon(
-                Icons.near_me,
-                color: Color(0xFFFFDF5D),
-              ),
-              onToggle: (val) {
-                setState(() {
-                  isQRmode = val;
-                });
-              },
-            ),
-            Container(
-              padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
-              alignment: Alignment.centerRight,
-              child: Text(isQRmode ? 'QR' : 'NearBy',
-                  style: TextStyle(fontSize: 12)),
-            ),
-          ],
-        ),
-      );
-
-  Widget buildSwitch() => Transform.scale(
-        scale: 1.1,
-        child: Switch.adaptive(
-          // thumbColor: MaterialStateProperty.all(Colors.red),
-          // trackColor: MaterialStateProperty.all(Colors.orange),
-          value: isQRmode,
-          onChanged: (value) => setState(() => isQRmode = value),
-          activeColor: Colors.blueAccent,
-          activeTrackColor: Colors.blue.withOpacity(0.4),
-          inactiveThumbColor: Colors.orange,
-          inactiveTrackColor: Colors.white,
-        ),
-      );
-  //here
 }
 
 /// A draggable card that moves back to [Alignment.center] when it's
 /// released.
 class DraggableCard extends StatefulWidget {
-  const DraggableCard(
-      {required this.child,
-      required this.loginID,
-      required this.isQRmode,
-      super.key});
+  const DraggableCard({required this.child, super.key});
 
   final Widget child;
-  final bool isQRmode;
-  final int loginID;
 
   @override
   State<DraggableCard> createState() => _DraggableCardState();
@@ -384,19 +326,6 @@ class _DraggableCardState extends State<DraggableCard>
   }
 
   @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(vsync: this);
-
-    _controller.addListener(() {
-      setState(() {
-        _dragAlignment = _animation.value;
-      });
-    });
-    getLocation();
-  }
-
-  @override
   Widget build(BuildContext context) {
     void handleTimeout() async {
       await Nearby().stopAdvertising();
@@ -421,18 +350,9 @@ class _DraggableCardState extends State<DraggableCard>
         print(details.velocity.pixelsPerSecond.dy);
         if (details.velocity.pixelsPerSecond.dy < 0) {
           print('send');
+          showSnackbar('명함 보내는 중...');
 
-          if (widget.isQRmode) {
-            showSnackbar('상대방에게 QR코드를 보여주세요!');
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => QRforTOOK(
-                        isSender: true,
-                        myId: widget.loginID,
-                        latlng: [lat, lng])));
-          } else {
-            showSnackbar('명함 보내는 중...');
+          {
             try {
               scheduleTimeout(5 * 1000);
               bool a = await Nearby().startAdvertising(
@@ -496,18 +416,10 @@ class _DraggableCardState extends State<DraggableCard>
           }
         } else {
           // _runAnimation(Offset(0, 0), size);
-          print('receive');
-          if (widget.isQRmode) {
-            showSnackbar('상대방의 QR코드를 찍어주세요!');
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => QRforTOOK(
-                        isSender: false,
-                        myId: widget.loginID,
-                        latlng: [lat, lng])));
-          } else {
-            showSnackbar('명함 받는중...');
+          print('recieve');
+          showSnackbar('명함 받는중...');
+
+          {
             try {
               scheduleTimeout(5 * 1000);
               bool a = await Nearby().startDiscovery(
@@ -579,7 +491,6 @@ class _DraggableCardState extends State<DraggableCard>
   void showSnackbar(dynamic a) {
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
       content: Text(a.toString()),
-      duration: Duration(milliseconds: 3000),
     ));
   }
 
@@ -655,6 +566,19 @@ class _DraggableCardState extends State<DraggableCard>
     final simulation = SpringSimulation(spring, 0, 1, -unitVelocity);
 
     _controller.animateWith(simulation);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(vsync: this);
+
+    _controller.addListener(() {
+      setState(() {
+        _dragAlignment = _animation.value;
+      });
+    });
+    getLocation();
   }
 
   @override
