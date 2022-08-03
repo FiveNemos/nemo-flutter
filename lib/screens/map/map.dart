@@ -10,6 +10,7 @@ import '../../models/map/cord.dart';
 import 'dart:convert';
 import 'dart:async';
 
+import 'package:permission_handler/permission_handler.dart';
 //
 // import '../sharing/sharing_accept_page.dart';
 import '../../providers/bottomBar.dart';
@@ -31,6 +32,19 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
   List userCord = [];
 
   var loginID;
+
+  checkPermissions() async {
+    Map<Permission, PermissionStatus> statuses = await [
+      // Permission.bluetooth,
+      Permission.bluetooth,
+      Permission.bluetoothAdvertise,
+      Permission.bluetoothConnect,
+      Permission.bluetoothScan,
+      Permission.location,
+      Permission.storage,
+      //add more permission to request here.
+    ].request();
+  }
 
   // var myId;
   // var latt;
@@ -153,6 +167,8 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
 
   @override
   Widget build(BuildContext context) {
+    checkPermissions();
+
     return Scaffold(
       appBar: AppBar(
         title: Text(

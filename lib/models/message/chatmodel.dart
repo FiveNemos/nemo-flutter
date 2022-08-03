@@ -12,6 +12,7 @@ class ChatModel {
     required this.receiverID,
     required this.sentAt,
     required this.messagetext,
+    required this.isread,
   });
 
   // String socketId;
@@ -20,6 +21,7 @@ class ChatModel {
   int receiverID;
   String sentAt;
   String messagetext;
+  bool isread;
 
   factory ChatModel.fromJson(Map<String, dynamic> json) => ChatModel(
         // socketId: json["socketId"],
@@ -28,6 +30,7 @@ class ChatModel {
         receiverID: json['receiverID'],
         sentAt: json['sentAt'],
         messagetext: json['messagetext'],
+        isread: json['isread'],
       );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +40,6 @@ class ChatModel {
         'receiverID': receiverID,
         'sentAt': sentAt, // 언제보냈는가
         'messagetext': messagetext, // 메세지 내용
+        'isread': isread,
       };
 }

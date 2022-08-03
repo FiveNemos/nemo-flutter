@@ -5,6 +5,7 @@ import 'package:nemo_flutter/screens/sharing/punch.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
 import 'package:socket_io_client/socket_io_client.dart';
+import 'dart:convert';
 
 // sharing.dart
 // Sharing 페이지를 stateful widget으로 변경하기
@@ -41,6 +42,8 @@ class _QRforTOOKState extends State<QRforTOOK> {
   Barcode? result;
   QRViewController? controller;
   dynamic socket;
+  Codec<String, String> stringToBase64 = utf8.fuse(base64);
+
   void setStateIfMounted(f) {
     if (mounted) setState(f);
   }
@@ -56,7 +59,7 @@ class _QRforTOOKState extends State<QRforTOOK> {
       socket.on('connect', (data) {
         debugPrint('socket connected');
         if (widget.isSender) {
-          socket.emit('join', 'QR${widget.myId}');
+          socket.emit('join', 'QRTOOKExchange${widget.myId.toString()}');
         }
         debugPrint('연결완료');
       });
@@ -94,7 +97,15 @@ class _QRforTOOKState extends State<QRforTOOK> {
   void initState() {
     // TODO: implement initState
     initializeSocket();
+    Future.delayed(Duration(milliseconds: 600), () async {
+      await controller?.resumeCamera();
+    });
     super.initState();
+    var encodeId =
+        stringToBase64.encode('QRTOOKExchange${widget.myId.toString()}');
+    var decodeId = stringToBase64.decode(encodeId);
+    print('encodeId: $encodeId');
+    print('decodeId: $decodeId');
   }
 
   // In order to get hot reload to work we need to pause the camera if the platform
@@ -102,11 +113,11 @@ class _QRforTOOKState extends State<QRforTOOK> {
   @override
   void reassemble() {
     super.reassemble();
-    if (Platform.isAndroid) {
-      controller!.pauseCamera();
-    } else if (Platform.isIOS) {
-      controller!.resumeCamera();
-    }
+    // if (Platform.isAndroid) {
+    //   controller!.pauseCamera();
+    // } else if (Platform.isIOS) {
+    //   controller!.resumeCamera();
+    // }
   }
 
   @override
@@ -116,7 +127,8 @@ class _QRforTOOKState extends State<QRforTOOK> {
       body: widget.isSender
           ? Center(
               child: QrImage(
-              data: widget.myId.toString(),
+              data: stringToBase64
+                  .encode('QRTOOKExchange${widget.myId.toString()}'),
               backgroundColor: Colors.white,
               size: 200,
             ))
@@ -149,14 +161,16 @@ class _QRforTOOKState extends State<QRforTOOK> {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
       int senderId;
-      String? senderIdinStr = scanData.code;
-      senderId = int.parse(senderIdinStr!);
+      String? chatRoomId = stringToBase64
+          .decode(scanData.code!); // 'QRTOOKExchange${widget.myId.toString()}'
+      String? senderIdinStr = chatRoomId.substring(14);
+      senderId = int.parse(senderIdinStr);
 
       setState(() {
         result = scanData;
-        socket.emit('join', 'QR$senderId');
+        socket.emit('join', chatRoomId);
         socket.emit('took', {
-          'chatroomID': 'QR$senderId',
+          'chatroomID': 'QR${senderId.toString()}',
           'senderID': senderId,
           'receiverID': widget.myId
         }); // 칭구
