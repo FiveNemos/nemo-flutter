@@ -38,13 +38,20 @@ class _ChatScreenState extends State<ChatScreen> {
   int? notReadCnt;
 
   getChatReadCnts() async {
+    print("start");
     try {
+      print("try");
       var dio = Dio();
+      print(
+          'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
       Response response = await dio.get(
           'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
+      print("here i go");
       if (response.statusCode == 200) {
         final jsonData = response.data;
-        int tempCnt = int.parse(jsonData['notreadcnt']);
+        int tempCnt = jsonData['notreadcnt'] == null
+            ? 0
+            : int.parse(jsonData['notreadcnt']);
         setState(() {
           notReadCnt = tempCnt;
         });
@@ -233,6 +240,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
+    print("hello");
     getChatReadCnts();
     getChatConns();
     super.initState();

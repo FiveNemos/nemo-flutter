@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shimmer/shimmer.dart';
 
 class ShimmerLoadProvider extends ChangeNotifier {
-  shimmerForProfile() {
+  shimmerForAll() {
     return Shimmer.fromColors(
         baseColor: Colors.grey.shade300,
         highlightColor: Colors.grey.shade100,
@@ -31,6 +31,140 @@ class ShimmerLoadProvider extends ChangeNotifier {
               const ContentPlaceholder(
                 lineType: ContentLineType.twoLines,
               ),
+            ],
+          ),
+        ));
+  }
+
+  shimmerForMap() {
+    return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        enabled: true,
+        child: SingleChildScrollView(
+            physics: const NeverScrollableScrollPhysics(),
+            child: Center(
+              child: Container(
+                width: double.infinity,
+                height: 500,
+                margin: const EdgeInsets.all(16.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(12.0),
+                  color: Colors.black,
+                ),
+              ),
+            )));
+  }
+
+  shimmerForProfile() {
+    return Shimmer.fromColors(
+        baseColor: Colors.grey.shade300,
+        highlightColor: Colors.grey.shade100,
+        enabled: true,
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              SizedBox(
+                height: 15,
+              ),
+              Center(
+                child: Container(
+                  width: 150,
+                  height: 150,
+                  margin: const EdgeInsets.all(16.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(100.0),
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              // Avatar
+
+              Center(child: const TitlePlaceholder(width: 200)),
+              const SizedBox(height: 32.0),
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Column(
+                      children: [
+                        Container(
+                          width: 100.0,
+                          height: 90.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: 50,
+                          height: 12.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 15),
+                    Column(
+                      children: [
+                        Container(
+                          width: 100.0,
+                          height: 90.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: 50,
+                          height: 12.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                    SizedBox(width: 15),
+                    Column(
+                      children: [
+                        Container(
+                          width: 100.0,
+                          height: 90.0,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.0),
+                            color: Colors.white,
+                          ),
+                        ),
+                        SizedBox(
+                          height: 10,
+                        ),
+                        Container(
+                          width: 50,
+                          height: 12.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 32.0),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Container(
+                  width: 200,
+                  height: 12.0,
+                  color: Colors.white,
+                ),
+              ),
+              const SizedBox(height: 16.0),
+              const TitlePlaceholder(width: 200),
             ],
           ),
         ));
@@ -106,7 +240,7 @@ class BannerPlaceholder extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      height: 200.0,
+      height: 230.0,
       margin: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(12.0),

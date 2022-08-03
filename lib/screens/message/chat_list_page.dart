@@ -59,7 +59,13 @@ class _ChatPageState extends State<ChatPage> {
       var dio = Dio();
       Response response = await dio
           .get('http://34.64.217.3:3000/api/chatroom/list?user_id=$id');
-      if (response.statusCode == 200) {
+      if (response.data == 'false') {
+        setState(() {
+          isLoading = false;
+        });
+      }
+      if (response.statusCode == 200 && response.data != 'false') {
+        print("responsedata : ${response.data}");
         final jsonData = response.data;
         var roomData = jsonData['chatroom'];
         var friendData = jsonData['data'];
@@ -293,7 +299,7 @@ class _ChatPageState extends State<ChatPage> {
                             if (chatUsers.isEmpty) {
                               return Container(
                                 alignment: Alignment.center,
-                                height: 200,
+                                height: 500,
                                 child: Text(
                                     '대화 내역이 없습니다. \n 명함을 교환한 친구에게 메시지를 보내보세요!',
                                     textAlign: TextAlign.center),
