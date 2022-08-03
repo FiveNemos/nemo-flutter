@@ -108,6 +108,9 @@ class _ChatPageState extends State<ChatPage> {
         return false;
       }
     } on DioError catch (e) {
+      setState(() {
+        isLoading = false;
+      });
       print('뭔가 에러가');
       final errorjson = jsonDecode(e.response.toString());
       print(errorjson);
