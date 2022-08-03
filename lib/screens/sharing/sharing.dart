@@ -316,8 +316,21 @@ class _DraggableCardState extends State<DraggableCard>
     });
   }
 
+  Timer scheduleTimeout([int milliseconds = 10000]) =>
+      Timer(Duration(milliseconds: milliseconds), handleTimeout);
+
+  void handleTimeout() async {
+    await Nearby().stopAdvertising();
+    await Nearby().stopDiscovery();
+    print('타임아웃! 다시 시도해주세요.');
+  }
+
   @override
   Widget build(BuildContext context) {
+    void handleTimeout() async {
+      await Nearby().stopAdvertising();
+    }
+
     checkPermissions();
     final size = MediaQuery.of(context).size;
 
@@ -341,6 +354,7 @@ class _DraggableCardState extends State<DraggableCard>
 
           {
             try {
+              scheduleTimeout(5 * 1000);
               bool a = await Nearby().startAdvertising(
                 userName,
                 strategy,
@@ -355,6 +369,10 @@ class _DraggableCardState extends State<DraggableCard>
 
                       Nearby().sendBytesPayload(
                           key, Uint8List.fromList(a.codeUnits));
+                      showSnackbar(
+                          '연결이 종료되었습니다 : ${endpointMap[id]!.endpointName}');
+                      await Nearby().stopAdvertising();
+                      showSnackbar('advertising을 종료합니다.');
                       // Navigator.push(
                       //     context,
                       //     MaterialPageRoute(
@@ -384,11 +402,11 @@ class _DraggableCardState extends State<DraggableCard>
                   //     'Connected: ${endpointMap[id]!.endpointName}, id $id');
                 },
                 onDisconnected: (id) {
-                  // showSnackbar(
-                  //     'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
                   setState(() {
                     endpointMap.remove(id);
                   });
+                  // showSnackbar(
+                  //     'Disconnected: ${endpointMap[id]!.endpointName}, id $id');
                 },
               );
               // showSnackbar('ADVERTISING: $a');
@@ -403,6 +421,7 @@ class _DraggableCardState extends State<DraggableCard>
 
           {
             try {
+              scheduleTimeout(5 * 1000);
               bool a = await Nearby().startDiscovery(
                 userName,
                 strategy,
@@ -427,8 +446,10 @@ class _DraggableCardState extends State<DraggableCard>
                           setState(() {
                             endpointMap.remove(id);
                           });
-                          // showSnackbar(
-                          //     '와! 샌즈! 자동종료 확인 : ${endpointMap[id]!.endpointName}');
+                          showSnackbar(
+                              '연결이 종료되었습니다 : ${endpointMap[id]!.endpointName}');
+                          await Nearby().stopDiscovery();
+                          showSnackbar('Discovery를 종료합니다.');
                         });
                       } else {
                         // showSnackbar('와! Sends! 실패했어요!');

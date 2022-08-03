@@ -12,8 +12,8 @@ import '../sharing/sharing.dart';
 import 'package:flutter/services.dart';
 import 'package:image_editor_plus/image_editor_plus.dart';
 import 'dart:typed_data';
-import './image_editor_example.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
 
 const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
@@ -158,6 +158,7 @@ class _CardEditorState extends State<CardEditor> {
   dynamic tagImage3;
   var detailTitle;
   var detailContent;
+  var pickedImage;
 
   checkUser() async {
     dynamic userInfo = await storage.read(key: 'login');
@@ -223,10 +224,11 @@ class _CardEditorState extends State<CardEditor> {
       tags = {'1': user.tag1, '2': user.tag2, '3': user.tag3};
       introduction = user.introduction;
       userImage = File(user.imagePath);
-      // print(user.imagePath);
+      print('user.imagePath = ${user.imagePath}!!!!!!!!!');
       tagImage1 = File(user.image1);
       tagImage2 = File(user.image2);
       tagImage3 = File(user.image3);
+      print('tagImage1.runtimeType = ${tagImage1.runtimeType}');
       detailTitle = user.title;
       detailContent = user.about;
       CHANGED.forEach((key, value) {
@@ -245,11 +247,41 @@ class _CardEditorState extends State<CardEditor> {
     // setEverything(user);
   }
 
+  Future<void> _download(String url) async {
+    final response = await http.get(Uri.parse(url));
+
+    // Get the image name
+    final imageName = path.basename(url);
+    // Get the document directory path
+    final appDir = await getApplicationDocumentsDirectory();
+
+    // This is the saved image path
+    // You can use it to display the saved image later
+    final localPath = path.join(appDir.path, imageName);
+
+    // Downloading
+    final imageFile = File(localPath);
+    await imageFile.writeAsBytes(response.bodyBytes);
+    setState(() {
+      pickedImage = imageFile;
+    });
+  }
+
   Future getImage(context) async {
+    print('getImage 들어옴!!!!!!!!!');
+    print('CHANGED[\'userImage\'] = ${CHANGED['userImage']}');
     Uint8List bytes = Uint8List(0);
 
-    var pickedImage =
-        await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (CHANGED['userImage'] == 0) {
+      await _download(BASE_URL + userImage.path);
+    } else {
+      setState(() {
+        pickedImage = userImage;
+      });
+    }
+    print('그리고 userImage path는: ${userImage.path}');
+    // var pickedImage =
+    //     await ImagePicker().pickImage(source: ImageSource.gallery);
     if (pickedImage != null) {
       File imageFile = File(pickedImage.path);
       await imageFile
@@ -258,6 +290,7 @@ class _CardEditorState extends State<CardEditor> {
           .catchError((onError) {
         print('Exception error while reading file from path');
       });
+      print('pickedImage.path = ${pickedImage.path}!!!!!!!!!!!!!');
       // var finalImage = Image.file(imageFile);
       // var data = await rootBundle.load(pickedImage.path);
       var imageData = bytes.buffer.asUint8List();
@@ -269,6 +302,7 @@ class _CardEditorState extends State<CardEditor> {
           ),
         ),
       );
+      // print('editedImage = ${editedImage.path}');
       if (editedImage != null) {
         Uint8List imageInUnit8List =
             editedImage; // store unit8List image here ;
@@ -279,10 +313,13 @@ class _CardEditorState extends State<CardEditor> {
           userImage = file;
           CHANGED['userImage'] = 1;
         });
+        setState(() {});
+      } else {
+        print('Edited Image was null~~~~~~~');
       }
+      print('처리 다 끝났달룽~~~~~~~~~~');
     }
   }
-
   // List<Filter> filters = presetFiltersList;
   // File imageFile;
 
