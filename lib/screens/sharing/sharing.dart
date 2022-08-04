@@ -293,7 +293,7 @@ class _SharingPageState extends State<SharingPage> {
             Container(
               padding: EdgeInsets.fromLTRB(0, 5, 0, 0),
               alignment: Alignment.centerRight,
-              child: Text(isQRmode ? 'QR' : 'NearBy',
+              child: Text(isQRmode ? 'QR' : 'Nearby',
                   style: TextStyle(fontSize: 12)),
             ),
           ],
