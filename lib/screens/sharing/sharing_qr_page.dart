@@ -48,6 +48,8 @@ class _QRforTOOKState extends State<QRforTOOK> {
   QRViewController? controller;
   dynamic socket;
   Codec<String, String> stringToBase64 = utf8.fuse(base64);
+  String errorMsg = '유효하지 않은 QR코드입니다 🙇🏻 \n 다시 시도해주세요 ! ';
+  bool isValid = false;
 
   void setStateIfMounted(f) {
     if (mounted) setState(f);
@@ -100,6 +102,13 @@ class _QRforTOOKState extends State<QRforTOOK> {
     }
   }
 
+  void showSnackbar(dynamic a) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(a.toString()),
+      duration: Duration(milliseconds: 2000),
+    ));
+  }
+
   @override
   void initState() {
     // TODO: implement initState
@@ -129,6 +138,9 @@ class _QRforTOOKState extends State<QRforTOOK> {
 
   @override
   Widget build(BuildContext context) {
+    if (result != null && !isValid) {
+      showSnackbar(errorMsg);
+    }
     return Scaffold(
       appBar: AppBar(),
       body: widget.isSender
@@ -167,21 +179,35 @@ class _QRforTOOKState extends State<QRforTOOK> {
   void _onQRViewCreated(QRViewController controller) {
     this.controller = controller;
     controller.scannedDataStream.listen((scanData) {
-      int senderId;
+      int? senderId;
 
       setState(() {
         result = scanData;
         if (result != null) {
           String? chatRoomId = stringToBase64.decode(
               result!.code!); // 'QRTOOKExchange${widget.myId.toString()}'
-          String? senderIdinStr = chatRoomId.substring(14);
-          senderId = int.parse(senderIdinStr);
-          socket.emit('join', chatRoomId);
-          socket.emit('took', {
-            'chatroomID': chatRoomId,
-            'senderID': senderId,
-            'receiverID': widget.myId
-          });
+          if (chatRoomId.substring(0, 14) == 'QRTOOKExchange') {
+            String? senderIdinStr = chatRoomId.substring(14);
+            senderId = int.tryParse(senderIdinStr);
+            if (senderId != null) {
+              if (senderId! > 0) {
+                socket.emit('join', chatRoomId);
+                socket.emit('took', {
+                  'chatroomID': chatRoomId,
+                  'senderID': senderId,
+                  'receiverID': widget.myId
+                });
+                setState(() {
+                  isValid = true;
+                });
+              }
+            }
+          }
+          if (!isValid) {
+            setState(() {
+              errorMsg = '유효하지 않은 바코드입니다.';
+            });
+          }
         } // 칭구
       });
     });

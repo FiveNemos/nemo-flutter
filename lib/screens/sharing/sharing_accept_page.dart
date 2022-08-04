@@ -117,16 +117,30 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
   }
 
   saveFriend() async {
+    String nowLat = widget.latlng![0].isNotEmpty
+        ? widget.latlng![0]
+        : '39.74023'; // East Sea Lat
+    String nowLng = widget.latlng![1].isNotEmpty
+        ? widget.latlng![1]
+        : '134.33323'; // East Sea Lng
+    bool isRightGPS = widget.latlng![0].isNotEmpty;
     var uri = Uri.parse(
-        'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=${widget.friendId}&lat=${widget.latlng![0]}&lng=${widget.latlng![1]}');
+        'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=${widget.friendId}&lat=$nowLat&lng=$nowLng');
     var request = http.MultipartRequest('GET', uri);
 
     final response = await request.send();
     if (response.statusCode == 200) {
-      return true;
+      return [true, isRightGPS];
     } else {
-      return false;
+      return [false, isRightGPS];
     }
+  }
+
+  void showSnackbar(dynamic a) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(a.toString()),
+      duration: Duration(milliseconds: 3000),
+    ));
   }
 
   @override
@@ -407,7 +421,9 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                         children: [
                           ElevatedButton(
                               onPressed: () async {
-                                bool saveResult = await saveFriend();
+                                List saveFriendResult = await saveFriend();
+                                bool saveResult = saveFriendResult[0];
+                                bool isRightGPS = saveFriendResult[1];
                                 // bool saveResult = true;
                                 // bool saveResult = true; // 저장에 성공했습니다 🙌
                                 if (saveResult) {
@@ -560,6 +576,11 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                                               )),
                                         );
                                       });
+                                  if (isRightGPS) {
+                                    showSnackbar('교환위치 저장까지 성공했어요 🙌');
+                                  } else {
+                                    showSnackbar('GPS 정보가 없어서 아쉬워요 😂');
+                                  }
                                   // 명함첩으로 이동
                                   // 저장에 성공했습니다 띄울까
                                 } else {
@@ -577,17 +598,9 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                                       });
                                   // Navigator.pop(context);
                                 }
-
-                                DialogUI(
-                                  popFor: 'save',
-                                  myId: myId,
-                                  friendId: widget.friendId,
-                                  latlng: widget.latlng,
-                                  friendName: friendDataFromJson.nickname,
-                                );
                               },
                               child: Text(
-                                '반가워요 !',
+                                '수락해요',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 17),
                               )),
@@ -599,7 +612,7 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                                 cancelExchange(context);
                               },
                               child: Text(
-                                '누구세요..?',
+                                '거절해요',
                                 style: TextStyle(
                                     fontWeight: FontWeight.bold, fontSize: 17),
                               )),
@@ -911,229 +924,229 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
 //   }
 // }
 
-class DialogUI extends StatelessWidget {
-  DialogUI(
-      {Key? key,
-      required this.popFor,
-      this.myId,
-      this.friendId,
-      this.latlng,
-      this.friendName})
-      : super(key: key);
-  String popFor;
-  int? myId;
-  int? friendId;
-  List? latlng;
-  String? friendName;
-
-  var inputData = TextEditingController();
-  saveCardDecoration(labelText) {
-    return InputDecoration(
-      constraints: BoxConstraints(maxHeight: 45),
-      labelText: labelText,
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(
-          color: Color(0xff8338EC),
-        ),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(10)),
-        borderSide: BorderSide(
-          color: Color(0xff8338EC),
-        ),
-      ),
-    );
-  }
-
-  saveFriend() async {
-    var uri = Uri.parse(
-        'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=$friendId&lat=${latlng![0]}&lng=${latlng![1]}');
-    var request = http.MultipartRequest('GET', uri);
-
-    final response = await request.send();
-    if (response.statusCode == 200) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Dialog(
-      alignment: Alignment.center,
-      child: SizedBox(
-          height: 150,
-          width: 150,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: 70,
-                padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
-                child: TextField(
-                  decoration: saveCardDecoration('어떤 모임에서 교환하셨나요?'),
-                  controller: inputData,
-                  maxLength: 15,
-                ),
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextButton(
-                    onPressed: () async {
-                      if (inputData.text.isNotEmpty) {
-                        bool saveResult = await saveFriend();
-                        // bool saveResult = true; // 저장에 성공했습니다 🙌
-                        if (saveResult) {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return WillPopScope(
-                                  onWillPop: () {
-                                    return Future.value(false);
-                                  },
-                                  child: Dialog(
-                                      alignment: Alignment.center,
-                                      child: Container(
-                                        margin:
-                                            EdgeInsets.fromLTRB(5, 10, 5, 10),
-                                        height: 300,
-                                        width: 300,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                Text(
-                                                  '$friendName',
-                                                  style: TextStyle(
-                                                    fontSize: 28,
-                                                    fontWeight: FontWeight.w900,
-                                                  ),
-                                                ),
-                                                Text(
-                                                  ' 님과',
-                                                  style: TextStyle(
-                                                    fontSize: 24,
-                                                    fontWeight: FontWeight.bold,
-                                                    color: Color(0xff6a4cb7),
-                                                  ),
-                                                ),
-                                              ],
-                                            ),
-                                            Text(
-                                              '명함을 교환했어요',
-                                              style: TextStyle(
-                                                fontSize: 21,
-                                                fontWeight: FontWeight.bold,
-                                                color: Color(0xff6a4cb7),
-                                              ),
-                                            ),
-                                            Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 10, 0, 10)),
-                                            Text(
-                                              '🤜🏼 🤛🏼',
-                                              style: TextStyle(
-                                                  fontSize: 25,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 10, 0, 10)),
-                                            Text(
-                                              '프로필을 보며\n서로를 알아가보세요!',
-                                              style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.w600,
-                                                  color: Colors.grey.shade600),
-                                              textAlign: TextAlign.center,
-                                            ),
-                                            Padding(
-                                                padding: EdgeInsets.fromLTRB(
-                                                    0, 10, 0, 10)),
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.center,
-                                              children: [
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.push(
-                                                          context,
-                                                          MaterialPageRoute(
-                                                              builder:
-                                                                  (context) =>
-                                                                      ProfilePage(
-                                                                        friendId:
-                                                                            friendId,
-                                                                        currIndex:
-                                                                            2,
-                                                                      )));
-                                                    },
-                                                    child: Text(
-                                                      '프로필 보기',
-                                                      style: TextStyle(
-                                                        fontWeight:
-                                                            FontWeight.bold,
-                                                      ),
-                                                    )),
-                                                SizedBox(
-                                                  width: 10,
-                                                ),
-                                                ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.pushNamed(
-                                                          context, '/contacts');
-                                                    },
-                                                    child: Text(
-                                                      '나중에 보기',
-                                                      style: TextStyle(
-                                                          fontWeight:
-                                                              FontWeight.bold),
-                                                    ))
-                                              ],
-                                            ),
-                                          ],
-                                        ),
-                                      )),
-                                );
-                              });
-                          // 명함첩으로 이동
-                          // 저장에 성공했습니다 띄울까
-                        } else {
-                          showDialog(
-                              context: context,
-                              builder: (context) {
-                                return Dialog(
-                                    alignment: Alignment.center,
-                                    child: Container(
-                                        height: 100,
-                                        width: 100,
-                                        alignment: Alignment.center,
-                                        child:
-                                            Text('저장에 실패했습니다😓 다시 시도해주세요.')));
-                              });
-                          // Navigator.pop(context);
-                        }
-                      }
-                    },
-                    child: Text('저장'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: Text('취소'),
-                  )
-                ],
-              )
-            ],
-          )),
-    );
-  }
-}
+// class DialogUI extends StatelessWidget {
+//   DialogUI(
+//       {Key? key,
+//       required this.popFor,
+//       this.myId,
+//       this.friendId,
+//       this.latlng,
+//       this.friendName})
+//       : super(key: key);
+//   String popFor;
+//   int? myId;
+//   int? friendId;
+//   List? latlng;
+//   String? friendName;
+//
+//   var inputData = TextEditingController();
+//   saveCardDecoration(labelText) {
+//     return InputDecoration(
+//       constraints: BoxConstraints(maxHeight: 45),
+//       labelText: labelText,
+//       enabledBorder: OutlineInputBorder(
+//         borderRadius: BorderRadius.all(Radius.circular(10)),
+//         borderSide: BorderSide(
+//           color: Color(0xff8338EC),
+//         ),
+//       ),
+//       focusedBorder: OutlineInputBorder(
+//         borderRadius: BorderRadius.all(Radius.circular(10)),
+//         borderSide: BorderSide(
+//           color: Color(0xff8338EC),
+//         ),
+//       ),
+//     );
+//   }
+//
+//   saveFriend() async {
+//     var uri = Uri.parse(
+//         'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=$friendId&lat=${latlng![0]}&lng=${latlng![1]}');
+//     var request = http.MultipartRequest('GET', uri);
+//
+//     final response = await request.send();
+//     if (response.statusCode == 200) {
+//       return true;
+//     } else {
+//       return false;
+//     }
+//   }
+//
+//   @override
+//   Widget build(BuildContext context) {
+//     return Dialog(
+//       alignment: Alignment.center,
+//       child: SizedBox(
+//           height: 150,
+//           width: 150,
+//           child: Column(
+//             mainAxisAlignment: MainAxisAlignment.center,
+//             children: [
+//               Container(
+//                 height: 70,
+//                 padding: const EdgeInsets.fromLTRB(10, 5, 10, 5),
+//                 child: TextField(
+//                   decoration: saveCardDecoration('어떤 모임에서 교환하셨나요?'),
+//                   controller: inputData,
+//                   maxLength: 15,
+//                 ),
+//               ),
+//               Row(
+//                 mainAxisAlignment: MainAxisAlignment.center,
+//                 children: [
+//                   TextButton(
+//                     onPressed: () async {
+//                       if (inputData.text.isNotEmpty) {
+//                         bool saveResult = await saveFriend();
+//                         // bool saveResult = true; // 저장에 성공했습니다 🙌
+//                         if (saveResult) {
+//                           showDialog(
+//                               context: context,
+//                               builder: (context) {
+//                                 return WillPopScope(
+//                                   onWillPop: () {
+//                                     return Future.value(false);
+//                                   },
+//                                   child: Dialog(
+//                                       alignment: Alignment.center,
+//                                       child: Container(
+//                                         margin:
+//                                             EdgeInsets.fromLTRB(5, 10, 5, 10),
+//                                         height: 300,
+//                                         width: 300,
+//                                         child: Column(
+//                                           mainAxisAlignment:
+//                                               MainAxisAlignment.center,
+//                                           children: [
+//                                             Row(
+//                                               mainAxisAlignment:
+//                                                   MainAxisAlignment.center,
+//                                               children: [
+//                                                 Text(
+//                                                   '$friendName',
+//                                                   style: TextStyle(
+//                                                     fontSize: 28,
+//                                                     fontWeight: FontWeight.w900,
+//                                                   ),
+//                                                 ),
+//                                                 Text(
+//                                                   ' 님과',
+//                                                   style: TextStyle(
+//                                                     fontSize: 24,
+//                                                     fontWeight: FontWeight.bold,
+//                                                     color: Color(0xff6a4cb7),
+//                                                   ),
+//                                                 ),
+//                                               ],
+//                                             ),
+//                                             Text(
+//                                               '명함을 교환했어요',
+//                                               style: TextStyle(
+//                                                 fontSize: 21,
+//                                                 fontWeight: FontWeight.bold,
+//                                                 color: Color(0xff6a4cb7),
+//                                               ),
+//                                             ),
+//                                             Padding(
+//                                                 padding: EdgeInsets.fromLTRB(
+//                                                     0, 10, 0, 10)),
+//                                             Text(
+//                                               '🤜🏼 🤛🏼',
+//                                               style: TextStyle(
+//                                                   fontSize: 25,
+//                                                   fontWeight: FontWeight.bold),
+//                                             ),
+//                                             Padding(
+//                                                 padding: EdgeInsets.fromLTRB(
+//                                                     0, 10, 0, 10)),
+//                                             Text(
+//                                               '프로필을 보며\n서로를 알아가보세요!',
+//                                               style: TextStyle(
+//                                                   fontSize: 18,
+//                                                   fontWeight: FontWeight.w600,
+//                                                   color: Colors.grey.shade600),
+//                                               textAlign: TextAlign.center,
+//                                             ),
+//                                             Padding(
+//                                                 padding: EdgeInsets.fromLTRB(
+//                                                     0, 10, 0, 10)),
+//                                             Row(
+//                                               mainAxisAlignment:
+//                                                   MainAxisAlignment.center,
+//                                               children: [
+//                                                 ElevatedButton(
+//                                                     onPressed: () {
+//                                                       Navigator.push(
+//                                                           context,
+//                                                           MaterialPageRoute(
+//                                                               builder:
+//                                                                   (context) =>
+//                                                                       ProfilePage(
+//                                                                         friendId:
+//                                                                             friendId,
+//                                                                         currIndex:
+//                                                                             2,
+//                                                                       )));
+//                                                     },
+//                                                     child: Text(
+//                                                       '프로필 보기',
+//                                                       style: TextStyle(
+//                                                         fontWeight:
+//                                                             FontWeight.bold,
+//                                                       ),
+//                                                     )),
+//                                                 SizedBox(
+//                                                   width: 10,
+//                                                 ),
+//                                                 ElevatedButton(
+//                                                     onPressed: () {
+//                                                       Navigator.pushNamed(
+//                                                           context, '/contacts');
+//                                                     },
+//                                                     child: Text(
+//                                                       '나중에 보기',
+//                                                       style: TextStyle(
+//                                                           fontWeight:
+//                                                               FontWeight.bold),
+//                                                     ))
+//                                               ],
+//                                             ),
+//                                           ],
+//                                         ),
+//                                       )),
+//                                 );
+//                               });
+//                           // 명함첩으로 이동
+//                           // 저장에 성공했습니다 띄울까
+//                         } else {
+//                           showDialog(
+//                               context: context,
+//                               builder: (context) {
+//                                 return Dialog(
+//                                     alignment: Alignment.center,
+//                                     child: Container(
+//                                         height: 100,
+//                                         width: 100,
+//                                         alignment: Alignment.center,
+//                                         child:
+//                                             Text('저장에 실패했습니다😓 다시 시도해주세요.')));
+//                               });
+//                           // Navigator.pop(context);
+//                         }
+//                       }
+//                     },
+//                     child: Text('저장'),
+//                   ),
+//                   TextButton(
+//                     onPressed: () {
+//                       Navigator.pop(context);
+//                     },
+//                     child: Text('취소'),
+//                   )
+//                 ],
+//               )
+//             ],
+//           )),
+//     );
+//   }
+// }
