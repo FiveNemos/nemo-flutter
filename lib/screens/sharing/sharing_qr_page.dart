@@ -138,9 +138,6 @@ class _QRforTOOKState extends State<QRforTOOK> {
 
   @override
   Widget build(BuildContext context) {
-    if (result != null && !isValid) {
-      showSnackbar(errorMsg);
-    }
     return Scaffold(
       appBar: AppBar(),
       body: widget.isSender
