@@ -32,8 +32,8 @@ Future<dynamic> postNameCard(
         context: context,
         builder: (context) {
           return AlertDialog(
-              title: Text('Not Yet!!'),
-              content: Text('사진을 바꿔주세요.'),
+              title: Text('아직 완성되지 않았습니다!'),
+              content: Text('모든 사진을 채워주세요 🙏'),
               actions: [
                 TextButton(
                   // textColor: Colors.black,
@@ -78,7 +78,7 @@ Future<dynamic> postNameCard(
           builder: (context) {
             return AlertDialog(
                 title: Text('저장완료'),
-                content: Text('저장이 완료되었습니다.'),
+                content: Text('명함이 저장되었습니다 😁'),
                 actions: [
                   TextButton(
                     // textColor: Colors.black,
@@ -100,7 +100,7 @@ Future<dynamic> postNameCard(
           builder: (context) {
             return AlertDialog(
                 title: Text('저장실패'),
-                content: Text('재시도하세요'),
+                content: Text('다시 시도해주세요..!'),
                 actions: [
                   IconButton(onPressed: () {}, icon: Icon(Icons.star))
                 ]);
