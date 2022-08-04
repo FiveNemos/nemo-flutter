@@ -243,7 +243,7 @@ class _ChatPageState extends State<ChatPage> {
                   padding: EdgeInsets.only(top: 16, left: 16, right: 16),
                   child: TextField(
                     onChanged: (text) {
-                      searchConversation(text);
+                      searchConversation(text.toLowerCase());
                     },
                     decoration: InputDecoration(
                       hintText: 'Search...',
@@ -309,8 +309,9 @@ class _ChatPageState extends State<ChatPage> {
                               );
                             }
                             chatUsers = chatUsers
-                                .where(
-                                    (x) => x.friendName.startsWith(searchText))
+                                .where((x) => x.friendName
+                                    .toLowerCase()
+                                    .startsWith(searchText))
                                 .toList();
 
                             return ListView.builder(
