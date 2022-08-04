@@ -117,16 +117,30 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
   }
 
   saveFriend() async {
+    String nowLat = widget.latlng![0].isNotEmpty
+        ? widget.latlng![0]
+        : '39.74023'; // East Sea Lat
+    String nowLng = widget.latlng![1].isNotEmpty
+        ? widget.latlng![1]
+        : '134.33323'; // East Sea Lng
+    bool isRightGPS = widget.latlng![0].isNotEmpty;
     var uri = Uri.parse(
-        'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=${widget.friendId}&lat=${widget.latlng![0]}&lng=${widget.latlng![1]}');
+        'http://34.64.217.3:3000/api/friend?id_1=$myId&id_2=${widget.friendId}&lat=$nowLat&lng=$nowLng');
     var request = http.MultipartRequest('GET', uri);
 
     final response = await request.send();
     if (response.statusCode == 200) {
-      return true;
+      return [true, isRightGPS];
     } else {
-      return false;
+      return [false, isRightGPS];
     }
+  }
+
+  void showSnackbar(dynamic a) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text(a.toString()),
+      duration: Duration(milliseconds: 3000),
+    ));
   }
 
   @override
@@ -407,7 +421,9 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                         children: [
                           ElevatedButton(
                               onPressed: () async {
-                                bool saveResult = await saveFriend();
+                                List saveFriendResult = await saveFriend();
+                                bool saveResult = saveFriendResult[0];
+                                bool isRightGPS = saveFriendResult[1];
                                 // bool saveResult = true;
                                 // bool saveResult = true; // 저장에 성공했습니다 🙌
                                 if (saveResult) {
@@ -560,6 +576,11 @@ class _SharingFriendPageState extends State<SharingFriendPage> {
                                               )),
                                         );
                                       });
+                                  if (isRightGPS) {
+                                    showSnackbar('교환위치 저장까지 성공했어요 🙌');
+                                  } else {
+                                    showSnackbar('GPS 정보가 없어서 아쉬워요 😂');
+                                  }
                                   // 명함첩으로 이동
                                   // 저장에 성공했습니다 띄울까
                                 } else {
