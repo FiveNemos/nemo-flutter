@@ -325,11 +325,13 @@ class _ContactsPageState extends State<ContactsPage> {
                 ],
               ),
         body: isLoading
-            ? Column(
-                children: [
-                  context.read<ShimmerLoadProvider>().shimmerForSharing(),
-                  context.read<ShimmerLoadProvider>().shimmerForSharing(),
-                ],
+            ? SingleChildScrollView(
+                child: Column(
+                  children: [
+                    context.read<ShimmerLoadProvider>().shimmerForSharing(),
+                    context.read<ShimmerLoadProvider>().shimmerForSharing(),
+                  ],
+                ),
               )
             : friends.length > 0
                 ? ListView.separated(
