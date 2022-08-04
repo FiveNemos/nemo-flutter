@@ -184,29 +184,32 @@ class _QRforTOOKState extends State<QRforTOOK> {
       setState(() {
         result = scanData;
         if (result != null) {
-          String? chatRoomId = stringToBase64.decode(
-              result!.code!); // 'QRTOOKExchange${widget.myId.toString()}'
-          if (chatRoomId.substring(0, 14) == 'QRTOOKExchange') {
-            String? senderIdinStr = chatRoomId.substring(14);
-            senderId = int.tryParse(senderIdinStr);
-            if (senderId != null) {
-              if (senderId! > 0) {
-                socket.emit('join', chatRoomId);
-                socket.emit('took', {
-                  'chatroomID': chatRoomId,
-                  'senderID': senderId,
-                  'receiverID': widget.myId
-                });
-                setState(() {
-                  isValid = true;
-                });
+          try {
+            String? chatRoomId = stringToBase64.decode(
+                result!.code!); // 'QRTOOKExchange${widget.myId.toString()}'
+            if (chatRoomId.substring(0, 14) == 'QRTOOKExchange') {
+              String? senderIdinStr = chatRoomId.substring(14);
+              senderId = int.tryParse(senderIdinStr);
+              if (senderId != null) {
+                if (senderId! > 0) {
+                  socket.emit('join', chatRoomId);
+                  socket.emit('took', {
+                    'chatroomID': chatRoomId,
+                    'senderID': senderId,
+                    'receiverID': widget.myId
+                  });
+                  setState(() {
+                    isValid = true;
+                  });
+                }
               }
             }
-          }
-          if (!isValid) {
-            setState(() {
-              errorMsg = '유효하지 않은 바코드입니다.';
-            });
+            if (!isValid) {
+              showSnackbar(errorMsg);
+            }
+          } catch (e) {
+            debugPrint('유효하지 않은 바코드입니다.');
+            showSnackbar(errorMsg);
           }
         } // 칭구
       });
