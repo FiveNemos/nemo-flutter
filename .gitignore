@@ -124,3 +124,9 @@ app.*.symbols
 # lefthooks
 node_modules/
 package-lock.json
+
+
+# secrets
+secrets.dart
+ios/Runner/AppDelegate.swift
+android/app/src/main/AndroidManifest.xml

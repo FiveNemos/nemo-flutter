@@ -1,82 +1,60 @@
 import 'package:flutter/material.dart';
-import 'pages/contacts.dart';
-import 'pages/message.dart';
-import 'pages/mypage.dart';
-import 'pages/sharing.dart';
+import 'package:nemo_flutter/providers/shimmerLoad.dart';
+import 'package:nemo_flutter/providers/bottomBar.dart';
+import 'package:provider/provider.dart';
 
-void main() => runApp(const MyApp());
+// import widget style
+import './styles/style.dart' as style;
+
+// import initial page
+import 'screens/init/init.dart';
+import 'screens/init/login.dart';
+import 'screens/init/signup.dart';
+
+// import 'pages/newNameCard.dart';
+import 'screens/contacts/contacts.dart';
+
+import 'screens/message/message.dart';
+import 'screens/mypage/mypage.dart';
+import 'screens/sharing/sharing.dart';
+
+// name card page
+import 'screens/mypage/cardgenerator.dart';
+
+import 'screens/map/map.dart';
+// --------------------------------------------------
+
+void main() {
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  static const String _title = '네모 샘플';
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: _title,
-      home: MyStatefulWidget(),
-    );
-  }
-}
-
-class MyStatefulWidget extends StatefulWidget {
-  const MyStatefulWidget({Key? key}) : super(key: key);
-
-  @override
-  State<MyStatefulWidget> createState() => _MyStatefulWidgetState();
-}
-
-class _MyStatefulWidgetState extends State<MyStatefulWidget> {
-  int _selectedIndex = 0;
-  static const List<Widget> _widgetOptions = <Widget>[
-    ContactsPage(),
-    SharingPage(),
-    MessagePage(),
-    MypagePage()
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('네모'),
-      ),
-      body: Center(
-        child: _widgetOptions.elementAt(_selectedIndex),
-      ),
-      bottomNavigationBar: BottomNavigationBar(
-        items: const <BottomNavigationBarItem>[
-          BottomNavigationBarItem(
-            icon: Icon(Icons.account_balance_wallet_outlined,
-                color: Colors.black),
-            label: 'Contacts',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.favorite_border_rounded,
-              color: Colors.black,
-            ),
-            label: 'Sharing',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.message_rounded, color: Colors.black),
-            label: 'Message',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.description_rounded, color: Colors.black),
-            label: 'MyPage',
-          ),
-        ],
-        currentIndex: _selectedIndex,
-        selectedItemColor: Colors.black,
-        onTap: _onItemTapped,
+    return MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+            create: (BuildContext context) => BottomNavigationProvider()),
+        ChangeNotifierProvider(
+            create: (BuildContext context) => ShimmerLoadProvider())
+      ],
+      child: MaterialApp(
+        title: 'Nemo test',
+        theme: style.theme,
+        initialRoute: '/',
+        routes: {
+          '/': (context) => InitPage(),
+          '/login': (context) => LoginPage(),
+          '/signup': (context) => SignupPage(),
+          '/contacts': (context) => ContactsPage(),
+          '/message': (context) => MessagePage(),
+          '/mypage': (context) => MypagePage(),
+          '/sharing': (context) => SharingPage(),
+          '/namecard': (context) => NameCardGenerator(),
+          '/map': (context) => CurrentLocationScreen(),
+        }, // end routes
       ),
     );
   }
