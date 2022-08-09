@@ -111,7 +111,7 @@ class _ContactsPageState extends State<ContactsPage> {
     // 순서 유지되는지 확인하기
     setState(() {
       friends = friendsStash
-          .where((x) => friendsData[x].nickname.startsWith(text))
+          .where((x) => friendsData[x].nickname.toLowerCase().startsWith(text))
           .toList();
     });
   }
@@ -237,7 +237,7 @@ class _ContactsPageState extends State<ContactsPage> {
                     child: TextField(
                       controller: _controller,
                       onChanged: (text) async {
-                        searchContacts(text);
+                        searchContacts(text.toLowerCase());
                       },
                       decoration: InputDecoration(
                         hintText: 'Search...',
@@ -325,11 +325,13 @@ class _ContactsPageState extends State<ContactsPage> {
                 ],
               ),
         body: isLoading
-            ? Column(
-                children: [
-                  context.read<ShimmerLoadProvider>().shimmerForSharing(),
-                  context.read<ShimmerLoadProvider>().shimmerForSharing(),
-                ],
+            ? SingleChildScrollView(
+                child: Column(
+                  children: [
+                    context.read<ShimmerLoadProvider>().shimmerForSharing(),
+                    context.read<ShimmerLoadProvider>().shimmerForSharing(),
+                  ],
+                ),
               )
             : friends.isNotEmpty
                 ? ListView.separated(
