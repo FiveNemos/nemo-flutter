@@ -3,15 +3,13 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-// import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:dio/dio.dart';
 import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
+import '../../secrets.dart';
 import 'package:flutter/services.dart';
-
-const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
 
 Map<String, int> CHANGED = {
   'nickname': 0,
@@ -58,7 +56,7 @@ Future<dynamic> updateNameCard(
         });
   } else {
     print('http post 요청 들어옴');
-    var uri = Uri.parse('http://34.64.217.3:3000/api/card/update');
+    var uri = Uri.parse('${API_URL}card/update');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});
@@ -167,12 +165,9 @@ class _CardEditorState extends State<CardEditor> {
   }
 
   getCard(id) async {
-    print('http://34.64.217.3:3000/api/card/$id');
     try {
       var dio = Dio();
-      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
-      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
-      print('response.data.runtimeType = ${response.runtimeType}');
+      Response response = await dio.get('${API_URL}card/$id');
       if (response.statusCode == 200) {
         final json = response.data;
         setState(() {
@@ -182,16 +177,16 @@ class _CardEditorState extends State<CardEditor> {
             introduction: json['intro'],
             title: json['detail_title'], // title로 변경 필요
             about: json['detail_content'], // about로 변경 필요
-            image1: BASE_URL + json['tag_img_1'],
-            image2: BASE_URL + json['tag_img_2'],
-            image3: BASE_URL + json['tag_img_3'],
+            image1: IMG_URL + json['tag_img_1'],
+            image2: IMG_URL + json['tag_img_2'],
+            image3: IMG_URL + json['tag_img_3'],
             tag1: json['tag_1'],
             tag2: json['tag_2'],
             tag3: json['tag_3'],
             image: [
-              BASE_URL + json['tag_img_1'],
-              BASE_URL + json['tag_img_2'],
-              BASE_URL + json['tag_img_3'],
+              IMG_URL + json['tag_img_1'],
+              IMG_URL + json['tag_img_2'],
+              IMG_URL + json['tag_img_3'],
             ],
             tag: [
               json['tag_1'],
@@ -829,7 +824,7 @@ class _NameState extends State<NameCard> {
                     ),
                     child: (CHANGED['userImage'] == 1)
                         ? Image.file(widget.userImage, fit: BoxFit.fill)
-                        : Image.network(BASE_URL + widget.userImage.path,
+                        : Image.network(IMG_URL + widget.userImage.path,
                             fit: BoxFit.fill),
                   ),
                 ),

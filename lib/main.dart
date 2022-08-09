@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:nemo_flutter/providers/shimmerLoad.dart';
-import 'package:nemo_flutter/screens/sharing/sharing_qr_page.dart';
 import 'package:nemo_flutter/providers/bottomBar.dart';
 import 'package:provider/provider.dart';
 

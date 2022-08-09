@@ -9,7 +9,7 @@ import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-// import 'package:shared_preferences/shared_preferences.dart';
+import '../../secrets.dart';
 
 class NearbyConnection extends StatefulWidget {
   @override
@@ -219,8 +219,7 @@ class _MyBodyState extends State<NearbyConnection> {
         String id_1 = userMap['user_id'];
         String id_2 = String.fromCharCodes(payload.bytes!);
 
-        var uri = Uri.parse(
-            'http://34.64.217.3:3000/api/friend?id_1=$id_1&id_2=$id_2');
+        var uri = Uri.parse('${API_URL}friend?id_1=$id_1&id_2=$id_2');
         var request = http.MultipartRequest('GET', uri);
 
         final response = await request.send();

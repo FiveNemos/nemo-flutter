@@ -9,6 +9,7 @@ import 'package:provider/provider.dart';
 import '../../models/contacts/user.dart';
 import '../../providers/bottomBar.dart';
 import '../../providers/shimmerLoad.dart';
+import '../../secrets.dart';
 // import '../../tests/contacts/preferences.dart';
 
 class ContactsPage extends StatefulWidget {
@@ -32,8 +33,7 @@ class _ContactsPageState extends State<ContactsPage> {
     try {
       var dio = Dio();
       Map nowfriendsData = {};
-      Response response =
-          await dio.get('http://34.64.217.3:3000/api/card/all/$id');
+      Response response = await dio.get('${API_URL}card/all/$id');
       if (response.statusCode == 200) {
         final json = response.data;
         if (json == 'no friend') {
@@ -44,8 +44,7 @@ class _ContactsPageState extends State<ContactsPage> {
           json['cards'].forEach((e) {
             var friendId = e['user_id'];
             nowfriendsData[friendId] = User(
-              imagePath:
-                  'https://storage.googleapis.com/nemo-bucket/${e['image']}',
+              imagePath: '$IMG_URL${e['image']}',
               nickname: e['nickname'],
               introduction: e['intro'],
               tag: [
@@ -63,13 +62,11 @@ class _ContactsPageState extends State<ContactsPage> {
             isLoading = false;
           });
         }
-        print('접속 성공!');
       } else {
         print('error');
         return false;
       }
     } catch (e) {
-      print('뭔가 에러가');
       setState(() {
         isLoading = false;
       });
@@ -80,20 +77,17 @@ class _ContactsPageState extends State<ContactsPage> {
   deleteFriend(target) async {
     try {
       var dio = Dio();
-      Response response = await dio.get(
-          'http://34.64.217.3:3000/api/friend/delete?id_1=$nowId&id_2=$target');
+      Response response =
+          await dio.get('${API_URL}friend/delete?id_1=$nowId&id_2=$target');
       if (response.statusCode == 200) {
-        final json = response.data;
         setState(() {
           friends.remove(target);
           friendsData.remove(target);
         });
       } else {
-        print('error');
         return false;
       }
     } catch (e) {
-      print('뭔가 에러가');
       return false;
     }
     // 친구 삭제하는 POST 요청 추가필요
@@ -333,7 +327,7 @@ class _ContactsPageState extends State<ContactsPage> {
                   ],
                 ),
               )
-            : friends.length > 0
+            : friends.isNotEmpty
                 ? ListView.separated(
                     scrollDirection: Axis.vertical,
                     padding: EdgeInsets.fromLTRB(25, 15, 25, 15), // 사진 크기 조절 1
@@ -418,7 +412,7 @@ class _ContactsPageState extends State<ContactsPage> {
                                     children: [
                                       Align(
                                         alignment: Alignment.center,
-                                        child: Container(
+                                        child: SizedBox(
                                           width: double.infinity,
                                           height: 25,
                                           child: Center(

@@ -10,6 +10,7 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:provider/provider.dart';
+import '../../secrets.dart';
 
 import '../../providers/bottomBar.dart';
 import '../../providers/shimmerLoad.dart';
@@ -603,32 +604,6 @@ class _DraggableCardState extends State<DraggableCard>
     ));
   }
 
-  // void onConnectionInit(String id, ConnectionInfo info) {
-  //   setState(() {
-  //     endpointMap[id] = info;
-  //   });
-  //   Nearby().acceptConnection(id, onPayLoadRecieved: (endid, payload) async {
-  //     if (payload.type == PayloadType.BYTES) {
-  //       dynamic userInfo = await storage.read(key: 'login');
-  //       Map userMap = jsonDecode(userInfo);
-  //       String id_1 = userMap['user_id'];
-  //       String id_2 = String.fromCharCodes(payload.bytes!);
-
-  //       var uri = Uri.parse(
-  //           'http://34.64.217.3:3000/api/friend?id_1=$id_1&id_2=$id_2');
-  //       var request = http.MultipartRequest('GET', uri);
-
-  //       final response = await request.send();
-  //       if (response.statusCode == 200) {
-  //         Navigator.push(
-  //             context,
-  //             MaterialPageRoute(
-  //                 builder: (context) => ProfilePage(friendId: id_2)));
-  //       }
-  //     }
-  //   });
-  // }
-
   void onConnectionInit(String id, ConnectionInfo info) {
     setState(() {
       endpointMap[id] = info;
@@ -712,17 +687,15 @@ class _TookPageState extends State<TookPage> {
   getAllCards(id) async {
     try {
       var dio = Dio();
-      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      Response response = await dio.get('${API_URL}card/$id');
 
       if (response.statusCode == 200) {
         myData = response.data;
         setState(() {
           myDataFromJson = User.fromJson(myData); // Instance User
         });
-        print('접속 성공!');
         return true;
       } else {
-        print('error');
         return false;
       }
     } catch (e) {

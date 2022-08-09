@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 import 'dart:convert'; // json decode 등등 관련 패키지
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../../models/init/login.dart';
+import '../../secrets.dart';
 // shared preference
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -61,8 +62,7 @@ class _LoginPageState extends State<LoginPage> {
       var param = {'account_name': '$accountName', 'password': '$password'};
       print(param);
 
-      Response response =
-          await dio.post('http://34.64.217.3:3000/api/user/login', data: param);
+      Response response = await dio.post('${API_URL}user/login', data: param);
 
       if (response.statusCode == 200) {
         loginID = response.data['user_id'];
@@ -91,7 +91,7 @@ class _LoginPageState extends State<LoginPage> {
     try {
       var dio = Dio();
 
-      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      Response response = await dio.get('${API_URL}card/$id');
       print(response.data);
       print(response.data.runtimeType);
 

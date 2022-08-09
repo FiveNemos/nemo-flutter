@@ -1,17 +1,13 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:nemo_flutter/screens/contacts/contacts.dart';
-import 'package:provider/provider.dart';
 import 'package:shimmer/shimmer.dart';
 import '../../models/message/chatrooms.dart';
-import '../../providers/bottomBar.dart';
 import '../../widgets/message/conversation_list.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'dart:async';
-
-const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
+import '../../secrets.dart';
 
 class ChatPage extends StatefulWidget {
   const ChatPage({Key? key}) : super(key: key);
@@ -24,7 +20,7 @@ class _ChatPageState extends State<ChatPage> {
   dynamic userInfo = '';
   int? loginID;
 
-  StreamController _streamController = StreamController();
+  final StreamController _streamController = StreamController();
   Timer? _timer;
   List<ChatRooms> original_chatUsers = []; // 이걸 DB에서 받아오는거로 바꾸면 될듯
   List chatUsers = [];
@@ -40,7 +36,7 @@ class _ChatPageState extends State<ChatPage> {
     print(DateTime.now());
     if (diff.inDays > 0) {
       if (diff.inDays > 7) {
-        DateFormat dateFormat = DateFormat("yyyy-MM-dd");
+        DateFormat dateFormat = DateFormat('yyyy-MM-dd');
         return dateFormat.format(msgtime);
       } else {
         return '${diff.inDays}일 전';
@@ -57,15 +53,14 @@ class _ChatPageState extends State<ChatPage> {
   Future getData(id) async {
     try {
       var dio = Dio();
-      Response response = await dio
-          .get('http://34.64.217.3:3000/api/chatroom/list?user_id=$id');
+      Response response = await dio.get('${API_URL}chatroom/list?user_id=$id');
       if (response.data == 'false') {
         setState(() {
           isLoading = false;
         });
       }
       if (response.statusCode == 200 && response.data != 'false') {
-        print("responsedata : ${response.data}");
+        print('responsedata : ${response.data}');
         final jsonData = response.data;
         var roomData = jsonData['chatroom'];
         var friendData = jsonData['data'];
@@ -86,7 +81,7 @@ class _ChatPageState extends State<ChatPage> {
               friendID: friendId,
               friendName: nowFriendData['nickname'],
               intro: nowFriendData['intro'],
-              friendImage: BASE_URL + nowFriendData['image'],
+              friendImage: IMG_URL + nowFriendData['image'],
               lastMsgTime: lastmsgtime,
               lastMsgText: e[4],
               notReadCnt: nowFriendData['not_read_cnt']);
@@ -280,10 +275,10 @@ class _ChatPageState extends State<ChatPage> {
                                 child: ListTile(
                                     leading: Icon(Icons.person, size: 50.0),
                                     title: SizedBox(
+                                      height: 20.0,
                                       child: Container(
                                         color: Colors.teal,
                                       ),
-                                      height: 20.0,
                                     )),
                               );
                             },

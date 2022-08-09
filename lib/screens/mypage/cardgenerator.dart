@@ -3,12 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-// import 'package:flutter_tags/flutter_tags.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:flutter/services.dart';
 
 import '../sharing/sharing.dart';
+import '../../secrets.dart';
 
 Future<dynamic> postNameCard(
   dynamic context,
@@ -45,8 +45,7 @@ Future<dynamic> postNameCard(
               ]);
         });
   } else {
-    print('http post 요청 들어옴');
-    var uri = Uri.parse('http://34.64.217.3:3000/api/card/create');
+    var uri = Uri.parse('${API_URL}card/create');
     var request = http.MultipartRequest('POST', uri);
     request.headers.addAll(
         {'Content-Type': 'multipart/form-data; boundary=----myboundary'});

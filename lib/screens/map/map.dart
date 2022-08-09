@@ -3,12 +3,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../secrets.dart';
 
 import 'package:dio/dio.dart';
 import 'package:provider/provider.dart';
 import '../../models/map/cord.dart';
 import 'dart:convert';
-import 'package:geolocator/geolocator.dart';
 import 'dart:async';
 
 import 'package:permission_handler/permission_handler.dart';
@@ -103,29 +103,11 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
   }
 
   getCord(id) async {
-    // print('http://10.0.2.2:3000/api/friend/lat');
     try {
       var dio = Dio();
-      Response response =
-          await dio.get('http://34.64.217.3:3000/api/friend/map?user_id=$id');
+      Response response = await dio.get('${API_URL}friend/map?user_id=$id');
       if (response.statusCode == 200) {
         final json = response.data['result'];
-        // print(json.runtimeType);
-        // print(userCord);
-        // for (int i = 0; i < json.length; i++) {
-        //   setState(() {
-        //     userCord[i] = UserCord(
-        //         user_id: json[i]['user_id'],
-        //         lat: json[i]['lat'],
-        //         long: json[i]['lng']);
-        //   });
-        //   print(userCord[0].lng);
-        //
-        //   print(userCord[i].user_id);
-        //   print(userCord[i].lat);
-        //   print(userCord[0].long);
-        //   // }
-        // }
 
         var temp = [];
         json.forEach((e) {
@@ -141,18 +123,11 @@ class _CurrentLocationScreenState extends State<CurrentLocationScreen> {
           print('temp:$temp');
         });
 
-        // print(double.parse(userCord.lat));
-        // print(double.parse(userCord.long));
-        // print(userCord.user_id);
-        // print('접속성공');
-        print('true');
         return true;
       } else {
-        print('error');
         return false;
       }
     } catch (e) {
-      print('에라이 에러');
       return false;
     }
   }

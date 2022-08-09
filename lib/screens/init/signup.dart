@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../secrets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../models/init/login.dart';
@@ -206,7 +207,6 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   postUser(account, password, phonenumber) async {
-    // print('http://34.64.217.3:3000/api/card/$id');
     // Response response;
     try {
       var dio = Dio();
@@ -215,14 +215,12 @@ class _SignupPageState extends State<SignupPage> {
         'password': '$password',
         'phone_number': '$phonenumber'
       };
-      Response response = await dio
-          .post('http://34.64.217.3:3000/api/user/signup', data: param);
+      Response response = await dio.post('${API_URL}user/signup', data: param);
       if (response.statusCode == 201) {
         final json = response.data;
         setState(() {
           loginID = json['id'];
         });
-        // saveData(json['id']);
         saveIdSecure(json['id']);
         print('success : $json');
         return true;
@@ -242,7 +240,6 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    var testList = ['아이디', '비밀번호', '비밀번호 재확인'];
     final List<Function> functions = [
       showNemo,
       changeAccountName,
@@ -289,19 +286,6 @@ class _SignupPageState extends State<SignupPage> {
                       errorDialog(errorDetail);
                     }
                   }
-                  // ElevatedButton(
-                  //           child: const Text('메인'),
-                  //           onPressed: () {
-                  //             Navigator.pushNamed(context, '/');
-                  //           },
-                  //         ),
-                  //         ElevatedButton(
-                  //           child: const Text('명함 생성'),
-                  //           onPressed: () {
-                  //             Navigator.pushNamed(context, '/namecard');
-                  //           },
-                  //         ),
-                  // print('확인: $accountName $password $passwordAgain');
                 }),
           ],
         ),

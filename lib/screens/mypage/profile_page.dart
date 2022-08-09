@@ -1,22 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:nemo_flutter/providers/shimmerLoad.dart';
 import 'package:provider/provider.dart';
-import 'package:shimmer/shimmer.dart';
 
 import '../../models/mypage/user.dart';
 import '../../providers/bottomBar.dart';
 import '../../widgets/mypage/profile_widget.dart';
 import '../message/chat_detail_page.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'dart:convert';
 import 'package:cached_network_image/cached_network_image.dart';
 import './cardeditor.dart';
-import 'package:shimmer/shimmer.dart';
-// import 'package:shimmer_example/placeholders.dart';
-
-const BASE_URL = 'https://storage.googleapis.com/nemo-bucket/';
+import '../../secrets.dart';
 
 class ProfilePage extends StatefulWidget {
   ProfilePage({Key? key, this.friendId, required this.currIndex, this.latlng})
@@ -56,8 +51,8 @@ class _ProfilePageState extends State<ProfilePage> {
   getChatRoom(loginID, friendID) async {
     try {
       var dio = Dio();
-      Response response = await dio.get(
-          'http://34.64.217.3:3000/api/chatroom/enter?id_1=$loginID&id_2=$friendID');
+      Response response = await dio
+          .get('${API_URL}chatroom/enter?id_1=$loginID&id_2=$friendID');
       if (response.statusCode == 200) {
         final jsonData = response.data;
         return jsonData;
@@ -74,31 +69,29 @@ class _ProfilePageState extends State<ProfilePage> {
   }
 
   getCard(id) async {
-    print('http://34.64.217.3:3000/api/card/$id');
     try {
       var dio = Dio();
-      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
-      // Response response2 = await dio.get('http://34.64.217.3:3000/api/card/99'); // 실험
+      Response response = await dio.get('${API_URL}card/$id');
 
       if (response.statusCode == 200) {
         final json = response.data;
         setState(() {
           user = UserProfile(
-            imagePath: BASE_URL + json['image'],
+            imagePath: IMG_URL + json['image'],
             nickname: json['nickname'],
             introduction: json['intro'],
             title: json['detail_title'], // title로 변경 필요
             about: json['detail_content'], // about로 변경 필요
-            image1: BASE_URL + json['tag_img_1'],
-            image2: BASE_URL + json['tag_img_2'],
-            image3: BASE_URL + json['tag_img_3'],
+            image1: IMG_URL + json['tag_img_1'],
+            image2: IMG_URL + json['tag_img_2'],
+            image3: IMG_URL + json['tag_img_3'],
             tag1: json['tag_1'],
             tag2: json['tag_2'],
             tag3: json['tag_3'],
             image: [
-              BASE_URL + json['tag_img_1'],
-              BASE_URL + json['tag_img_2'],
-              BASE_URL + json['tag_img_3'],
+              IMG_URL + json['tag_img_1'],
+              IMG_URL + json['tag_img_2'],
+              IMG_URL + json['tag_img_3'],
             ],
             tag: [
               json['tag_1'],
@@ -263,7 +256,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             var roomdata =
                                 await getChatRoom(loginID, widget.friendId);
                             if (!mounted) return;
-                            print("roomdata : $roomdata");
+                            print('roomdata : $roomdata');
                             int chatroomID = int.parse(roomdata['chatroomID']);
                             // int notReadCnt = int.parse(roomdata['notreadcnt']);
                             if (chatroomID > 0) {

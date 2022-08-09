@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../../models/message/chatmodel.dart';
 import 'package:socket_io_client/socket_io_client.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import '../../secrets.dart';
 
 class ChatScreen extends StatefulWidget {
   int chatroomID;
@@ -34,19 +35,14 @@ class _ChatScreenState extends State<ChatScreen> {
   final ScrollController _scrollController = ScrollController();
   int? myConnId;
   int? friendConnId;
-  StreamController _streamController = StreamController();
+  final StreamController _streamController = StreamController();
   int? notReadCnt;
 
   getChatReadCnts() async {
-    print("start");
     try {
-      print("try");
       var dio = Dio();
-      print(
-          'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
       Response response = await dio.get(
-          'http://34.64.217.3:3000/api/chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
-      print("here i go");
+          '${API_URL}chatroom/readcnts?id_1=${widget.loginID}&id_2=${widget.friendID}');
       if (response.statusCode == 200) {
         final jsonData = response.data;
         int tempCnt = jsonData['notreadcnt'] == null
@@ -57,7 +53,6 @@ class _ChatScreenState extends State<ChatScreen> {
         });
         return await getChatMessages(tempCnt);
       } else {
-        print('error');
         return false;
       }
     } on DioError catch (e) {
@@ -71,7 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
     try {
       var dio = Dio();
       Response response = await dio.get(
-          'http://34.64.217.3:3000/api/chatroom/conns?id_1=${widget.loginID}&id_2=${widget.friendID}');
+          '${API_URL}chatroom/conns?id_1=${widget.loginID}&id_2=${widget.friendID}');
       if (response.statusCode == 200) {
         final jsonData = response.data;
         setState(() {
@@ -81,16 +76,11 @@ class _ChatScreenState extends State<ChatScreen> {
         // print("마이콩");
         socket.emit(
             'reset', {'chatroomID': widget.chatroomID, 'connid': jsonData[0]});
-        // socket.emit('reset', jsonData[0]);
-        // print("니가에러지");
-        print('접속 성공!');
       } else {
-        print('error');
         return false;
       }
     } on DioError catch (e) {
       final errorjson = jsonDecode(e.response.toString());
-      print(errorjson);
       return false;
     }
   }
@@ -98,8 +88,8 @@ class _ChatScreenState extends State<ChatScreen> {
   getChatMessages(int notReadCnt) async {
     try {
       var dio = Dio();
-      Response response = await dio.get(
-          'http://34.64.217.3:3000/api/chatroom/message?room_id=${widget.chatroomID}');
+      Response response = await dio
+          .get('${API_URL}chatroom/message?room_id=${widget.chatroomID}');
       if (response.statusCode == 200) {
         final jsonData = response.data;
         List<ChatModel> temp = [];
@@ -175,7 +165,7 @@ class _ChatScreenState extends State<ChatScreen> {
       socket.on('connect', (data) {
         debugPrint('socket connected');
         // debugPrint(socket.connected);
-        print("왜지감자");
+        print('왜지감자');
         socket.emit('join', widget.chatroomID);
         setState(() {
           socketFlag = true;
@@ -240,7 +230,7 @@ class _ChatScreenState extends State<ChatScreen> {
 
   @override
   void initState() {
-    print("hello");
+    print('hello');
     getChatReadCnts();
     getChatConns();
     super.initState();
@@ -503,7 +493,7 @@ class _ChatScreenState extends State<ChatScreen> {
                             _messageController.clear();
                           } else {
                             print(
-                                "출력합니다: ${_messages.where((e) => e.isread = false).length}");
+                                '출력합니다: ${_messages.where((e) => e.isread = false).length}');
                           }
                         },
                         mini: true,

@@ -2,11 +2,8 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
-// import 'dart:convert'; // json decode 등등 관리
+import '../../secrets.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-// import 'package:flutter_slidable/flutter_slidable.dart';
-// import 'package:nemo_flutter/screens/mypage/profile_page.dart';
-// import '../../tests/contacts/preferences.dart';
 import 'package:blinking_text/blinking_text.dart';
 
 class InitPage extends StatefulWidget {
@@ -60,7 +57,7 @@ class _InitPageState extends State<InitPage> {
 
     try {
       var dio = Dio();
-      Response response = await dio.get('http://34.64.217.3:3000/api/card/$id');
+      Response response = await dio.get('${API_URL}card/$id');
       if (response.data.runtimeType != bool) {
         return true;
       } else {
