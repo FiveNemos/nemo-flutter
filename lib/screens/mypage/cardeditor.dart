@@ -10,6 +10,13 @@ import '../../models/mypage/user.dart';
 import '../sharing/sharing.dart';
 import '../../secrets.dart';
 import 'package:flutter/services.dart';
+import 'package:image_editor_plus/image_editor_plus.dart';
+import 'dart:typed_data';
+import 'package:path_provider/path_provider.dart';
+import 'package:path/path.dart' as path;
+
+const BASE_URL = 'https://storage.googlea'
+    'pis.com/nemo-bucket/';
 
 Map<String, int> CHANGED = {
   'nickname': 0,
@@ -152,6 +159,7 @@ class _CardEditorState extends State<CardEditor> {
   dynamic tagImage3;
   var detailTitle;
   var detailContent;
+  var pickedImage;
 
   checkUser() async {
     dynamic userInfo = await storage.read(key: 'login');
@@ -236,12 +244,88 @@ class _CardEditorState extends State<CardEditor> {
     // setEverything(user);
   }
 
-  saveUserImage(File file) {
+  Future<void> _download(String url) async {
+    final response = await http.get(Uri.parse(url));
+
+    // Get the image name
+    final imageName = path.basename(url);
+    // Get the document directory path
+    final appDir = await getApplicationDocumentsDirectory();
+
+    // This is the saved image path
+    // You can use it to display the saved image later
+    final localPath = path.join(appDir.path, imageName);
+
+    // Downloading
+    final imageFile = File(localPath);
+    await imageFile.writeAsBytes(response.bodyBytes);
     setState(() {
-      userImage = file;
-      CHANGED['userImage'] = 1;
+      pickedImage = imageFile;
     });
   }
+
+  int editCount = 0;
+  Future getImage(context) async {
+    print('getImage 들어옴!!!!!!!!!');
+    print('CHANGED[\'userImage\'] = ${CHANGED['userImage']}');
+    Uint8List bytes = Uint8List(0);
+
+    if (CHANGED['userImage'] == 0) {
+      await _download(BASE_URL + userImage.path);
+    } else {
+      setState(() {
+        pickedImage = userImage;
+      });
+    }
+    // var pickedImage =
+    //     await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (pickedImage != null) {
+      File imageFile = File(pickedImage.path);
+      await imageFile
+          .readAsBytes()
+          .then((value) => bytes = Uint8List.fromList(value))
+          .catchError((onError) {
+        print('Exception error while reading file from path');
+      });
+      print(
+          'pickedImage.path = ${pickedImage.path}!!!!!!!!!!!!!'); //어쩐지 이게 계속 똑같더
+      // var finalImage = Image.file(imageFile);
+      // var data = await rootBundle.load(pickedImage.path);
+      var imageData = bytes.buffer.asUint8List();
+      var editedImage = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => ImageEditor(
+            image: imageData,
+          ),
+        ),
+      );
+      // print('editedImage = ${editedImage.path}');
+      if (editedImage != null) {
+        Uint8List imageInUnit8List =
+            editedImage; // store unit8List image here ;
+        final tempDir = await getTemporaryDirectory();
+        File file = await File('${tempDir.path}/image$editCount.png').create();
+        file.writeAsBytesSync(imageInUnit8List);
+        setState(() {
+          userImage = file;
+          CHANGED['userImage'] = 1;
+          editCount++;
+        });
+        print('file.path = ${file.path}');
+      } else {
+        print('Edited Image was null~~~~~~~');
+      }
+      print('처리 다 끝났달룽~~~~~~~~~~');
+    }
+  }
+
+  // saveUserImage(File file) {
+  //   setState(() {
+  //     userImage = file;
+  //     CHANGED['userImage'] = 1;
+  //   });
+  // }
 
   saveTagImage(int num, File picture) {
     setState(() {
@@ -346,7 +430,8 @@ class _CardEditorState extends State<CardEditor> {
                         tags: tags,
                         introduction: introduction,
                         userImage: userImage,
-                        saveUserImage: saveUserImage,
+                        // saveUserImage: saveUserImage,
+                        getImage: getImage,
                         user: user,
                       ),
                       Padding(padding: EdgeInsets.fromLTRB(0, 0, 0, 25)),
@@ -768,13 +853,15 @@ class NameCard extends StatefulWidget {
       this.tags,
       this.introduction,
       this.userImage,
-      this.saveUserImage,
+      // this.saveUserImage,
+      this.getImage,
       this.user})
       : super(key: key);
 
   var nickname, tags, introduction;
   dynamic userImage;
-  var saveUserImage;
+  // var saveUserImage;
+  var getImage;
   var user;
 
   @override
@@ -810,12 +897,13 @@ class _NameState extends State<NameCard> {
                 decoration: BoxDecoration(color: Color(0xffE6E6FA)),
                 child: InkWell(
                   onTap: () async {
-                    var picker = ImagePicker();
-                    var image =
-                        await picker.pickImage(source: ImageSource.gallery);
-                    if (image != null) {
-                      widget.saveUserImage(File(image.path));
-                    }
+                    await widget.getImage(context);
+                    // var picker = ImagePicker();
+                    // var image =
+                    //     await picker.pickImage(source: ImageSource.gallery);
+                    // if (image != null) {
+                    //   widget.saveUserImage(File(image.path));
+                    // }
                   },
                   child: ClipRRect(
                     borderRadius: BorderRadius.only(
