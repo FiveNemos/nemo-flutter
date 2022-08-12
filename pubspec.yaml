@@ -62,6 +62,10 @@ dependencies:
   qr_code_scanner: ^1.0.0
 
   badges: ^2.0.3
+  image_editor_plus:
+    git:
+      url: https://github.com/jessy1001/image_editor_plus.git
+      ref: update1nemos #branch name
 
 
 
